@@ -6,7 +6,6 @@ resource "azurerm_storage_account" "storage" {
   account_replication_type = "ZRS"
   is_hns_enabled           = true
   is_blob_access_tracking_enabled = true
-  is_versioning_enabled           = true
 
   identity {
     type = "UserAssigned"
