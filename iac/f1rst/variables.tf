@@ -1,7 +1,7 @@
 variable "location" { default = "brazilsouth" }
 variable "resource_group_name" {  default = "rsg-datamaster" }
 variable "spn_name"       { default = "github-deploy-spn" }
-variable "keyvault_name"  { default = "kv-iac-secrets" }
+variable "keyvault_name"  { default = "kv-secrets-datamastermdl" }
 variable "keyvault_rg"    { default = "rsg-datamaster" }
 
 variable "tags" {

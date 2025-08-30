@@ -1,12 +1,12 @@
 variable "location" { default = "brazilsouth" }
 variable "resource_group_name" {  default = "rsg-datamaster" }
 variable "spn_name"       { default = "github-deploy-spn" }
-variable "keyvault_name"  { default = "kv-iac-secrets" }
+variable "keyvault_name"  { default = "kv-secrets-datamastermdl" }
 variable "keyvault_rg"    { default = "rsg-datamaster" }
 
 variable "namespaces" {
   type    = list(string)
-  default = ["airflow", "elk", "spark", "spark-operator", "grafana", "prometheus", "nginx"]
+  default = ["airflow", "elk", "spark", "spark-operator", "grafana", "prometheus", "nginx", "app"]
 }
 
 variable "cert_password"    { 
@@ -20,6 +20,7 @@ variable "tags" {
   description = "Tags padrão"
   type        = map(string)
   default     = {
+    project     = "datamaster"
     environment = "production"
     owner       = "marcio"
   }

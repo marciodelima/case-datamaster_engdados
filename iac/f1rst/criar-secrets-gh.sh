@@ -5,7 +5,7 @@ set -e
 REPO="marciodelima/case-datamaster_engdados"
 
 echo "Terraform apply..."
-terraform init
+terraform init -upgrade
 terraform apply -auto-approve
 
 echo "Outputs do Terraform..."
@@ -15,8 +15,8 @@ AZURE_TENANT_ID=$(terraform output -raw azure_tenant_id)
 AZURE_CREDENTIALS=$(terraform output -raw azure_credentials_json)
 
 echo "Criando secrets no GitHub..."
-gh secret set ACR_LOGIN_SERVER --body "acrregistry-datamaster.azurecr.io" --repo $REPO
-gh secret set ACR_NAME         --body "acrregistry-datamaster.azurecr.io" --repo $REPO
+gh secret set ACR_LOGIN_SERVER --body "acrregistrydatamaster.azurecr.io" --repo $REPO
+gh secret set ACR_NAME         --body "acrregistrydatamaster.azurecr.io" --repo $REPO
 gh secret set AKS_RG           --body "rsg-datamaster" --repo $REPO
 gh secret set AKS_NAME         --body "aks-datamaster" --repo $REPO
 

@@ -205,3 +205,40 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Diretório de estado local
+*.tfstate
+*.tfstate.backup
+
+# Diretório de cache do Terraform
+.terraform/
+.terraform.lock.hcl
+
+# Arquivos de variáveis sensíveis
+terraform.tfvars
+*.auto.tfvars
+
+# Logs e arquivos temporários
+crash.log
+*.log
+*.tmp
+
+# Arquivos de plano
+*.tfplan
+
+# Arquivos de override
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Arquivos de saída
+*.out
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+

@@ -1,9 +1,11 @@
+data "azurerm_subscription" "primary" {}
+
 output "acr_login_server" {
   value = azurerm_container_registry.acr.login_server
 }
 
 output "azure_client_id" {
-  value = azuread_application.github_app.application_id
+  value = azuread_application.github_app.client_id
 }
 
 output "azure_client_secret" {
@@ -17,7 +19,7 @@ output "azure_tenant_id" {
 
 output "azure_credentials_json" {
   value = jsonencode({
-    clientId       = azuread_application.github_app.application_id
+    clientId       = azuread_application.github_app.client_id
     clientSecret   = azuread_application_password.github_secret.value
     tenantId       = data.azurerm_client_config.current.tenant_id
     subscriptionId = data.azurerm_subscription.primary.subscription_id

@@ -1,7 +1,3 @@
-data "azurerm_key_vault" "kv" {
-  name                = var.keyvault_name
-  resource_group_name = var.keyvault_rg
-}
 data "azurerm_subscription" "current" {}
 data "azurerm_client_config" "current" {}
 
@@ -10,69 +6,58 @@ resource "azuread_application" "github_app" {
 }
 
 resource "azuread_service_principal" "github_spn" {
-  application_id = azuread_application.github_app.application_id
+  client_id = azuread_application.github_app.client_id
 }
 
 resource "azuread_application_password" "github_secret" {
-  application_object_id = azuread_application.github_app.id
+  application_id        = azuread_application.github_app.id
   display_name          = "github-spn-secret"
-  end_date_relative     = "8760h" # 1 ano
+  end_date = timeadd(timestamp(), "8760h") # 1 ano
+}
+
+resource "azurerm_role_assignment" "acr_pull" {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = azuread_service_principal.github_spn.object_id
+}
+
+resource "azurerm_role_assignment" "kv_reader" {
+  scope                = azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Reader"
+  principal_id         = azuread_service_principal.github_spn.object_id
+}
+
+resource "azurerm_key_vault_access_policy" "github_spn_policy" {
+  key_vault_id = azurerm_key_vault.kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+    "Get",
+    "Set",
+    "Delete",
+    "List"
+  ]
 }
 
 resource "azurerm_key_vault_secret" "spn_password" {
   name         = "spn-client-secret"
   value        = azuread_application_password.github_secret.value
-  key_vault_id = data.azurerm_key_vault.kv.id
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
 }
 
 resource "azurerm_key_vault_secret" "spn_client_id" {
   name         = "spn-client-id"
-  value        = azuread_application.github_app.application_id
-  key_vault_id = data.azurerm_key_vault.kv.id
+  value        = azuread_application.github_app.client_id
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
 }
 
 resource "azurerm_key_vault_secret" "spn_tenant_id" {
   name         = "spn-tenant-id"
   value        = data.azurerm_client_config.current.tenant_id
-  key_vault_id = data.azurerm_key_vault.kv.id
-}
-
-resource "azurerm_role_assignment" "acr_pull" {
-  principal_id         = azuread_service_principal.github_spn.id
-  role_definition_name = "AcrPull"
-  scope                = azurerm_container_registry.acr.id
-}
-
-resource "azurerm_role_assignment" "aks_contributor" {
-  principal_id         = azuread_service_principal.github_spn.id
-  role_definition_name = "Azure Kubernetes Service Cluster User Role"
-  scope                = azurerm_kubernetes_cluster.aks.id
-}
-
-resource "azurerm_role_assignment" "kv_reader" {
-  principal_id         = azuread_service_principal.github_spn.id
-  role_definition_name = "Key Vault Secrets User"
-  scope                = data.azurerm_key_vault.kv.id
-}
-
-resource "azurerm_role_assignment" "storage_reader" {
-  principal_id         = azuread_service_principal.github_spn.id
-  role_definition_name = "Storage Blob Data Reader"
-  scope                = azurerm_storage_account.sa.id
-}
-
-resource "azurerm_key_vault_access_policy" "github_spn_policy" {
-  key_vault_id = data.azurerm_key_vault.kv.id
-  tenant_id    = data.azurerm_client_config.current.tenant_id
-  object_id    = azuread_service_principal.github_spn.id
-
-  secret_permissions = [
-    "get",
-    "list"
-  ]
-
-  certificate_permissions = []
-  key_permissions         = []
-  storage_permissions     = []
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
 }
 
