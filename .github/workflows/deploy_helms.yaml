@@ -4,14 +4,14 @@ on:
   push:
     branches: [ main ]
     paths:
-      - aks-deploy/**
+      - iac/aks-deploy/**
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: aks-deploy
+        working-directory: iac/aks-deploy
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
