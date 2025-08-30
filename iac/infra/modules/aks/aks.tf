@@ -1,7 +1,7 @@
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "aks-datamaster"
   location            = var.location
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.resource_group
   dns_prefix          = "privatedns.datamaster"
   kubernetes_version  = "1.31.3"
   oidc_issuer_enabled = true
@@ -34,8 +34,5 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_policy = "azure"
   }
 
-  tags = {
-    environment = "production"
-  }
 }
 

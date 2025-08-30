@@ -26,7 +26,7 @@ resource "azurerm_federated_identity_credential" "federation" {
   parent_id           = azurerm_user_assigned_identity.integration_identity.id
 
   audience = ["api://AzureADTokenExchange"]
-  issuer   = azurerm_kubernetes_cluster.main.oidc_issuer_url
+  issuer   = azurerm_kubernetes_cluster.aks.oidc_issuer_url
   subject  = "system:serviceaccount:${each.key}:${each.key}-sa"
 }
 
