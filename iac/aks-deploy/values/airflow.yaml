@@ -1,0 +1,78 @@
+executor: KubernetesExecutor
+
+airflow:
+  image:
+    repository: apache/airflow
+    tag: 2.8.1
+  config:
+    AIRFLOW__CORE__FERNET_KEY: your_fernet_key
+    AIRFLOW__KUBERNETES__NAMESPACE: airflow
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_IMAGE: apache/airflow:2.8.1
+
+webserver:
+  service:
+    type: ClusterIP
+  defaultUser:
+    enabled: true
+    username: admin
+    password: admin123
+
+scheduler:
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+workers:
+  enabled: true
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+
+  extraContainers:
+    - name: filebeat
+      image: docker.elastic.co/beats/filebeat:8.12.0
+      volumeMounts:
+        - name: logs
+          mountPath: /opt/airflow/logs
+        - name: filebeat-config
+          mountPath: /usr/share/filebeat/filebeat.yml
+          subPath: filebeat.yml
+      command: ["filebeat", "-e", "-c", "/usr/share/filebeat/filebeat.yml"]
+
+  extraVolumes:
+    - name: logs
+      persistentVolumeClaim:
+        claimName: airflow-logs-pvc
+    - name: filebeat-config
+      configMap:
+        name: filebeat-config
+
+dags:
+  persistence:
+    enabled: true
+    existingClaim: airflow-dags-pvc
+
+extraVolumeMounts:
+  - name: spark-yaml
+    mountPath: /opt/spark/yaml
+    readOnly: true
+
+extraVolumes:
+  - name: spark-yaml
+    persistentVolumeClaim:
+      claimName: spark-yaml-pvc
+
+metrics:
+  enabled: true
+  exporter:
+    enabled: true
+    image:
+      repository: epoch8/airflow-exporter
+      tag: latest
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: prometheus
+

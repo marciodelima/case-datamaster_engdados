@@ -1,0 +1,11 @@
+controller:
+  service:
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  ingressClassResource:
+    name: nginx
+    enabled: true
+  serviceAccount:
+    create: false
+    name: nginx-sa
+
