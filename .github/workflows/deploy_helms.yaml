@@ -72,12 +72,12 @@ jobs:
         helm install spark-operator/spark-operator --namespace spark-operator \
            --set webhook.enable=true --set sparkJobNamespace=spark
 
-	helm install spark-history cloudnativeapp/spark-history-server \
-	  --namespace spark-history \
-	  --set persistence.enabled=true \
-	  --set persistence.existingClaim=spark-event-logs \
-	  --set spark.history.fs.logDirectory=file:/data \
-	  --set service.type=ClusterIP
+        helm install spark-history cloudnativeapp/spark-history-server \
+          --namespace spark-history \
+          --set persistence.enabled=true \
+          --set persistence.existingClaim=spark-event-logs \
+          --set spark.history.fs.logDirectory=file:/data \
+          --set service.type=ClusterIP
 
     - name: Apply Kubernetes manifests
       run: |
