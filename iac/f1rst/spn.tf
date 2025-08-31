@@ -36,6 +36,7 @@ resource "azurerm_key_vault_access_policy" "github_owner_policy" {
     "Get",
     "Set",
     "Delete",
+    "Recover",
     "List"
   ]
 }
@@ -49,6 +50,7 @@ resource "azurerm_key_vault_access_policy" "github_spn_policy" {
     "Get",
     "Set",
     "Delete",
+    "Recover",
     "List"
   ]
 }
