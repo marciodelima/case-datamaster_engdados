@@ -30,3 +30,4 @@ variable "folders" {
   default = ["raw", "bronze", "silver", "gold"]
 }
 
+

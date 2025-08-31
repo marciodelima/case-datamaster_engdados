@@ -74,3 +74,9 @@ resource "azurerm_key_vault_secret" "spn_tenant_id" {
   depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
 }
 
+resource "azurerm_role_assignment" "spn_owner" {
+  scope                = azurerm_resource_group.rsg_datamaster.id
+  role_definition_name = "Owner"
+  principal_id         = azuread_service_principal.github_spn.object_id
+}
+
