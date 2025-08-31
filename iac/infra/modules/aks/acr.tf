@@ -1,9 +1,9 @@
 resource "azurerm_container_registry" "acr" {
-  name                     = "acrregistrydatamaster"
-  resource_group_name      = var.resource_group
-  location                 = var.location
-  sku                      = "Standard"
-  admin_enabled            = false
+  name                = "acrregistrydatamaster"
+  resource_group_name = var.resource_group
+  location            = var.location
+  sku                 = "Standard"
+  admin_enabled       = false
 
   identity {
     type         = "UserAssigned"

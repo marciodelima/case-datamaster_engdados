@@ -1,12 +1,12 @@
-resource "azurerm_public_ip" "appgw_ip" { 
-  name = "appgw-public-ip" 
-  location = var.location 
-  resource_group_name = var.resource_group 
-  allocation_method = "Static" 
-  sku = "Standard" 
-  tags = { 
-    allow = "appgw" 
-  } 
+resource "azurerm_public_ip" "appgw_ip" {
+  name                = "appgw-public-ip"
+  location            = var.location
+  resource_group_name = var.resource_group
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags = {
+    allow = "appgw"
+  }
 }
 
 resource "azurerm_application_gateway" "appgw" {
@@ -50,49 +50,49 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   request_routing_rule {
-    name                       = "default-routing"
-    rule_type                  = "PathBasedRouting"
-    http_listener_name         = "https-listener"
-    url_path_map_name          = "path-routing"
+    name               = "default-routing"
+    rule_type          = "PathBasedRouting"
+    http_listener_name = "https-listener"
+    url_path_map_name  = "path-routing"
   }
 
   url_path_map {
-    name                                = "path-routing"
-    default_backend_address_pool_name   = "default-pool"
-    default_backend_http_settings_name  = "default-settings"
+    name                               = "path-routing"
+    default_backend_address_pool_name  = "default-pool"
+    default_backend_http_settings_name = "default-settings"
 
     path_rule {
       name                       = "airflow-rule"
       paths                      = ["/airflow/*"]
-      backend_address_pool_name = "airflow-pool"
+      backend_address_pool_name  = "airflow-pool"
       backend_http_settings_name = "airflow-settings"
     }
 
     path_rule {
       name                       = "grafana-rule"
       paths                      = ["/grafana/*"]
-      backend_address_pool_name = "grafana-pool"
+      backend_address_pool_name  = "grafana-pool"
       backend_http_settings_name = "grafana-settings"
     }
 
     path_rule {
       name                       = "prometheus-rule"
       paths                      = ["/prometheus/*"]
-      backend_address_pool_name = "prometheus-pool"
+      backend_address_pool_name  = "prometheus-pool"
       backend_http_settings_name = "prometheus-settings"
     }
 
     path_rule {
       name                       = "kibana-rule"
       paths                      = ["/kibana/*"]
-      backend_address_pool_name = "kibana-pool"
+      backend_address_pool_name  = "kibana-pool"
       backend_http_settings_name = "kibana-settings"
     }
 
     path_rule {
       name                       = "spark-rule"
       paths                      = ["/spark-history/*"]
-      backend_address_pool_name = "spark-history-pool"
+      backend_address_pool_name  = "spark-history-pool"
       backend_http_settings_name = "spark-history-settings"
     }
   }
@@ -128,56 +128,56 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   backend_http_settings {
-    name                            = "airflow-settings"
-    port                            = 443
-    protocol                        = "Https"
-    request_timeout                 = 30
-    cookie_based_affinity           = "Disabled"
+    name                                = "airflow-settings"
+    port                                = 443
+    protocol                            = "Https"
+    request_timeout                     = 30
+    cookie_based_affinity               = "Disabled"
     pick_host_name_from_backend_address = true
   }
 
   backend_http_settings {
-    name                            = "grafana-settings"
-    port                            = 443
-    protocol                        = "Https"
-    request_timeout                 = 30
-    cookie_based_affinity           = "Disabled"
+    name                                = "grafana-settings"
+    port                                = 443
+    protocol                            = "Https"
+    request_timeout                     = 30
+    cookie_based_affinity               = "Disabled"
     pick_host_name_from_backend_address = true
   }
 
   backend_http_settings {
-    name                            = "prometheus-settings"
-    port                            = 443
-    protocol                        = "Https"
-    request_timeout                 = 30
-    cookie_based_affinity           = "Disabled"
+    name                                = "prometheus-settings"
+    port                                = 443
+    protocol                            = "Https"
+    request_timeout                     = 30
+    cookie_based_affinity               = "Disabled"
     pick_host_name_from_backend_address = true
   }
 
   backend_http_settings {
-    name                            = "kibana-settings"
-    port                            = 443
-    protocol                        = "Https"
-    request_timeout                 = 30
-    cookie_based_affinity           = "Disabled"
+    name                                = "kibana-settings"
+    port                                = 443
+    protocol                            = "Https"
+    request_timeout                     = 30
+    cookie_based_affinity               = "Disabled"
     pick_host_name_from_backend_address = true
   }
 
   backend_http_settings {
-    name                            = "spark-history-settings"
-    port                            = 443
-    protocol                        = "Https"
-    request_timeout                 = 30
-    cookie_based_affinity           = "Disabled"
+    name                                = "spark-history-settings"
+    port                                = 443
+    protocol                            = "Https"
+    request_timeout                     = 30
+    cookie_based_affinity               = "Disabled"
     pick_host_name_from_backend_address = true
   }
 
   backend_http_settings {
-    name                            = "default-settings"
-    port                            = 443
-    protocol                        = "Https"
-    request_timeout                 = 30
-    cookie_based_affinity           = "Disabled"
+    name                                = "default-settings"
+    port                                = 443
+    protocol                            = "Https"
+    request_timeout                     = 30
+    cookie_based_affinity               = "Disabled"
     pick_host_name_from_backend_address = true
   }
 }
