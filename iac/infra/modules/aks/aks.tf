@@ -22,7 +22,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.integration_identity.id]
+    identity_ids = [data.azurerm_user_assigned_identity.integration_identity.id]
   }
 
   azure_active_directory_role_based_access_control {
@@ -36,6 +36,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     service_cidr   = "10.0.0.0/16"
   }
 
-  depends_on = [azurerm_user_assigned_identity.integration_identity]
+  depends_on = [data.azurerm_user_assigned_identity.integration_identity]
 }
 

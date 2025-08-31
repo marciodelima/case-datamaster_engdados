@@ -9,7 +9,7 @@ resource "azurerm_storage_account" "storage" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.integration_identity.id]
+    identity_ids = [data.azurerm_user_assigned_identity.integration_identity.id]
   }
 
   blob_properties {
