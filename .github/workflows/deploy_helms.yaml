@@ -40,8 +40,8 @@ jobs:
         helm repo add elastic https://helm.elastic.co
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
-	helm repo add cloudnativeapp https://helm.cloudnativeapp.dev
-        helm repo update s
+        helm repo add cloudnativeapp https://helm.cloudnativeapp.dev
+        helm repo update
 
     - name: Deploy Helm charts
       run: |
