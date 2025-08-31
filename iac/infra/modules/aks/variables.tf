@@ -6,7 +6,7 @@ variable "keyvault_rg"    { default = "rsg-datamaster" }
 
 variable "namespaces" {
   type    = list(string)
-  default = ["airflow", "elk", "spark", "spark-operator", "grafana", "prometheus", "nginx", "app"]
+  default = ["airflow", "elk", "spark", "spark-operator", "grafana", "prometheus", "nginx", "app", "spark-history"]
 }
 
 variable "cert_password"    { 
@@ -14,7 +14,6 @@ variable "cert_password"    {
   sensitive   = true
   default = "12345678" 
 }
-variable "cert_path" { default = "certificado.pfx" }
 
 variable "tags" {
   description = "Tags padrão"
@@ -24,4 +23,9 @@ variable "tags" {
     environment = "production"
     owner       = "marcio"
   }
+}
+
+variable "admin_group_object_ids" {
+  type = list(string)
+  default = []
 }

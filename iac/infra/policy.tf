@@ -1,29 +1,3 @@
-resource "azurerm_policy_definition" "deny_public_ip" {
-  name         = "deny-public-ip"
-  policy_type  = "Custom"
-  mode         = "All"
-  display_name = "Deny Public IP"
-  description  = "Bloqueia criação de IPs públicos"
-
-  policy_rule = <<POLICY
-{
-  "if": {
-    "field": "Microsoft.Network/publicIPAddresses/ipAddress",
-    "exists": "true"
-  },
-  "then": {
-    "effect": "deny"
-  }
-}
-POLICY
-}
-
-resource "azurerm_policy_assignment" "deny_public_ip_assignment" {
-  name                 = "deny-public-ip-assignment"
-  scope                = data.azurerm_subscription.primary.id
-  policy_definition_id = azurerm_policy_definition.deny_public_ip.id
-}
-
 resource "azurerm_policy_definition" "deny_public_ip_except_tagged" {
   name         = "deny-public-ip-except-tagged"
   policy_type  = "Custom"
@@ -53,4 +27,14 @@ resource "azurerm_policy_definition" "deny_public_ip_except_tagged" {
 }
 POLICY
 }
+
+data "azurerm_subscription" "primary" {}
+
+resource "azurerm_subscription_policy_assignment" "deny_public_ip_assignment" {
+  name                 = "deny-public-ip-assignment"
+  display_name         = "Deny Public IP Assignment"
+  policy_definition_id = azurerm_policy_definition.deny_public_ip_except_tagged.id
+  subscription_id      = "/subscriptions/${data.azurerm_subscription.primary.subscription_id}"
+}
+
 

@@ -20,9 +20,9 @@ jobs:
     - name: Azure Login via Key Vault
       run: |
         echo "🔐 Buscando secrets do Key Vault..."
-        export CLIENT_ID=$(az keyvault secret show --name spn-client-id --vault-name kv-iac-secrets --query value -o tsv)
-        export CLIENT_SECRET=$(az keyvault secret show --name spn-client-secret --vault-name kv-iac-secrets --query value -o tsv)
-        export TENANT_ID=$(az keyvault secret show --name spn-tenant-id --vault-name kv-iac-secrets --query value -o tsv)
+        export CLIENT_ID=$(az keyvault secret show --name spn-client-id --vault-name kv-secrets-datamastermdl --query value -o tsv)
+        export CLIENT_SECRET=$(az keyvault secret show --name spn-client-secret --vault-name kv-secrets-datamastermdl --query value -o tsv)
+        export TENANT_ID=$(az keyvault secret show --name spn-tenant-id --vault-name kv-secrets-datamastermdl --query value -o tsv)
 
         echo "🔐 Autenticando na Azure..."
         az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET --tenant $TENANT_ID

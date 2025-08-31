@@ -10,7 +10,7 @@ resource "azurerm_purview_account" "catalogo" {
 resource "azurerm_role_assignment" "purview_reader" {
   scope                = azurerm_storage_account.storage.id
   role_definition_name = "Storage Blob Data Reader"
-  principal_id         = azurerm_purview_account.purview.identity.principal_id
+  principal_id         = azurerm_purview_account.catalogo.identity[0].principal_id
 }
 
 resource "null_resource" "ativar_scan" {
@@ -19,7 +19,7 @@ resource "null_resource" "ativar_scan" {
   }
 
   depends_on = [
-    azurerm_purview_account.purview,
+    azurerm_purview_account.catalogo,
     azurerm_storage_account.storage
   ]
 }

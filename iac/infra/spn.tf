@@ -12,6 +12,6 @@ resource "azuread_service_principal" "github_spn" {
 resource "azurerm_role_assignment" "storage_reader" {
   principal_id         = azuread_service_principal.github_spn.object_id
   role_definition_name = "Storage Blob Data Reader"
-  scope                = azurerm_storage_account.sa.id
+  scope                = azurerm_storage_account.storage.id
 }
 

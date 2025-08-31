@@ -30,4 +30,13 @@ resource "azurerm_federated_identity_credential" "federation" {
   subject  = "system:serviceaccount:${each.key}:${each.key}-sa"
 }
 
+resource "helm_release" "keda" {
+  name       = "keda"
+  namespace  = "keda"
+  repository = "https://kedacore.github.io/charts"
+  chart      = "keda"
+  version    = "2.13.0"
+
+  create_namespace = true
+}
 

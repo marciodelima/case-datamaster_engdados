@@ -1,17 +1,15 @@
 resource "azurerm_storage_account" "storage" {
-  name                     = "datamasterstorage"
+  name                     = "datamasterstore"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "ZRS"
+  account_kind             = "StorageV2"
   is_hns_enabled           = true
-  is_blob_access_tracking_enabled = true
 
   identity {
-    type = "UserAssigned"
-    user_assigned_identity = {
-      "${azurerm_user_assigned_identity.integration_identity.id}" = azurerm_user_assigned_identity.integration_identity.id
-    }
+    type         = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.integration_identity.id]
   }
 
   blob_properties {
@@ -22,57 +20,21 @@ resource "azurerm_storage_account" "storage" {
     container_delete_retention_policy {
       days = 7
     }
+  }
 
-    lifecycle {
-      rule {
-        name    = "delete_raw_after_2_days"
-        enabled = true
+  tags = var.tags
+}
 
-        filter {
-          prefix_match = ["dados/raw/"]
-        }
+resource "azapi_update_resource" "enable_last_access_tracking" {
+  type        = "Microsoft.Storage/storageAccounts@2023-01-01"
+  resource_id = azurerm_storage_account.storage.id
 
-        action {
-          base_blob {
-            delete_after_creation {
-              days_after_creation_greater_than = 2
-            }
-          }
-        }
-      }
-
-      rule {
-        name    = "move_to_cool_after_7_days_no_access"
-        enabled = true
-
-        filter {
-          prefix_match = ["dados/"]
-        }
-
-        action {
-          base_blob {
-            tier_to_cool {
-              days_after_last_access_time_greater_than = 7
-            }
-          }
-        }
-      }
-
-      rule {
-        name    = "move_to_cold_after_30_days_no_access"
-        enabled = true
-
-        filter {
-          prefix_match = ["dados/"]
-        }
-
-        action {
-          base_blob {
-            tier_to_archive {
-              days_after_last_access_time_greater_than = 30
-            }
-          }
-        }
+  body = {
+    properties = {
+      lastAccessTimeTrackingPolicy = {
+        name                      = "EnableTracking"
+        enable                    = true
+        trackingGranularityInDays = 1
       }
     }
   }
@@ -82,13 +44,75 @@ resource "azurerm_storage_container" "dados" {
   name                  = "dados"
   storage_account_name  = azurerm_storage_account.storage.name
   container_access_type = "private"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "azurerm_storage_management_policy" "policy" {
+  storage_account_id = azurerm_storage_account.storage.id
+
+  rule {
+    name    = "delete_raw_after_2_days"
+    enabled = true
+
+    filters {
+      prefix_match = ["dados/raw/"]
+      blob_types   = ["blockBlob"]
+    }
+
+    actions {
+      base_blob {
+        delete_after_days_since_creation_greater_than = 2
+      }
+    }
+  }
+
+  rule {
+    name    = "move_to_cool_after_7_days_no_access"
+    enabled = true
+
+    filters {
+      prefix_match = ["dados/"]
+      blob_types   = ["blockBlob"]
+    }
+
+    actions {
+      base_blob {
+        tier_to_cool_after_days_since_last_access_time_greater_than = 7
+      }
+    }
+  }
+
+  rule {
+    name    = "move_to_cold_after_30_days_no_access"
+    enabled = true
+
+    filters {
+      prefix_match = ["dados/"]
+      blob_types   = ["blockBlob"]
+    }
+
+    actions {
+      base_blob {
+        tier_to_archive_after_days_since_last_access_time_greater_than = 30
+      }
+    }
+  }
 }
 
 resource "azurerm_storage_data_lake_gen2_path" "folders" {
-  count                 = length(["raw", "bronze", "silver", "gold"])
-  path                  = "dados/${element(["raw", "bronze", "silver", "gold"], count.index)}"
-  filesystem_name       = azurerm_storage_container.dados.name
-  storage_account_name  = azurerm_storage_account.storage.name
-  resource              = "directory"
+  count              = length(var.folders)
+  path               = "dados/${var.folders[count.index]}"
+  filesystem_name    = azurerm_storage_container.dados.name
+  storage_account_id = azurerm_storage_account.storage.id
+  resource           = "directory"
+
+  depends_on = [
+    azurerm_storage_account.storage,
+    azurerm_storage_container.dados,
+    azapi_update_resource.enable_last_access_tracking
+  ]
 }
 

@@ -34,6 +34,18 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 10Gi
   storageClassName: default
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spark-logs-pvc
+  namespace: spark
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 15Gi
 

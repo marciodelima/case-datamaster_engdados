@@ -27,7 +27,7 @@ jobs:
       run: |
         export TF_SP_SECRET=$(az keyvault secret show \
           --name terraform-client-secret \
-          --vault-name kv-iac-secrets \
+          --vault-name kv-secrets-datamastermdl \
           --query value -o tsv)
 
         echo "TF_SP_SECRET=$TF_SP_SECRET" >> $GITHUB_ENV
@@ -36,7 +36,7 @@ jobs:
       run: terraform fmt -check -recursive
 
     - name: Terraform Init
-      run: terraform init
+      run: terraform init -upgrade
 
     - name: Terraform Validate
       run: terraform validate
