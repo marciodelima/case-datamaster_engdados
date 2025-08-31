@@ -27,10 +27,23 @@ resource "azurerm_role_assignment" "kv_reader" {
   principal_id         = azuread_service_principal.github_spn.object_id
 }
 
-resource "azurerm_key_vault_access_policy" "github_spn_policy" {
+resource "azurerm_key_vault_access_policy" "github_owner_policy" {
   key_vault_id = azurerm_key_vault.kv.id
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+    "Get",
+    "Set",
+    "Delete",
+    "List"
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "github_spn_policy" {
+  key_vault_id = azurerm_key_vault.kv.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azuread_service_principal.github_spn.object_id
 
   secret_permissions = [
     "Get",

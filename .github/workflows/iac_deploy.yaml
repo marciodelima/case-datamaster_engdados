@@ -12,6 +12,8 @@ jobs:
       run:
         working-directory: iac/infra
 
+    environment: production
+
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
@@ -32,6 +34,11 @@ jobs:
 
         echo "TF_SP_SECRET=$TF_SP_SECRET" >> $GITHUB_ENV
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.7
+    
     - name: Terraform Format Check
       run: terraform fmt -check -recursive
 
@@ -41,8 +48,11 @@ jobs:
     - name: Terraform Validate
       run: terraform validate
 
+    - name: Terraform Plan
+      run: terraform plan -out=tfplan
+
     - name: Terraform Apply
-      run: terraform apply -auto-approve
+      run: terraform apply -auto-approve tfplan
       env:
         ARM_CLIENT_SECRET: ${{ env.TF_SP_SECRET }}
-
+ 
