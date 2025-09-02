@@ -8,7 +8,7 @@ resource "azurerm_dns_a_record" "dataplatform" {
   zone_name           = azurerm_dns_zone.dns.name
   resource_group_name = var.resource_group
   ttl                 = 300
-  records             = [azurerm_public_ip.appgw_ip.id]
+  target_resource_id  = azurerm_public_ip.appgw_ip.id
   depends_on          = [azurerm_public_ip.appgw_ip]
 }
 

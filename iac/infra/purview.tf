@@ -5,7 +5,7 @@ resource "azurerm_purview_account" "catalogo" {
   identity {
     type = "SystemAssigned"
   }
-  depends_on = [azurerm_storage_account.storage]
+  depends_on = [azurerm_storage_account.storage, null_resource.register_purview]
 }
 
 resource "azurerm_role_assignment" "purview_reader" {

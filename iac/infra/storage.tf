@@ -25,20 +25,12 @@ resource "azurerm_storage_account" "storage" {
   tags = var.tags
 }
 
-resource "azapi_update_resource" "enable_last_access_tracking" {
-  type        = "Microsoft.Storage/storageAccounts@2023-01-01"
-  resource_id = azurerm_storage_account.storage.id
-
-  body = {
-    properties = {
-      lastAccessTimeTrackingPolicy = {
-        name                      = "EnableTracking"
-        enable                    = true
-        trackingGranularityInDays = 1
-      }
-    }
+resource "null_resource" "enable_last_access_tracking" {
+  provisioner "local-exec" {
+    command = "az storage account blob-service-properties update --account-name datamasterstore --resource-group rsg-datamaster --enable-last-access-tracking true"
   }
 }
+
 
 resource "azurerm_storage_container" "dados" {
   name                  = "dados"
@@ -100,6 +92,7 @@ resource "azurerm_storage_management_policy" "policy" {
       }
     }
   }
+  depends_on = [null_resource.enable_last_access_tracking]
 }
 
 resource "azurerm_storage_data_lake_gen2_path" "folders" {
@@ -112,7 +105,7 @@ resource "azurerm_storage_data_lake_gen2_path" "folders" {
   depends_on = [
     azurerm_storage_account.storage,
     azurerm_storage_container.dados,
-    azapi_update_resource.enable_last_access_tracking
+    null_resource.enable_last_access_tracking
   ]
 }
 

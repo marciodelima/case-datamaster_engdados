@@ -26,14 +26,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   azure_active_directory_role_based_access_control {
-    admin_group_object_ids = var.admin_group_object_ids
+    managed = true
   }
 
   network_profile {
     network_plugin = "azure"
-    network_policy = "azure"
-    dns_service_ip = "10.0.0.10"
-    service_cidr   = "10.0.0.0/16"
   }
 
   depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet]
