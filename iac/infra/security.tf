@@ -1,5 +1,3 @@
-data "azurerm_subscription" "current" {}
-
 resource "azurerm_role_assignment" "identity_storage_access" {
   principal_id         = data.azurerm_user_assigned_identity.integration_identity.principal_id
   role_definition_name = "Storage Blob Data Contributor"
@@ -24,9 +22,4 @@ resource "null_resource" "register_purview" {
   }
 }
 
-resource "azurerm_role_assignment" "policy_contributor" {
-  scope                = data.azurerm_subscription.current.id
-  role_definition_name = "Resource Policy Contributor"
-  principal_id         = data.azurerm_user_assigned_identity.integration_identity.principal_id
-}
 

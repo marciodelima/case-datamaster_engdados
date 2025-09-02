@@ -1,4 +1,5 @@
 data "azurerm_client_config" "current" {}
+data "azurerm_subscription" "current" {}
 
 resource "azuread_application" "github_app" {
   display_name = var.spn_name
@@ -75,9 +76,9 @@ resource "azurerm_key_vault_secret" "spn_tenant_id" {
   depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
 }
 
-resource "azurerm_role_assignment" "spn_owner" {
-  scope                = azurerm_resource_group.rsg_datamaster.id
-  role_definition_name = "Owner"
+resource "azurerm_role_assignment" "policy_contributor" {
+  scope                = data.azurerm_subscription.current.id
+  role_definition_name = "Resource Policy Contributor"
   principal_id         = azuread_service_principal.github_spn.object_id
 }
 

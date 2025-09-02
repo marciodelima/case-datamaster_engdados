@@ -27,7 +27,7 @@ variable "tags" {
 }
 
 variable "folders" {
-  default = ["raw", "bronze", "silver", "gold"]
+  default = ["raw", "bronze", "silver", "gold", "stage"]
 }
 
 
