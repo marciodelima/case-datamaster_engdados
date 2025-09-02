@@ -6,7 +6,7 @@ variable "keyvault_rg" { default = "rsg-datamaster" }
 
 variable "namespaces" {
   type    = list(string)
-  default = ["airflow", "elk", "spark", "spark-operator", "grafana", "prometheus", "nginx", "app", "spark-history"]
+  default = ["airflow", "elk", "spark", "spark-operator", "grafana", "prometheus", "nginx", "app", "spark-history", "keda"]
 }
 
 variable "cert_password" {

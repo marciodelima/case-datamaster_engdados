@@ -180,5 +180,7 @@ resource "azurerm_application_gateway" "appgw" {
     cookie_based_affinity               = "Disabled"
     pick_host_name_from_backend_address = true
   }
+  
+  depends_on          = [azurerm_public_ip.appgw_ip, azurerm_private_dns_zone.datamaster_dns, azurerm_dns_a_record.dataplatform]
 }
 

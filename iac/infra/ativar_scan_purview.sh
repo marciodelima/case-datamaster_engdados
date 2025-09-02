@@ -20,7 +20,7 @@ az purview account datasource create \
   --kind AzureStorage \
   --scan-name "scan-dados" \
   --scan-rule-set-name "AzureStorageDefault" \
-  --recurrence "Weekly" \
+  --recurrence "Daily" \
   --scan-trigger-type Schedule
 
 echo "Fonte de dados registrada e scan agendado com sucesso."

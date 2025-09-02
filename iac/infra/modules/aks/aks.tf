@@ -36,6 +36,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     service_cidr   = "10.0.0.0/16"
   }
 
-  depends_on = [data.azurerm_user_assigned_identity.integration_identity]
+  depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet]
 }
 

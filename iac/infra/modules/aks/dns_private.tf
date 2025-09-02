@@ -9,5 +9,6 @@ resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
   private_dns_zone_name = azurerm_private_dns_zone.datamaster_dns.name
   virtual_network_id    = azurerm_virtual_network.aks_vnet.id
   registration_enabled  = false
+  depends_on = [azurerm_subnet.aks_subnet, azurerm_virtual_network.aks_vnet]
 }
 

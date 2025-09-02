@@ -4,6 +4,7 @@ resource "kubernetes_namespace" "services" {
   metadata {
     name = each.key
   }
+  depends_on = [azurerm_kubernetes_cluster.aks]
 }
 
 resource "kubernetes_service_account" "workload_sa" {
@@ -16,6 +17,7 @@ resource "kubernetes_service_account" "workload_sa" {
       "azure.workload.identity/client-id" = data.azurerm_user_assigned_identity.integration_identity.id
     }
   }
+  depends_on = [kubernetes_namespace.services]
 }
 
 resource "azurerm_federated_identity_credential" "federation" {
@@ -28,6 +30,7 @@ resource "azurerm_federated_identity_credential" "federation" {
   audience = ["api://AzureADTokenExchange"]
   issuer   = azurerm_kubernetes_cluster.aks.oidc_issuer_url
   subject  = "system:serviceaccount:${each.key}:${each.key}-sa"
+  depends_on = [kubernetes_namespace.services]
 }
 
 resource "helm_release" "keda" {
@@ -37,6 +40,7 @@ resource "helm_release" "keda" {
   chart      = "keda"
   version    = "2.13.0"
 
-  create_namespace = true
+  create_namespace = false
+  depends_on = [kubernetes_namespace.services]
 }
 

@@ -9,6 +9,7 @@ resource "azurerm_dns_a_record" "dataplatform" {
   resource_group_name = var.resource_group
   ttl                 = 300
   records             = [azurerm_public_ip.appgw_ip.id]
+  depends_on          = [azurerm_public_ip.appgw_ip]
 }
 
 

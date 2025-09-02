@@ -15,6 +15,7 @@ resource "kubernetes_role" "spark_role" {
     resources  = ["deployments"]
     verbs      = ["create", "get", "list", "watch", "delete"]
   }
+  depends_on = [kubernetes_namespace.services]
 }
 
 resource "kubernetes_role_binding" "spark_binding" {
@@ -34,6 +35,7 @@ resource "kubernetes_role_binding" "spark_binding" {
     name      = "spark-sa"
     namespace = "spark"
   }
+  depends_on = [kubernetes_namespace.services]
 }
 
 resource "kubernetes_role" "airflow_spark_apply" {
@@ -53,6 +55,7 @@ resource "kubernetes_role" "airflow_spark_apply" {
     resources  = ["pods"]
     verbs      = ["get", "list", "watch"]
   }
+  depends_on = [kubernetes_namespace.services]
 }
 
 resource "kubernetes_role_binding" "airflow_spark_binding" {
@@ -72,5 +75,6 @@ resource "kubernetes_role_binding" "airflow_spark_binding" {
     name      = "airflow-sa"
     namespace = "airflow"
   }
+  depends_on = [kubernetes_namespace.services]
 }
 
