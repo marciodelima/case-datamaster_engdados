@@ -12,7 +12,7 @@ terraform {
 provider "azurerm" {
   features {
     key_vault {
-      recover_soft_deleted_secrets = true
+      recover_soft_deleted_secrets = false
     }
   }
 }

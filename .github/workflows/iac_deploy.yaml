@@ -29,7 +29,7 @@ jobs:
       run: |
         export TF_SP_SECRET=$(az keyvault secret show \
           --name spn-client-secret \
-          --vault-name kv-secrets-datamastermdl \
+          --vault-name kv-secret-datamastermdl \
           --query value -o tsv)
 
         echo "TF_SP_SECRET=$TF_SP_SECRET" >> $GITHUB_ENV

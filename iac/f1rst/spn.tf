@@ -19,12 +19,14 @@ resource "azurerm_role_assignment" "acr_pull" {
   scope                = azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
   principal_id         = azuread_service_principal.github_spn.object_id
+  depends_on           = [azurerm_container_registry.acr]
 }
 
 resource "azurerm_role_assignment" "kv_reader" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
   principal_id         = azuread_service_principal.github_spn.object_id
+  depends_on = [azurerm_key_vault.kv]
 }
 
 resource "azurerm_key_vault_access_policy" "github_owner_policy" {
@@ -39,6 +41,7 @@ resource "azurerm_key_vault_access_policy" "github_owner_policy" {
     "Recover",
     "List"
   ]
+  depends_on = [azurerm_key_vault.kv]
 }
 
 resource "azurerm_key_vault_access_policy" "github_spn_policy" {
@@ -53,27 +56,28 @@ resource "azurerm_key_vault_access_policy" "github_spn_policy" {
     "Recover",
     "List"
   ]
+  depends_on = [azurerm_key_vault.kv]
 }
 
 resource "azurerm_key_vault_secret" "spn_password" {
   name         = "spn-client-secret"
   value        = azuread_application_password.github_secret.value
   key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
+  depends_on = [azurerm_key_vault_access_policy.github_spn_policy, azurerm_key_vault.kv]
 }
 
 resource "azurerm_key_vault_secret" "spn_client_id" {
   name         = "spn-client-id"
   value        = azuread_application.github_app.client_id
   key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
+  depends_on = [azurerm_key_vault_access_policy.github_spn_policy, azurerm_key_vault.kv]
 }
 
 resource "azurerm_key_vault_secret" "spn_tenant_id" {
   name         = "spn-tenant-id"
   value        = data.azurerm_client_config.current.tenant_id
   key_vault_id = azurerm_key_vault.kv.id
-  depends_on = [azurerm_key_vault_access_policy.github_spn_policy]
+  depends_on = [azurerm_key_vault_access_policy.github_spn_policy, azurerm_key_vault.kv]
 }
 
 resource "azurerm_role_assignment" "policy_contributor" {

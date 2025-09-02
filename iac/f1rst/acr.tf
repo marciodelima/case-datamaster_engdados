@@ -9,5 +9,6 @@ resource "azurerm_container_registry" "acr" {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.integration_identity.id]
   }
+  depends_on = [azurerm_resource_group.rsg_datamaster]
 }
 
