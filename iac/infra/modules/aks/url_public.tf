@@ -9,6 +9,37 @@ resource "azurerm_public_ip" "appgw_ip" {
   }
 }
 
+resource "azurerm_web_application_firewall_policy" "waf_policy" {
+  name                = "appgw-waf-policy"
+  location            = var.location
+  resource_group_name = var.resource_group
+
+  custom_rules {
+    name      = "BlockBadBots"
+    priority  = 1
+    rule_type = "MatchRule"
+    action    = "Block"
+
+    match_conditions {
+      match_variables {
+        variable_name = "RequestHeaders"
+        selector      = "User-Agent"
+      }
+      operator           = "Contains"
+      match_values       = ["BadBot"]
+      negation_condition = false
+      transforms         = ["Lowercase"]
+    }
+  }
+
+  managed_rules {
+    managed_rule_set {
+      type    = "OWASP"
+      version = "3.2"
+    }
+  }
+}
+
 resource "azurerm_application_gateway" "appgw" {
   name                = "aks-appgw"
   location            = var.location
@@ -19,7 +50,9 @@ resource "azurerm_application_gateway" "appgw" {
     tier     = "WAF_v2"
     capacity = 2
   }
-
+  
+  firewall_policy_id = azurerm_web_application_firewall_policy.waf_policy.id
+  
   gateway_ip_configuration {
     name      = "appgw-ip-config"
     subnet_id = azurerm_subnet.aks_subnet.id

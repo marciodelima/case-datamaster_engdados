@@ -48,7 +48,7 @@ resource "azurerm_storage_management_policy" "policy" {
   storage_account_id = azurerm_storage_account.storage.id
 
   rule {
-    name    = "delete_raw_after_2_days"
+    name    = "delete_raw_after_7_days"
     enabled = true
 
     filters {
@@ -58,7 +58,7 @@ resource "azurerm_storage_management_policy" "policy" {
 
     actions {
       base_blob {
-        delete_after_days_since_creation_greater_than = 2
+        delete_after_days_since_creation_greater_than = 7
       }
     }
   }
@@ -90,7 +90,7 @@ resource "azurerm_storage_management_policy" "policy" {
 
     actions {
       base_blob {
-        tier_to_archive_after_days_since_last_access_time_greater_than = 30
+        tier_to_cold_after_days_since_last_access_time_greater_than = 30
       }
     }
   }

@@ -3,7 +3,7 @@
 # Variáveis
 PURVIEW_NAME="purview-datamaster"
 STORAGE_NAME="datamasterstore"
-RESOURCE_GROUP="rsg-datalake"
+RESOURCE_GROUP="rsg-datamaster"
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
 # Obter o ID do Storage
