@@ -22,4 +22,3 @@ resource "null_resource" "register_purview" {
   }
 }
 
-
