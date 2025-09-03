@@ -30,7 +30,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin = "azure"
+    network_plugin     = "azure"
+    service_cidr       = "10.240.0.0/16"
+    dns_service_ip     = "10.240.0.10"
+    docker_bridge_cidr = "172.17.0.1/16"
   }
 
   depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet]

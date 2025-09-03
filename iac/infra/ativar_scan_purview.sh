@@ -13,6 +13,7 @@ STORAGE_ID=$(az storage account show \
   --query id -o tsv)
 
 # Registrar o Storage como fonte de dados
+az extension add --name purview
 az purview account datasource create \
   --account-name $PURVIEW_NAME \
   --name "datalake-dados" \
@@ -24,4 +25,3 @@ az purview account datasource create \
   --scan-trigger-type Schedule
 
 echo "Fonte de dados registrada e scan agendado com sucesso."
-
