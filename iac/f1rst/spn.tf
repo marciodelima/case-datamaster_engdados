@@ -26,7 +26,7 @@ resource "azurerm_role_assignment" "kv_reader" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
   principal_id         = azuread_service_principal.github_spn.object_id
-  depends_on = [azurerm_key_vault.kv]
+  depends_on           = [azurerm_key_vault.kv]
 }
 
 resource "azurerm_key_vault_access_policy" "github_owner_policy" {
@@ -82,7 +82,9 @@ resource "azurerm_key_vault_secret" "spn_tenant_id" {
 
 resource "azurerm_role_assignment" "policy_contributor" {
   scope                = data.azurerm_subscription.current.id
-  role_definition_name = "Resource Policy Contributor"
+  role_definition_name = "Owner"
   principal_id         = azuread_service_principal.github_spn.object_id
 }
+
+
 

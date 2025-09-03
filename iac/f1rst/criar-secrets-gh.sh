@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Lista todos os Key Vaults deletados na localização
+vaults=$(az keyvault list-deleted --query "[].name" -o tsv)
+
+for vault in $vaults; do
+  echo "Purging Key Vault: $vault"
+  az keyvault purge --name $vault
+done
+
 set -e
 
 REPO="marciodelima/case-datamaster_engdados"
