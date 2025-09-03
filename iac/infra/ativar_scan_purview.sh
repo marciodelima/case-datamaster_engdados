@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Variáveis
-PURVIEW_NAME="purviewcatalogo"
-STORAGE_NAME="datalakemedalhao"
-RESOURCE_GROUP="rg-datalake"
+PURVIEW_NAME="purview-datamaster"
+STORAGE_NAME="datamasterstore"
+RESOURCE_GROUP="rsg-datalake"
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
 # Obter o ID do Storage

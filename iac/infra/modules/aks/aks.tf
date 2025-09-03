@@ -11,11 +11,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name                 = "default"
-    node_count           = 3
-    vm_size              = "Standard_DS3_v2"
+    node_count           = 2
+    vm_size              = "Standard_D4s_v3"
     enable_auto_scaling  = true
-    min_count            = 3
-    max_count            = 10
+    min_count            = 2
+    max_count            = 5
     orchestrator_version = "1.31.3"
     vnet_subnet_id       = azurerm_subnet.aks_subnet.id
   }

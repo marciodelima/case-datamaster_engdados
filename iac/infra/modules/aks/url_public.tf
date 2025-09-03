@@ -54,6 +54,7 @@ resource "azurerm_application_gateway" "appgw" {
     rule_type          = "PathBasedRouting"
     http_listener_name = "https-listener"
     url_path_map_name  = "path-routing"
+    priority           = 100
   }
 
   url_path_map {

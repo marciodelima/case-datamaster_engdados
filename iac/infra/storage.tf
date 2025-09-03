@@ -29,6 +29,7 @@ resource "null_resource" "enable_last_access_tracking" {
   provisioner "local-exec" {
     command = "az storage account blob-service-properties update --account-name datamasterstore --resource-group rsg-datamaster --enable-last-access-tracking true"
   }
+  depends_on = [azurerm_storage_account.storage]
 }
 
 
@@ -40,6 +41,7 @@ resource "azurerm_storage_container" "dados" {
   lifecycle {
     prevent_destroy = true
   }
+  depends_on = [azurerm_storage_account.storage]
 }
 
 resource "azurerm_storage_management_policy" "policy" {
