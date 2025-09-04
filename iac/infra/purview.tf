@@ -22,7 +22,7 @@ resource "azapi_resource" "purview_datasource" {
   type      = "Microsoft.Purview/accounts/datasources@2023-09-01"
   name      = "datalake-dados"
   parent_id = azurerm_purview_account.catalogo.id
-
+  schema_validation_enabled = false 
   body = jsonencode({
     kind = "AzureStorage"
     properties = {
