@@ -19,20 +19,21 @@ resource "azurerm_role_assignment" "purview_reader" {
 }
 
 resource "azapi_resource" "purview_datasource" {
-  type      = "Microsoft.Purview/accounts/datasources@2023-09-01"
   name      = "datalake-dados"
+  type      = "Microsoft.Purview/accounts/datasources@2023-09-01"
   parent_id = azurerm_purview_account.catalogo.id
-  schema_validation_enabled = false 
-  body = jsonencode({
+  schema_validation_enabled = false
+
+  body = {
     kind = "AzureStorage"
     properties = {
       resourceId = azurerm_storage_account.storage.id
       collection = {
-        type = "CollectionReference"
+        type          = "CollectionReference"
         referenceName = "root"
       }
     }
-  })
+  }
   depends_on = [
     azurerm_purview_account.catalogo,
     azurerm_storage_account.storage
