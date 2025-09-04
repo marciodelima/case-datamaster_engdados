@@ -55,7 +55,7 @@ resource "azurerm_application_gateway" "appgw" {
   
   gateway_ip_configuration {
     name      = "appgw-ip-config"
-    subnet_id = azurerm_subnet.aks_subnet.id
+    subnet_id = azurerm_subnet.appgw_subnet.id
   }
 
   frontend_ip_configuration {
