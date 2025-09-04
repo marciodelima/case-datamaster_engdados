@@ -42,7 +42,7 @@ jobs:
     - name: Setup Terraform - State
       uses: sturlabragason/terraform_state_artifact@v1
       with:
-        encryptionkey: ${{ secrets.AZURE_CLIENT_SECRET }}
+        encryptionkey: ${{ env.TF_SP_SECRET }}
  
     - name: Terraform Format
       run: terraform fmt -recursive
