@@ -40,9 +40,10 @@ jobs:
         terraform_version: 1.13.1
 
     - name: Setup Terraform - State
-      uses: sturlabragason/terraform_state_artifact@v1
+      uses: actions/upload-artifact@v4
       with:
-        encryptionkey: ${{ env.TF_SP_SECRET }}
+        name: terraform-state
+        path: infra/
  
     - name: Terraform Format
       run: terraform fmt -recursive
