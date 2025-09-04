@@ -21,12 +21,12 @@ resource "azurerm_role_assignment" "purview_reader" {
 resource "azapi_resource" "purview_datasource" {
   type      = "Microsoft.Purview/accounts/datasources@2023-09-01"
   name      = "datalake-dados"
-  parent_id = azurerm_purview_account.purview.id
+  parent_id = azurerm_purview_account.catalogo.id
 
   body = jsonencode({
     kind = "AzureStorage"
     properties = {
-      resourceId = data.azurerm_storage_account.storage.id
+      resourceId = azurerm_storage_account.storage.id
       collection = {
         type = "CollectionReference"
         referenceName = "root"
@@ -40,12 +40,12 @@ resource "azapi_resource" "purview_datasource" {
 }
 
 resource "null_resource" "purview_scan" {
-  depends_on = [azurerm_purview_datasource.storage_datasource]
+  depends_on = [azapi_resource.purview_datasource]
 
   provisioner "local-exec" {
     command = <<EOT
       ACCESS_TOKEN=$(az account get-access-token --resource https://purview.azure.net --query accessToken -o tsv)
-      curl -X PUT "https://${azurerm_purview_account.purview.name}.scan.purview.azure.com/datasources/datalake-dados/scans/scan-dados?api-version=2023-09-01" \
+      curl -X PUT "https://${azurerm_purview_account.catalogo.name}.scan.purview.azure.com/datasources/datalake-dados/scans/scan-dados?api-version=2023-09-01" \
         -H "Authorization: Bearer $ACCESS_TOKEN" \
         -H "Content-Type: application/json" \
         -d '{
