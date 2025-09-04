@@ -38,7 +38,12 @@ jobs:
       uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: 1.13.1
-    
+
+    - name: Setup Terraform - State
+      uses: sturlabragason/terraform_state_artifact@v1
+      with:
+        encryptionkey: ${{ secrets.AZURE_CLIENT_SECRET }}
+ 
     - name: Terraform Format
       run: terraform fmt -recursive
 
