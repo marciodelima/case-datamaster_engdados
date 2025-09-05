@@ -3,7 +3,7 @@ data "azurerm_user_assigned_identity" "integration_identity" {
   resource_group_name = var.resource_group
 }
 
-data "azuread_application" "github_app" {
+resource "azuread_application" "github_app" {
   display_name = var.spn_name
 }
 
