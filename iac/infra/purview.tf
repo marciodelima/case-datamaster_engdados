@@ -18,21 +18,24 @@ resource "azurerm_role_assignment" "purview_reader" {
   ]
 }
 
-resource "azapi_resource" "purview_datasource" {
-  name      = "datalake-dados"
-  type      = "Microsoft.Purview/accounts/datasources@2023-09-01"
-  parent_id = azurerm_purview_account.catalogo.id
-  schema_validation_enabled = false
-
-  body = {
-    kind = "AzureStorage"
-    properties = {
-      resourceId = azurerm_storage_account.storage.id
-      collection = {
-        type          = "CollectionReference"
-        referenceName = "root"
-      }
-    }
+resource "null_resource" "create_purview_datasource" {
+  provisioner "local-exec" {
+    command = <<EOT
+      az rest --method put \
+        --uri "https://${azurerm_purview_account.catalogo.name}.scan.purview.azure.com/datasources/datalake-dados?api-version=2023-09-01" \
+        --headers "Content-Type=application/json" \
+        --body '{
+          "kind": "AzureDataLakeStorage",
+          "properties": {
+            "resourceId": "${replace(azurerm_storage_account.storage.id, "\"", "\\\"")}",
+            "collection": {
+            "collection": {
+              "type": "CollectionReference",
+              "referenceName": "${azurerm_purview_account.catalogo.name}"
+            }
+          }
+        }'
+    EOT
   }
   depends_on = [
     azurerm_purview_account.catalogo,
@@ -41,7 +44,7 @@ resource "azapi_resource" "purview_datasource" {
 }
 
 resource "null_resource" "purview_scan" {
-  depends_on = [azapi_resource.purview_datasource]
+  depends_on = [null_resource.create_purview_datasource]
 
   provisioner "local-exec" {
     command = <<EOT

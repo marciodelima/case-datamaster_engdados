@@ -25,10 +25,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     identity_ids = [data.azurerm_user_assigned_identity.integration_identity.id]
   }
 
-  azure_active_directory_role_based_access_control {
-    managed = true
-  }
-
   network_profile {
     network_plugin     = "azure"
     service_cidr       = "10.240.0.0/16"
@@ -37,5 +33,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet]
+}
+
+provider "kubernetes" {
+  host                   = azurerm_kubernetes_cluster.aks.kube_config[0].host
+  client_certificate     = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_certificate)
+  client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].client_key)
+  cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_config[0].cluster_ca_certificate)
+
+  alias = "aks"
 }
 
