@@ -17,6 +17,10 @@ output "azure_tenant_id" {
   value = data.azurerm_client_config.current.tenant_id
 }
 
+output "azure_integration_identity" {
+  value = azurerm_user_assigned_identity.integration_identity.name
+}
+
 output "azure_credentials_json" {
   value = jsonencode({
     clientId       = azuread_application.github_app.client_id

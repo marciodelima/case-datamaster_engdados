@@ -47,7 +47,7 @@ resource "null_resource" "purview_scan" {
   depends_on = [null_resource.create_purview_datasource]
 
   provisioner "local-exec" {
-    command = <<EOT
+    command     = <<EOT
       ACCESS_TOKEN=$(az account get-access-token --resource https://purview.azure.net --query accessToken -o tsv)
       curl -X PUT "https://${azurerm_purview_account.catalogo.name}.scan.purview.azure.com/datasources/datalake-dados/scans/scan-dados?api-version=2023-09-01" \
         -H "Authorization: Bearer $ACCESS_TOKEN" \

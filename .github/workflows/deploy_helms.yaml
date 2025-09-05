@@ -41,7 +41,20 @@ jobs:
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
         helm repo add cloudnativeapp https://helm.cloudnativeapp.dev
+        helm repo add kedacore https://kedacore.github.io/charts
         helm repo update
+
+    - name: Create namespaces
+      run: |
+        kubectl create namespace airflow --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace elk --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace grafana --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace prometheus --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace nginx --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace spark-operator --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace spark-history --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace spark --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace keda --dry-run=client -o yaml | kubectl apply -f -
 
     - name: Deploy Helm charts
       run: |
@@ -78,6 +91,27 @@ jobs:
           --set persistence.existingClaim=spark-event-logs \
           --set spark.history.fs.logDirectory=file:/data \
           --set service.type=ClusterIP
+        
+        helm upgrade --install keda kedacore/keda \
+          --namespace keda \
+          --values values/keda.yaml 
+
+    - name: Criar federated identity para cada namespace
+      run: |
+        OIDC_URL=$(az aks show \
+          --name ${{ secrets.AKS_NAME }} \
+          --resource-group ${{ secrets.AKS_RG }} \
+          --query "oidcIssuerProfile.issuerUrl" -o tsv)
+
+        for NS in airflow elk grafana spark prometheus nginx app spark-operator spark-history keda; do
+          az identity federated-credential create \
+            --name ${NS}-federation \
+            --identity-name ${{ secrets.MANAGED_IDENTITY_NAME }} \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --issuer $OIDC_URL \
+            --subject system:serviceaccount:${NS}:${NS}-sa \
+            --audiences api://AzureADTokenExchange
+        done
 
     - name: Apply Kubernetes manifests
       run: |
@@ -85,5 +119,5 @@ jobs:
         kubectl apply -f manifests/controllers/
         kubectl apply -f manifests/ingress/
         kubectl apply -f manifests/pvc/
-        
+        kubectl apply -f manifests/rbac/
 
