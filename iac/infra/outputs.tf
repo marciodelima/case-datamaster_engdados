@@ -12,4 +12,3 @@ output "eventhub_name" {
   value       = azurerm_eventhub.streaming_hub.name
 }
 
-

@@ -4,7 +4,6 @@ resource "kubernetes_namespace" "services" {
   metadata {
     name = each.key
   }
-  provider = kubernetes.aks
   depends_on = [azurerm_kubernetes_cluster.aks]
 }
 
@@ -18,7 +17,6 @@ resource "kubernetes_service_account" "workload_sa" {
       "azure.workload.identity/client-id" = data.azurerm_user_assigned_identity.integration_identity.id
     }
   }
-  provider = kubernetes.aks
   depends_on = [kubernetes_namespace.services]
 }
 
@@ -43,7 +41,7 @@ resource "helm_release" "keda" {
   version    = "2.13.0"
 
   create_namespace = false
-  provider = kubernetes.aks
+  provider = helm.aks
   depends_on = [kubernetes_namespace.services]
 }
 

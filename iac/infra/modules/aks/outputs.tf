@@ -19,8 +19,7 @@ output "private_dns_zone" {
 }
 
 output "kube_config" {
-  value     = azurerm_kubernetes_cluster.aks.kube_config_raw
-  sensitive = true
+  value = azurerm_kubernetes_cluster.aks.kube_config
 }
 
 output "host" {
