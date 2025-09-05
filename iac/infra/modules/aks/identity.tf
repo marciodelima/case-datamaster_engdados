@@ -8,6 +8,6 @@ resource "azuread_application" "github_app" {
 }
 
 data "azuread_service_principal" "github_spn" {
-  client_id = data.azuread_application.github_app.client_id
+  client_id = azuread_application.github_app.client_id
 }
 
