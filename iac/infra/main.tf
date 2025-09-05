@@ -26,6 +26,9 @@ terraform {
 
 module "aks" {
   source = "./modules/aks"
+  providers = {
+    helm = helm.aks
+  }
 }
 
 provider "azurerm" {
