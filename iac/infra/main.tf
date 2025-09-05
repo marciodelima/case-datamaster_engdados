@@ -24,13 +24,6 @@ terraform {
   }
 }
 
-module "aks" {
-  source = "./modules/aks"
-  providers = {
-    helm = helm.aks
-  }
-}
-
 provider "azurerm" {
   features {}
 }
@@ -57,4 +50,11 @@ provider "helm" {
 provider "azuread" {}
 
 provider "azapi" {}
+
+module "aks" {
+  source = "./modules/aks"
+  #providers = {
+  #  helm = helm.aks
+  #}
+}
 

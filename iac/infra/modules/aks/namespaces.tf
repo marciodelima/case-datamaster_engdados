@@ -41,7 +41,7 @@ resource "helm_release" "keda" {
   version    = "2.13.0"
 
   create_namespace = false
-  provider = helm.aks
+  #provider = helm.aks
   depends_on = [kubernetes_namespace.services]
 }
 
