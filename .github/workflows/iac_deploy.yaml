@@ -50,6 +50,7 @@ jobs:
       with:
         name: terraform-state
         path: iac/infra/
+      continue-on-error: true
 
     - name: Terraform Init
       run: terraform init -upgrade
