@@ -46,7 +46,9 @@ jobs:
       run: terraform fmt -check
 
     - name: Terraform Init com backend remoto
-      run: terraform init -upgrade -backend-config="resource_group_name=rsg-datamaster" \
+      run: |
+        terraform init -upgrade \
+                      -backend-config="resource_group_name=rsg-datamaster" \
                       -backend-config="storage_account_name=tfstatedatamastersta" \
                       -backend-config="container_name=tfstate" \
                       -backend-config="key=terraform.tfstate"
