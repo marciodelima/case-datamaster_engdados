@@ -46,15 +46,15 @@ jobs:
 
     - name: Create namespaces
       run: |
-        kubectl create namespace airflow --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace elk --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace grafana --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace prometheus --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace nginx --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace spark-operator --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace spark-history --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace spark --dry-run=client -o yaml | kubectl apply -f -
-        kubectl create namespace keda --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create namespace airflow --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace elk --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace grafana --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace prometheus --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace nginx --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace spark-operator --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace spark-history --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace spark --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        kubectl create namespace keda --dry-run=client -o yaml | kubectl apply --validate=false -f -
 
     - name: Deploy Helm charts
       run: |
