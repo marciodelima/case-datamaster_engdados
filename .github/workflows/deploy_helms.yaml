@@ -46,15 +46,15 @@ jobs:
 
     - name: Create namespaces
       run: |
-        kubectl create namespace airflow --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace elk --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace grafana --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace prometheus --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace nginx --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace spark-operator --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace spark-history --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace spark --dry-run=client -o yaml | kubectl apply --validate=false -f -
-        kubectl create namespace keda --dry-run=client -o yaml | kubectl apply --validate=false -f -
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace airflow"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace elk"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace grafana"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace prometheus"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace nginx"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace spark-operator"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace spark-history"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace spark"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace keda"
 
     - name: Deploy Helm charts
       run: |
