@@ -40,7 +40,7 @@ jobs:
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo add elastic https://helm.elastic.co
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-        helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
+        helm repo add spark-operator https://kubeflow.github.io/spark-operator
         helm repo add cloudnativeapp https://helm.cloudnativeapp.dev
         helm repo add kedacore https://kedacore.github.io/charts
         helm repo update
