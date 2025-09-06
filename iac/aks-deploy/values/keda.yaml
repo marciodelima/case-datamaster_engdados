@@ -1,0 +1,28 @@
+metricsServer:
+  enabled: true
+
+prometheus:
+  enabled: false
+
+certManager:
+  enabled: false
+
+webhooks:
+  enabled: true
+
+operator:
+  logLevel: info
+  replicas: 1
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+

@@ -1,0 +1,58 @@
+# spark
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: spark-role
+  namespace: spark
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services", "configmaps", "persistentvolumeclaims"]
+  verbs: ["create", "get", "list", "watch", "delete"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["create", "get", "list", "watch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: spark-binding
+  namespace: spark
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: spark-role
+subjects:
+- kind: ServiceAccount
+  name: spark-sa
+  namespace: spark
+
+# airflow
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: airflow-spark-apply
+  namespace: airflow
+rules:
+- apiGroups: ["sparkoperator.k8s.io"]
+  resources: ["sparkapplications"]
+  verbs: ["create", "get", "list", "watch", "delete", "patch", "update"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: airflow-spark-binding
+  namespace: airflow
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: airflow-spark-apply
+subjects:
+- kind: ServiceAccount
+  name: airflow-sa
+  namespace: airflow
+
