@@ -58,40 +58,40 @@ jobs:
 
     - name: Deploy Helm charts
       run: |
-        helm upgrade --install airflow apache-airflow/airflow \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install airflow apache-airflow/airflow \
           --namespace airflow \
-          --values values/airflow.yaml
+          --values values/airflow.yaml"
 
-        helm upgrade --install elasticsearch elastic/elasticsearch \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install elasticsearch elastic/elasticsearch \
           --namespace elk \
-          --values values/elk.yaml
+          --values values/elk.yaml"
 
-        helm upgrade --install kibana elastic/kibana \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install kibana elastic/kibana \
           --namespace elk \
-          --values values/elk.yaml
+          --values values/elk.yaml"
 
-        helm upgrade --install grafana grafana/grafana \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install grafana grafana/grafana \
           --namespace grafana \
-          --values values/grafana.yaml
+          --values values/grafana.yaml"
 
-        helm upgrade --install prometheus prometheus-community/prometheus \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install prometheus prometheus-community/prometheus \
           --namespace prometheus \
-          --values values/prometheus.yaml
+          --values values/prometheus.yaml"
 
-        helm upgrade --install nginx ingress-nginx/ingress-nginx \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install nginx ingress-nginx/ingress-nginx \
           --namespace nginx \
-          --values values/nginx.yaml
+          --values values/nginx.yaml"
         
-        helm install spark-operator/spark-operator --namespace spark-operator \
-           --set webhook.enable=true --set sparkJobNamespace=spark
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm install spark-operator/spark-operator --namespace spark-operator \
+           --set webhook.enable=true --set sparkJobNamespace=spark"
 
-        helm install spark-history ./charts/spark-history-server \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm install spark-history ./charts/spark-history-server \
           --namespace spark-history \
-          --values charts/spark-history-server/values.yaml
+          --values charts/spark-history-server/values.yaml"
         
-        helm upgrade --install keda kedacore/keda \
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install keda kedacore/keda \
           --namespace keda \
-          --values values/keda.yaml 
+          --values values/keda.yaml"
 
     - name: Criar federated identity para cada namespace
       run: |
@@ -112,9 +112,9 @@ jobs:
 
     - name: Apply Kubernetes manifests
       run: |
-        kubectl apply -f manifests/secrets/
-        kubectl apply -f manifests/controllers/
-        kubectl apply -f manifests/ingress/
-        kubectl apply -f manifests/pvc/
-        kubectl apply -f manifests/rbac/
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/secrets/"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/controllers/"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/ingress/"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/pvc/"
+        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/rbac/"
 
