@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: gcr.io/spark-operator/spark-history-server
+  tag: v3.5.0
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 18080
+
+persistence:
+  enabled: true
+  storageClass: default
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  mountPath: /data
+  existingClaim: spark-event-logs
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+

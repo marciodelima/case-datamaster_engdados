@@ -41,7 +41,6 @@ jobs:
         helm repo add elastic https://helm.elastic.co
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo add spark-operator https://kubeflow.github.io/spark-operator
-        helm repo add cloudnativeapp https://helm.cloudnativeapp.dev
         helm repo add kedacore https://kedacore.github.io/charts
         helm repo update
 
@@ -86,12 +85,9 @@ jobs:
         helm install spark-operator/spark-operator --namespace spark-operator \
            --set webhook.enable=true --set sparkJobNamespace=spark
 
-        helm install spark-history cloudnativeapp/spark-history-server \
+        helm install spark-history ./charts/spark-history-server \
           --namespace spark-history \
-          --set persistence.enabled=true \
-          --set persistence.existingClaim=spark-event-logs \
-          --set spark.history.fs.logDirectory=file:/data \
-          --set service.type=ClusterIP
+          --values charts/spark-history-server/values.yaml
         
         helm upgrade --install keda kedacore/keda \
           --namespace keda \
