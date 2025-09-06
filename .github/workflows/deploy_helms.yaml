@@ -26,9 +26,10 @@ jobs:
           -p ${{ secrets.AZURE_CLIENT_SECRET }} \
           --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    - name: Set up AKS context
+    - name: Set AKS context
       uses: azure/aks-set-context@v1
       with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
         cluster-name: ${{ secrets.AKS_NAME }}
         resource-group: ${{ secrets.AKS_RG }}
 
