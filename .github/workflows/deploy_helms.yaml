@@ -33,17 +33,6 @@ jobs:
         cluster-name: ${{ secrets.AKS_NAME }}
         resource-group: ${{ secrets.AKS_RG }}
 
-    - name: Add Helm repositories
-      run: |
-        helm repo add apache-airflow https://airflow.apache.org
-        helm repo add grafana https://grafana.github.io/helm-charts
-        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-        helm repo add elastic https://helm.elastic.co
-        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-        helm repo add spark-operator https://kubeflow.github.io/spark-operator
-        helm repo add kedacore https://kedacore.github.io/charts
-        helm repo update
-
     - name: Create namespaces
       run: |
         az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace airflow"
@@ -58,40 +47,56 @@ jobs:
 
     - name: Deploy Helm charts
       run: |
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install airflow apache-airflow/airflow \
-          --namespace airflow \
-          --values values/airflow.yaml"
+        az aks command invoke \
+	  --resource-group ${{ secrets.AKS_RG }} \
+	  --name ${{ secrets.AKS_NAME }} \
+	  --command "
+	    helm repo add apache-airflow https://airflow.apache.org
+	    helm repo add grafana https://grafana.github.io/helm-charts
+	    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	    helm repo add elastic https://helm.elastic.co
+	    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+	    helm repo add spark-operator https://kubeflow.github.io/spark-operator
+	    helm repo add kedacore https://kedacore.github.io/charts
+	    helm repo update
 
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install elasticsearch elastic/elasticsearch \
-          --namespace elk \
-          --values values/elk.yaml"
+	    helm upgrade --install airflow apache-airflow/airflow \
+	      --namespace airflow \
+	      --values values/airflow.yaml
 
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install kibana elastic/kibana \
-          --namespace elk \
-          --values values/elk.yaml"
+	    helm upgrade --install elasticsearch elastic/elasticsearch \
+	      --namespace elk \
+	      --values values/elk.yaml
 
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install grafana grafana/grafana \
-          --namespace grafana \
-          --values values/grafana.yaml"
+	    helm upgrade --install kibana elastic/kibana \
+	      --namespace elk \
+	      --values values/elk.yaml
 
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install prometheus prometheus-community/prometheus \
-          --namespace prometheus \
-          --values values/prometheus.yaml"
+	    helm upgrade --install grafana grafana/grafana \
+	      --namespace grafana \
+	      --values values/grafana.yaml
 
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install nginx ingress-nginx/ingress-nginx \
-          --namespace nginx \
-          --values values/nginx.yaml"
-        
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm install spark-operator/spark-operator --namespace spark-operator \
-           --set webhook.enable=true --set sparkJobNamespace=spark"
+	    helm upgrade --install prometheus prometheus-community/prometheus \
+	      --namespace prometheus \
+	      --values values/prometheus.yaml
 
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm install spark-history ./charts/spark-history-server \
-          --namespace spark-history \
-          --values charts/spark-history-server/values.yaml"
-        
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "helm upgrade --install keda kedacore/keda \
-          --namespace keda \
-          --values values/keda.yaml"
+	    helm upgrade --install nginx ingress-nginx/ingress-nginx \
+	      --namespace nginx \
+	      --values values/nginx.yaml
+
+	    helm upgrade --install spark-operator spark-operator/spark-operator \
+	      --namespace spark-operator \
+	      --set webhook.enable=true \
+	      --set sparkJobNamespace=spark
+
+	    helm upgrade --install spark-history ./charts/spark-history-server \
+	      --namespace spark-history \
+	      --values charts/spark-history-server/values.yaml
+
+	    helm upgrade --install keda kedacore/keda \
+	      --namespace keda \
+	      --values values/keda.yaml
+	  "
 
     - name: Criar federated identity para cada namespace
       run: |
