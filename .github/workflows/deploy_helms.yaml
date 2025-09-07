@@ -2,7 +2,7 @@ name: Deploy HELMs Tools to AKS
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - iac/aks-deploy/**
 
@@ -12,114 +12,112 @@ jobs:
     defaults:
       run:
         working-directory: iac/aks-deploy
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Helm
-      uses: azure/setup-helm@v3
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
 
-    - name: Azure Login
-      run: |
-        az login --service-principal \
-          -u ${{ secrets.AZURE_CLIENT_ID }} \
-          -p ${{ secrets.AZURE_CLIENT_SECRET }} \
-          --tenant ${{ secrets.AZURE_TENANT_ID }}
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u ${{ secrets.AZURE_CLIENT_ID }} \
+            -p ${{ secrets.AZURE_CLIENT_SECRET }} \
+            --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    - name: Set AKS context
-      uses: azure/aks-set-context@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-        cluster-name: ${{ secrets.AKS_NAME }}
-        resource-group: ${{ secrets.AKS_RG }}
+      - name: Set AKS context
+        uses: azure/aks-set-context@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          cluster-name: ${{ secrets.AKS_NAME }}
+          resource-group: ${{ secrets.AKS_RG }}
 
-    - name: Create namespaces
-      run: |
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace airflow"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace elk"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace grafana"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace prometheus"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace nginx"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace spark-operator"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace spark-history"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace spark"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl create namespace keda"
+      - name: Create namespaces
+        run: |
+          for NS in airflow elk grafana prometheus nginx spark-operator spark-history spark keda; do
+            az aks command invoke \
+              --resource-group ${{ secrets.AKS_RG }} \
+              --name ${{ secrets.AKS_NAME }} \
+              --command "kubectl create namespace $NS"
+          done
 
-    - name: Deploy Helm charts
-      run: |
-        az aks command invoke \
-	  --resource-group ${{ secrets.AKS_RG }} \
-	  --name ${{ secrets.AKS_NAME }} \
-	  --command "
-	    helm repo add apache-airflow https://airflow.apache.org
-	    helm repo add grafana https://grafana.github.io/helm-charts
-	    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-	    helm repo add elastic https://helm.elastic.co
-	    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-	    helm repo add spark-operator https://kubeflow.github.io/spark-operator
-	    helm repo add kedacore https://kedacore.github.io/charts
-	    helm repo update
-
-	    helm upgrade --install airflow apache-airflow/airflow \
-	      --namespace airflow \
-	      --values values/airflow.yaml
-
-	    helm upgrade --install elasticsearch elastic/elasticsearch \
-	      --namespace elk \
-	      --values values/elk.yaml
-
-	    helm upgrade --install kibana elastic/kibana \
-	      --namespace elk \
-	      --values values/elk.yaml
-
-	    helm upgrade --install grafana grafana/grafana \
-	      --namespace grafana \
-	      --values values/grafana.yaml
-
-	    helm upgrade --install prometheus prometheus-community/prometheus \
-	      --namespace prometheus \
-	      --values values/prometheus.yaml
-
-	    helm upgrade --install nginx ingress-nginx/ingress-nginx \
-	      --namespace nginx \
-	      --values values/nginx.yaml
-
-	    helm upgrade --install spark-operator spark-operator/spark-operator \
-	      --namespace spark-operator \
-	      --set webhook.enable=true \
-	      --set sparkJobNamespace=spark
-
-	    helm upgrade --install spark-history ./charts/spark-history-server \
-	      --namespace spark-history \
-	      --values charts/spark-history-server/values.yaml
-
-	    helm upgrade --install keda kedacore/keda \
-	      --namespace keda \
-	      --values values/keda.yaml
-	  "
-
-    - name: Criar federated identity para cada namespace
-      run: |
-        OIDC_URL=$(az aks show \
-          --name ${{ secrets.AKS_NAME }} \
-          --resource-group ${{ secrets.AKS_RG }} \
-          --query "oidcIssuerProfile.issuerUrl" -o tsv)
-
-        for NS in airflow elk grafana spark prometheus nginx app spark-operator spark-history keda; do
-          az identity federated-credential create \
-            --name ${NS}-federation \
-            --identity-name ${{ secrets.MANAGED_IDENTITY_NAME }} \
+      - name: Deploy Helm charts
+        run: |
+          az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
-            --issuer $OIDC_URL \
-            --subject system:serviceaccount:${NS}:${NS}-sa \
-            --audiences api://AzureADTokenExchange
-        done
+            --name ${{ secrets.AKS_NAME }} \
+            --command "
+              helm repo add apache-airflow https://airflow.apache.org
+              helm repo add grafana https://grafana.github.io/helm-charts
+              helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+              helm repo add elastic https://helm.elastic.co
+              helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+              helm repo add spark-operator https://kubeflow.github.io/spark-operator
+              helm repo add kedacore https://kedacore.github.io/charts
+              helm repo update
 
-    - name: Apply Kubernetes manifests
-      run: |
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/secrets/"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/controllers/"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/ingress/"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/pvc/"
-        az aks command invoke --resource-group ${{ secrets.AKS_RG }} --name ${{ secrets.AKS_NAME }} --command "kubectl apply -f manifests/rbac/"
+              helm upgrade --install airflow apache-airflow/airflow \
+                --namespace airflow \
+                --values values/airflow.yaml
 
+              helm upgrade --install elasticsearch elastic/elasticsearch \
+                --namespace elk \
+                --values values/elk.yaml
+
+              helm upgrade --install kibana elastic/kibana \
+                --namespace elk \
+                --values values/elk.yaml
+
+              helm upgrade --install grafana grafana/grafana \
+                --namespace grafana \
+                --values values/grafana.yaml
+
+              helm upgrade --install prometheus prometheus-community/prometheus \
+                --namespace prometheus \
+                --values values/prometheus.yaml
+
+              helm upgrade --install nginx ingress-nginx/ingress-nginx \
+                --namespace nginx \
+                --values values/nginx.yaml
+
+              helm upgrade --install spark-operator spark-operator/spark-operator \
+                --namespace spark-operator \
+                --set webhook.enable=true \
+                --set sparkJobNamespace=spark
+
+              helm upgrade --install spark-history ./charts/spark-history-server \
+                --namespace spark-history \
+                --values charts/spark-history-server/values.yaml
+
+              helm upgrade --install keda kedacore/keda \
+                --namespace keda \
+                --values values/keda.yaml
+            "
+
+      - name: Create federated identity for each namespace
+        run: |
+          OIDC_URL=$(az aks show \
+            --name ${{ secrets.AKS_NAME }} \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --query "oidcIssuerProfile.issuerUrl" -o tsv)
+
+          for NS in airflow elk grafana spark prometheus nginx app spark-operator spark-history keda; do
+            az identity federated-credential create \
+              --name ${NS}-federation \
+              --identity-name ${{ secrets.MANAGED_IDENTITY_NAME }} \
+              --resource-group ${{ secrets.AKS_RG }} \
+              --issuer $OIDC_URL \
+              --subject system:serviceaccount:${NS}:${NS}-sa \
+              --audiences api://AzureADTokenExchange
+          done
+
+      - name: Apply Kubernetes manifests
+        run: |
+          for DIR in secrets controllers ingress pvc rbac; do
+            az aks command invoke \
+              --resource-group ${{ secrets.AKS_RG }} \
+              --name ${{ secrets.AKS_NAME }} \
+              --command "kubectl apply -f manifests/$DIR/"
+          done
