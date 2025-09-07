@@ -13,4 +13,3 @@ kubeStateMetrics:
 nodeExporter:
   enabled: true
 
-
