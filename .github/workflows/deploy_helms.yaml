@@ -58,25 +58,25 @@ jobs:
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
              --command "helm repo add apache-airflow https://airflow.apache.org && helm repo update && helm upgrade --install airflow apache-airflow/airflow --namespace airflow --values airflow.yaml" \
-             --file iac/aks-deploy/values/airflow.yaml
+             --file values/airflow.yaml
        
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
              --command "helm repo add elastic https://helm.elastic.co && helm repo update && helm upgrade --install elasticsearch elastic/elasticsearch --namespace elk --values elk.yaml" \
-             --file iac/aks-deploy/values/elk.yaml
+             --file values/elk.yaml
        
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
              --command "helm upgrade --install kibana elastic/kibana --namespace elk --values elk.yaml" \
-             --file iac/aks-deploy/values/elk.yaml
+             --file values/elk.yaml
        
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
              --command "helm repo add grafana https://grafana.github.io/helm-charts && helm repo update && helm upgrade --install grafana grafana/grafana --namespace grafana --values grafana.yaml" \
-             --file iac/aks-deploy/values/grafana.yaml
+             --file values/grafana.yaml
        
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
@@ -88,7 +88,7 @@ jobs:
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
              --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm upgrade --install nginx ingress-nginx/ingress-nginx --namespace nginx --values nginx.yaml" \
-             --file iac/aks-deploy/values/nginx.yaml
+             --file values/nginx.yaml
        
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
