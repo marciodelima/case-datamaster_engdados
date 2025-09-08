@@ -12,7 +12,7 @@ jobs:
     defaults:
       run:
         working-directory: iac/aks-deploy
-
+        
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -52,8 +52,8 @@ jobs:
               --command "kubectl create namespace $NS"
           done
 
-       - name: Deploy Helm charts
-         run: |
+      - name: Deploy Helm charts
+        run: |
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
