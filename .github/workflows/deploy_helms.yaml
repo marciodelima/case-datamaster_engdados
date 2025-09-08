@@ -52,6 +52,22 @@ jobs:
               --command "kubectl create namespace $NS"
           done
 
+      - name: Apply Kubernetes Artifacts
+        run: |
+          for DIR in secrets controllers ingress pvc rbac; do
+            for FILE in iac/aks-deploy/manifests/$DIR/*.yaml; do
+               if [ -f "$FILE" ]; then
+                 az aks command invoke \
+                    --resource-group ${{ secrets.AKS_RG }} \
+                    --name ${{ secrets.AKS_NAME }} \
+                    --command "kubectl apply -f $FILE" \
+                    --file "$FILE"
+              else
+                 echo "Nenhum arquivo em $DIR."
+              fi
+            done
+          done
+
       - name: Deploy Helm charts
         run: |
            az aks command invoke \
@@ -100,7 +116,7 @@ jobs:
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
-             --command "helm upgrade --install spark-history spark-history-server-0.1.0.tgz --namespace spark-history --values spark-history.yaml" \
+             --command "helm upgrade --install spark-history spark-history-server-0.1.0.tgz --namespace spark-history --values values.yaml" \
              --file charts/packaged/spark-history-server-0.1.0.tgz \
              --file charts/spark-history-server/values.yaml
       
@@ -108,7 +124,7 @@ jobs:
              --resource-group ${{ secrets.AKS_RG }} \
              --name ${{ secrets.AKS_NAME }} \
              --command "helm repo add kedacore https://kedacore.github.io/charts && helm repo update && helm upgrade --install keda kedacore/keda --namespace keda --values keda.yaml" \
-             --file iac/aks-deploy/values/keda.yaml
+             --file values/keda.yaml
        
            az aks command invoke \
              --resource-group ${{ secrets.AKS_RG }} \
@@ -146,20 +162,4 @@ jobs:
               --issuer $OIDC_URL \
               --subject system:serviceaccount:${NS}:${NS}-sa \
               --audiences api://AzureADTokenExchange
-          done
-
-      - name: Apply Kubernetes manifests via az aks command invoke
-        run: |
-          for DIR in secrets controllers ingress pvc rbac; do
-            for FILE in iac/aks-deploy/manifests/$DIR/*.yaml; do
-               if [ -f "$FILE" ]; then
-                 az aks command invoke \
-                    --resource-group ${{ secrets.AKS_RG }} \
-                    --name ${{ secrets.AKS_NAME }} \
-                    --command "kubectl apply -f $FILE" \
-                    --file "$FILE"
-              else
-                 echo "Nenhum arquivo em $DIR."
-              fi
-            done
           done
