@@ -7,28 +7,7 @@ spec:
   selector:
     app: elasticsearch
   ports:
-    - port: 9200
+    - protocol: TCP
+      port: 9200
       targetPort: 9200
-  clusterIP: None
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: elasticsearch-ingress
-  namespace: elk
-  annotations:
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-spec:
-  rules:
-    - host: elasticsearch.airflow.svc.cluster.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: elasticsearch
-                port:
-                  number: 9200
 

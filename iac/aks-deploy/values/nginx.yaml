@@ -1,10 +1,9 @@
 controller:
-  replicaCount: 2
+  replicaCount: 1
 
   service:
     type: LoadBalancer
-    annotations:
-      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    loadBalancerIP: <INGRESS_IP>
 
   ingressClassResource:
     name: nginx
@@ -38,19 +37,10 @@ controller:
     - key: "node-role.kubernetes.io/control-plane"
       effect: "NoSchedule"
 
-rbac:
-  create: true
-
 serviceAccount:
-  create: true
+  create: false
   name: nginx-ingress-sa
 
 podSecurityPolicy:
   enabled: false
-
-tcp:
-  9090: "prometheus/prometheus:9090"
-  5601: "elk/kibana:5601"
-  3000: "grafana/grafana:3000"
-  8080: "airflow/airflow-web:8080"
 
