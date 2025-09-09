@@ -1,18 +1,17 @@
+---
 name: Deploy HELMs Tools to AKS
-
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - iac/aks-deploy/**
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: iac/aks-deploy
-        
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -37,15 +36,16 @@ jobs:
       - name: Get Public IP
         id: get-ip
         run: |
-           IP=$(az network public-ip show \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name aks-ingress-ip \
-             --query ipAddress -o tsv)
-           echo "INGRESS_IP=$IP" >> $GITHUB_ENV
+          IP=$(az network public-ip show \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name aks-ingress-ip \
+            --query ipAddress -o tsv)
+          echo "INGRESS_IP=$IP" >> $GITHUB_ENV
 
       - name: Create namespaces
-        run: |
-          for NS in airflow elk grafana prometheus nginx spark-operator spark-history spark keda; do
+        run: >
+          for NS in airflow elk grafana prometheus nginx spark-operator spark-history
+          spark keda; do
             az aks command invoke \
               --resource-group ${{ secrets.AKS_RG }} \
               --name ${{ secrets.AKS_NAME }} \
@@ -54,102 +54,102 @@ jobs:
 
       - name: Apply Kubernetes Artifacts
         run: |
-            for DIR in secrets controllers ingress pvc rbac; do
-              for FILE in manifests/$DIR/*.yaml; do
-                  if [ -f "$FILE" ]; then
-                  FILENAME=$(basename "$FILE")
-                  az aks command invoke \
-                    --resource-group ${{ secrets.AKS_RG }} \
-                    --name ${{ secrets.AKS_NAME }} \
-                    --command "kubectl apply -f $FILENAME" \
-                    --file "$FILE"
-                else
-                  echo "Nenhum arquivo em $DIR."
-                fi
+          for DIR in secrets controllers ingress pvc rbac; do
+            for FILE in manifests/$DIR/*.yaml; do
+                if [ -f "$FILE" ]; then
+                FILENAME=$(basename "$FILE")
+                az aks command invoke \
+                  --resource-group ${{ secrets.AKS_RG }} \
+                  --name ${{ secrets.AKS_NAME }} \
+                  --command "kubectl apply -f $FILENAME" \
+                  --file "$FILE"
+              else
+                echo "Nenhum arquivo em $DIR."
+              fi
             done
           done
 
       - name: Deploy Helm charts
-        run: |
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add apache-airflow https://airflow.apache.org && helm repo update && helm upgrade --install airflow apache-airflow/airflow --namespace airflow --values airflow.yaml" \
-             --file values/airflow.yaml
-       
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add elastic https://helm.elastic.co && helm repo update && helm upgrade --install elasticsearch elastic/elasticsearch --namespace elk --values elk.yaml" \
-             --file values/elk.yaml
-       
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add elastic https://helm.elastic.co && helm repo update && helm upgrade --install kibana elastic/kibana --namespace elk --values kibana.yaml" \
-             --file values/kibana.yaml
-       
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add grafana https://grafana.github.io/helm-charts && helm repo update && helm upgrade --install grafana grafana/grafana --namespace grafana --values grafana.yaml" \
-             --file values/grafana.yaml
-       
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm upgrade --install prometheus prometheus-community/prometheus --namespace prometheus --values prometheus.yaml" \
-             --file values/prometheus.yaml
-       
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm upgrade --install nginx ingress-nginx/ingress-nginx --namespace nginx --values nginx.yaml" \
-             --file values/nginx.yaml
-       
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add spark-operator https://kubeflow.github.io/spark-operator && helm repo update && helm upgrade --install spark-operator spark-operator/spark-operator --namespace spark-operator --set webhook.enable=true --set sparkJobNamespace=spark"
-       
-           helm package charts/spark-history-server --destination charts/packaged/
+        run: >+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add apache-airflow https://airflow.apache.org && helm repo update && helm upgrade --install airflow apache-airflow/airflow --namespace airflow --values airflow.yaml" \
+            --file values/airflow.yaml
 
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm upgrade --install spark-history spark-history-server-0.1.0.tgz --namespace spark-history --values values.yaml" \
-             --file charts/packaged/spark-history-server-0.1.0.tgz \
-             --file charts/spark-history-server/values.yaml
-      
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "helm repo add kedacore https://kedacore.github.io/charts && helm repo update && helm upgrade --install keda kedacore/keda --namespace keda --values keda.yaml" \
-             --file values/keda.yaml
-       
-           az aks command invoke \
-             --resource-group ${{ secrets.AKS_RG }} \
-             --name ${{ secrets.AKS_NAME }} \
-             --command "
-               helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-               helm repo update
-               helm upgrade --install dashboard kubernetes-dashboard/kubernetes-dashboard \
-                 --namespace dashboard \
-                 --create-namespace \
-                 --set protocol=https \
-                 --set service.externalPort=443 \
-                 --set ingress.enabled=true \
-                 --set ingress.annotations.\"kubernetes.io/ingress.class\"=nginx \
-                 --set ingress.annotations.\"nginx.ingress.kubernetes.io/rewrite-target\"=/ \
-                 --set ingress.annotations.\"nginx.ingress.kubernetes.io/ssl-redirect\"=true \
-                 --set ingress.ingressClassName=nginx \
-                 --set ingress.hosts[0]=dashboard.local \
-                 --set ingress.paths[0]=/dashboard \
-                 --set ingress.tls[0].secretName=certificate-tls
-             "
-            
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add elastic https://helm.elastic.co && helm repo update && helm upgrade --install elasticsearch elastic/elasticsearch --namespace elk --values elk.yaml" \
+            --file values/elk.yaml
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add elastic https://helm.elastic.co && helm repo update && helm upgrade --install kibana elastic/kibana --namespace elk --values kibana.yaml" \
+            --file values/kibana.yaml
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add grafana https://grafana.github.io/helm-charts && helm repo update && helm upgrade --install grafana grafana/grafana --namespace grafana --values grafana.yaml" \
+            --file values/grafana.yaml
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm upgrade --install prometheus prometheus-community/prometheus --namespace prometheus --values prometheus.yaml" \
+            --file values/prometheus.yaml
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm upgrade --install nginx ingress-nginx/ingress-nginx --namespace nginx --values nginx.yaml" \
+            --file values/nginx.yaml
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add spark-operator https://kubeflow.github.io/spark-operator && helm repo update && helm upgrade --install spark-operator spark-operator/spark-operator --namespace spark-operator --set webhook.enable=true --set sparkJobNamespace=spark"
+
+          helm package charts/spark-history-server --destination charts/packaged/
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm upgrade --install spark-history spark-history-server-0.1.0.tgz --namespace spark-history --values values.yaml" \
+            --file charts/packaged/spark-history-server-0.1.0.tgz \
+            --file charts/spark-history-server/values.yaml
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "helm repo add kedacore https://kedacore.github.io/charts && helm repo update && helm upgrade --install keda kedacore/keda --namespace keda --values keda.yaml" \
+            --file values/keda.yaml
+
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "
+              helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+              helm repo update
+              helm upgrade --install dashboard kubernetes-dashboard/kubernetes-dashboard \
+                --namespace dashboard \
+                --create-namespace \
+                --set protocol=https \
+                --set service.externalPort=443 \
+                --set ingress.enabled=true \
+                --set ingress.annotations.\"kubernetes.io/ingress.class\"=nginx \
+                --set ingress.annotations.\"nginx.ingress.kubernetes.io/rewrite-target\"=/ \
+                --set ingress.annotations.\"nginx.ingress.kubernetes.io/ssl-redirect\"=true \
+                --set ingress.ingressClassName=nginx \
+                --set ingress.hosts[0]=dashboard.local \
+                --set ingress.paths[0]=/dashboard \
+                --set ingress.tls[0].secretName=certificate-tls
+            "
+           
       - name: Create federated identity for each namespace
-        run: |
+        run: >
           OIDC_URL=$(az aks show \
             --name ${{ secrets.AKS_NAME }} \
             --resource-group ${{ secrets.AKS_RG }} \
