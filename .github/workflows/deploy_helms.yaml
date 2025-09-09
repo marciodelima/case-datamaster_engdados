@@ -55,7 +55,7 @@ jobs:
       - name: Apply Kubernetes Artifacts
         run: |
           for DIR in secrets controllers ingress pvc rbac; do
-            for FILE in iac/aks-deploy/manifests/$DIR/*.yaml; do
+            for FILE in manifests/$DIR/*.yaml; do
                if [ -f "$FILE" ]; then
                  az aks command invoke \
                     --resource-group ${{ secrets.AKS_RG }} \
