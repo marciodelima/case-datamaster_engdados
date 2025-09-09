@@ -6,6 +6,9 @@ metadata:
   labels:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/component: controller
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: rsg-datamaster
+    service.beta.kubernetes.io/azure-load-balancer-ipv4: aks-ingress-ip
 spec:
   type: LoadBalancer
   selector:
