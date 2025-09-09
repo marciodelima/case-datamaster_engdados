@@ -1,3 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx-controller
+  namespace: nginx
+  labels:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/component: controller
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/component: controller
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+    - name: https
+      port: 443
+      targetPort: https
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -20,7 +41,7 @@ spec:
               service:
                 name: observability-portal
                 port:
-                  number: 80        
+                  number: 80
           - path: /airflow
             pathType: Prefix
             backend:
@@ -56,5 +77,4 @@ spec:
                 name: spark-history-server
                 port:
                   number: 18080
-
 
