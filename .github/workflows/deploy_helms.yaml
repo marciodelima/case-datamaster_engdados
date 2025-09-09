@@ -44,13 +44,22 @@ jobs:
 
       - name: Create namespaces
         run: >
-          for NS in airflow elk grafana prometheus nginx spark-operator spark-history
+          for NS in airflow elk prometheus nginx spark-operator spark-history
           spark keda; do
             az aks command invoke \
               --resource-group ${{ secrets.AKS_RG }} \
               --name ${{ secrets.AKS_NAME }} \
               --command "kubectl create namespace $NS"
           done
+
+      - name: Install Prometheus Operator CRDs via az command
+        run: |
+            for CRD in alertmanagers podmonitors prometheuses prometheusrules servicemonitors thanosrulers; do
+              az aks command invoke \
+                --resource-group ${{ secrets.AKS_RG }} \
+                --name ${{ secrets.AKS_NAME }} \
+                --command "kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_${CRD}.yaml"
+            done
 
       - name: Apply Kubernetes Artifacts
         run: |
