@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: observability-portal-html
+  namespace: nginx
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Portal de Observabilidade - DataMaster</title>
+      <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 40px; }
+        h1 { color: #333; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 10px 0; }
+        a { text-decoration: none; color: #0078d4; font-size: 18px; }
+      </style>
+    </head>
+    <body>
+      <h1>Portal de Observabilidade</h1>
+      <ul>
+        <li><a href="/grafana">Grafana</a></li>
+        <li><a href="/prometheus">Prometheus</a></li>
+        <li><a href="/airflow">Airflow</a></li>
+        <li><a href="/kibana">Kibana</a></li>
+        <li><a href="/spark-history">Spark History</a></li>
+        <li><a href="/dashboard">Kubernetes Dashboard</a></li>
+      </ul>
+    </body>
+    </html>
+

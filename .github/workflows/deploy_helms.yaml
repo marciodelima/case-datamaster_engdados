@@ -92,19 +92,7 @@ jobs:
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
             --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add grafana https://grafana.github.io/helm-charts && helm repo update && helm upgrade --install grafana grafana/grafana --namespace grafana --values grafana.yaml" \
-            --file values/grafana.yaml
-
-          az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm upgrade --install prometheus prometheus-community/prometheus --namespace prometheus --values prometheus.yaml" \
-            --file values/prometheus.yaml
-
-          az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus" \
+            --command "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus --values prometheus.yaml" \
             --file values/prometheus.yaml
 
           az aks command invoke \
