@@ -54,17 +54,18 @@ jobs:
 
       - name: Apply Kubernetes Artifacts
         run: |
-          for DIR in secrets controllers ingress pvc rbac; do
-            for FILE in manifests/$DIR/*.yaml; do
-               if [ -f "$FILE" ]; then
-                 az aks command invoke \
+            for DIR in secrets controllers ingress pvc rbac; do
+              for FILE in manifests/$DIR/*.yaml; do
+                  if [ -f "$FILE" ]; then
+                  FILENAME=$(basename "$FILE")
+                  az aks command invoke \
                     --resource-group ${{ secrets.AKS_RG }} \
                     --name ${{ secrets.AKS_NAME }} \
-                    --command "kubectl apply -f $FILE" \
+                    --command "kubectl apply -f $FILENAME" \
                     --file "$FILE"
-              else
-                 echo "Nenhum arquivo em $DIR."
-              fi
+                else
+                  echo "Nenhum arquivo em $DIR."
+                fi
             done
           done
 
