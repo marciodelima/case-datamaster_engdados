@@ -47,3 +47,20 @@ resource "azurerm_subnet_network_security_group_association" "aks_nsg_assoc" {
   network_security_group_id = azurerm_network_security_group.aks_nsg.id
 }
 
+resource "azurerm_nat_gateway" "nat" {
+  name                = "aks-nat"
+  location            = var.location
+  resource_group_name = var.resource_group
+  sku_name            = "Standard"
+  idle_timeout_in_minutes = 10
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "nat_ip_assoc" {
+  nat_gateway_id       = azurerm_nat_gateway.nat.id
+  public_ip_address_id = azurerm_public_ip.appgw_ip.id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "nat_assoc" {
+  subnet_id      = azurerm_subnet.aks_subnet.id
+  nat_gateway_id = azurerm_nat_gateway.nat.id
+}

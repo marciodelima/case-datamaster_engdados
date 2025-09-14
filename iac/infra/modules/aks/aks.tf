@@ -6,6 +6,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   oidc_issuer_enabled     = true
   sku_tier                = "Standard"
   dns_prefix              = "privatedns-datamaster"
+  private_cluster_enabled = true
   tags                    = var.tags
 
   default_node_pool {
@@ -27,6 +28,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin     = "azure"
     service_cidr       = "10.240.0.0/16"
     dns_service_ip     = "10.240.0.10"
+    outbound_type      = "userDefinedRouting"
   }
 
   depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet, azurerm_public_ip.appgw_ip]
