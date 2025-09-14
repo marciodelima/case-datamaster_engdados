@@ -13,6 +13,7 @@ resource "azurerm_storage_account" "storage" {
   }
 
   blob_properties {
+    last_access_time_enabled = true
     delete_retention_policy {
       days = 7
     }
