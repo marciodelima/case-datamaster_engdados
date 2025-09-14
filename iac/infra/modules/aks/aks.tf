@@ -15,7 +15,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     enable_auto_scaling  = true
     orchestrator_version = "1.31.3"
     vnet_subnet_id       = azurerm_subnet.aks_subnet.id
-    vm_size		 = "Standard_B2s"
+    vm_size		 = "Standard_D2as_v6"
   }
 
   identity {
