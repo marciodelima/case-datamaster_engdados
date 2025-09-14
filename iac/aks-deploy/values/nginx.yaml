@@ -1,10 +1,6 @@
 controller:
   replicaCount: 1
 
-  service:
-    type: LoadBalancer
-    loadBalancerIP: <INGRESS_IP>
-
   ingressClassResource:
     name: nginx
     enabled: true
