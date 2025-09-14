@@ -44,7 +44,7 @@ jobs:
 
       - name: Create namespaces
         run: >
-          for NS in airflow elk prometheus nginx spark-operator spark-history
+          for NS in airflow elk prometheus nginx spark-operator spark-history grafana dashboard
           spark keda; do
             az aks command invoke \
               --resource-group ${{ secrets.AKS_RG }} \
