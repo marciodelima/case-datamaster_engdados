@@ -1,8 +1,7 @@
-resource "azurerm_kubernetes_cluster" "aks" {
+reso0urce "azurerm_kubernetes_cluster" "aks" {
   name                    = "aks-datamaster"
   location                = var.location
   resource_group_name     = var.resource_group
-  dns_prefix              = "privatedns-datamaster"
   kubernetes_version      = "1.31.3"
   oidc_issuer_enabled     = true
   sku_tier                = "Standard"
@@ -11,9 +10,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name                 = "default"
-    node_count           = 1
-    vm_size              = "Standard_D2as_v6"
-    enable_auto_scaling  = true
     min_count            = 1
     max_count            = 2
     orchestrator_version = "1.31.3"
@@ -31,6 +27,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     dns_service_ip     = "10.240.0.10"
   }
 
-  depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet]
+  depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet, azurerm_public_ip.appgw_ip]
 }
+
 
