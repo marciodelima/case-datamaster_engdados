@@ -1,4 +1,4 @@
-reso0urce "azurerm_kubernetes_cluster" "aks" {
+resource "azurerm_kubernetes_cluster" "aks" {
   name                    = "aks-datamaster"
   location                = var.location
   resource_group_name     = var.resource_group
