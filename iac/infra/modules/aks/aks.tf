@@ -34,5 +34,16 @@ resource "azurerm_kubernetes_cluster" "aks" {
   depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet, azurerm_public_ip.appgw_ip]
 }
 
+resource "azurerm_route_table" "aks_rt" {
+  name                    = "aks-route-table"
+  location                = var.location
+  resource_group_name     = var.resource_group
+}
+
+resource "azurerm_subnet_route_table_association" "aks_rt_assoc" {
+  subnet_id      = azurerm_subnet.aks_subnet.id
+  route_table_id = azurerm_route_table.aks_rt.id
+}
+
 
 
