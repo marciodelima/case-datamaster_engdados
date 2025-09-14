@@ -1,0 +1,7 @@
+controller:
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/azure-load-balancer-resource-group: aks-network-rg
+      service.beta.kubernetes.io/azure-load-balancer-ipv4: aks-ingress-ip
+
