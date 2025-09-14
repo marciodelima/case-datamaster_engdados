@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: airflow-sa
+  namespace: airflow
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: grafana-sa
+  namespace: grafana
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: elk-sa
+  namespace: elk
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-sa
+  namespace: prometheus
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark-sa
+  namespace: spark
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-sa
+  namespace: nginx
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-sa
+  namespace: app
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: keda-sa
+  namespace: keda
+
