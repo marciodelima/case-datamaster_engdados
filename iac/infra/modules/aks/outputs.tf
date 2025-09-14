@@ -3,8 +3,8 @@ output "aks_cluster_name" {
   value       = azurerm_kubernetes_cluster.aks.name
 }
 
-output "application_gateway_ip" {
-  description = "IP público do Application Gateway"
+output "ingress_ip" {
+  description = "IP público"
   value       = azurerm_public_ip.appgw_ip.ip_address
 }
 

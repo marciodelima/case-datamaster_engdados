@@ -5,7 +5,7 @@ reso0urce "azurerm_kubernetes_cluster" "aks" {
   kubernetes_version      = "1.31.3"
   oidc_issuer_enabled     = true
   sku_tier                = "Standard"
-  private_cluster_enabled = true
+  dns_prefix              = "privatedns-datamaster"
   tags                    = var.tags
 
   default_node_pool {
