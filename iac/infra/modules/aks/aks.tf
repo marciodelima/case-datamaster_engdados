@@ -25,16 +25,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   network_profile {
-    network_plugin     = "azure"
-    service_cidr       = "10.240.0.0/16"
-    dns_service_ip     = "10.240.0.10"
-    outbound_type      = "userAssignedNATGateway"
-  }
-  
-  load_balancer_profile {
+    network_plugin          = "azure"
+    service_cidr            = "10.240.0.0/16"
+    dns_service_ip          = "10.240.0.10"
+    outbound_type           = "userAssignedNATGateway"
     outbound_ip_address_ids = [azurerm_public_ip.nat_ip.id]
   }
-
+  
   depends_on = [data.azurerm_user_assigned_identity.integration_identity, azurerm_subnet.aks_subnet, azurerm_public_ip.appgw_ip]
 }
 
