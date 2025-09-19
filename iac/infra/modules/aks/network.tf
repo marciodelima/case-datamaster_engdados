@@ -64,3 +64,29 @@ resource "azurerm_subnet_nat_gateway_association" "nat_assoc" {
   subnet_id      = azurerm_subnet.aks_subnet.id
   nat_gateway_id = azurerm_nat_gateway.nat.id
 }
+
+resource "azurerm_private_dns_zone" "internal_dns" {
+  name                = "datamaster.internal"
+  resource_group_name = var.resource_group
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "dns_link" {
+  name                  = "dns-link"
+  resource_group_name   = var.resource_group
+  private_dns_zone_name = azurerm_private_dns_zone.internal_dns.name
+  virtual_network_id    = azurerm_virtual_network.vnet.id
+  registration_enabled  = false
+}
+
+resource "azurerm_private_dns_a_record" "namespace_dns_records" {
+  for_each            = toset(var.namespaces)
+  name                = each.key
+  zone_name           = azurerm_private_dns_zone.internal_dns.name
+  resource_group_name = var.resource_group_name
+  ttl                 = 300
+  records             = [azurerm_public_ip.appgw_ip.id]
+}
+
+
+
+

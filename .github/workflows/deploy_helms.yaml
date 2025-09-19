@@ -110,8 +110,15 @@ jobs:
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
             --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm upgrade --install nginx ingress-nginx/ingress-nginx --namespace nginx --values nginx.yaml" \
-            --file values/nginx.yaml
+            --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace nginx \
+            --version 4.9.0 \
+            --set controller.ingressClassResource.name=nginx \
+            --set controller.ingressClassResource.enabled=true \
+            --set controller.ingressClassResource.default=true \
+            --set controller.service.type=LoadBalancer \
+            --set controller.service.loadBalancerIP=${{env.INGRESS_IP}} \
+            --set controller.service.annotations.\"service\.beta\.kubernetes\.io/azure-load-balancer-internal\"=null \
+            --set controller.watchNamespace=\"\""
 
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
