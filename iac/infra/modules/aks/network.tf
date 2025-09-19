@@ -53,6 +53,17 @@ resource "azurerm_network_security_group" "aks_nsg" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "Allow-DNS-Outbound"
+    priority                   = 130
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "Udp"
+    source_port_range          = "*"
+    destination_port_range     = "53"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_subnet_network_security_group_association" "aks_nsg_assoc" {
@@ -61,21 +72,32 @@ resource "azurerm_subnet_network_security_group_association" "aks_nsg_assoc" {
 }
 
 resource "azurerm_nat_gateway" "nat" {
-  name                = "aks-nat"
-  location            = var.location
-  resource_group_name = var.resource_group
-  sku_name            = "Standard"
+  name                     = "aks-nat"
+  location                 = var.location
+  resource_group_name      = var.resource_group
+  sku_name                 = "Standard"
   idle_timeout_in_minutes = 10
 }
 
 resource "azurerm_nat_gateway_public_ip_association" "nat_ip_assoc" {
   nat_gateway_id       = azurerm_nat_gateway.nat.id
-  public_ip_address_id = azurerm_public_ip.appgw_ip.id
+  public_ip_address_id = azurerm_public_ip.nginx_ip.id
 }
 
 resource "azurerm_subnet_nat_gateway_association" "nat_assoc" {
   subnet_id      = azurerm_subnet.aks_subnet.id
   nat_gateway_id = azurerm_nat_gateway.nat.id
+}
+
+resource "azurerm_route_table" "aks_rt" {
+  name                = "aks-route-table"
+  location            = var.location
+  resource_group_name = var.resource_group
+}
+
+resource "azurerm_subnet_route_table_association" "aks_rt_assoc" {
+  subnet_id      = azurerm_subnet.aks_subnet.id
+  route_table_id = azurerm_route_table.aks_rt.id
 }
 
 resource "azurerm_private_dns_zone" "internal_dns" {
@@ -97,25 +119,6 @@ resource "azurerm_private_dns_a_record" "namespace_dns_records" {
   zone_name           = azurerm_private_dns_zone.internal_dns.name
   resource_group_name = var.resource_group
   ttl                 = 300
-  records             = [azurerm_public_ip.appgw_ip.ip_address]
-}
-
-resource "azurerm_route_table" "aks_rt" {
-  name                    = "aks-route-table"
-  location                = var.location
-  resource_group_name     = var.resource_group
-}
-
-resource "azurerm_subnet_route_table_association" "aks_rt_assoc" {
-  subnet_id      = azurerm_subnet.aks_subnet.id
-  route_table_id = azurerm_route_table.aks_rt.id
-}
-
-resource "azurerm_route" "default_route_nat" {
-  name                   = "default-route"
-  resource_group_name    = var.resource_group
-  route_table_name       = azurerm_route_table.aks_rt.name
-  address_prefix         = "0.0.0.0/0"
-  next_hop_type          = "Internet"
+  records             = [azurerm_public_ip.nginx_ip.ip_address]
 }
 
