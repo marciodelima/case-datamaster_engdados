@@ -136,12 +136,7 @@ jobs:
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
             --name ${{ secrets.AKS_NAME }} \
-            --command "
-              helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-              helm repo update
-              helm upgrade --install dashboard kubernetes-dashboard/kubernetes-dashboard \
-                --namespace dashboard \
-                --create-namespace \
+            --command "helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/ && helm repo update && helm upgrade --install dashboard kubernetes-dashboard/kubernetes-dashboard --namespace dashboard --create-namespace \
                 --set protocol=https \
                 --set service.externalPort=443 \
                 --set ingress.enabled=true \
@@ -151,8 +146,7 @@ jobs:
                 --set ingress.ingressClassName=nginx \
                 --set ingress.hosts[0]=dashboard.local \
                 --set ingress.paths[0]=/dashboard \
-                --set ingress.tls[0].secretName=certificate-tls
-            "
+                --set ingress.tls[0].secretName=certificate-tls"
            
       - name: Create federated identity for each namespace
         run: >
