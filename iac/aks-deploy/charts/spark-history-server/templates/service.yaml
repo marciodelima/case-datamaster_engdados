@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: spark-history-server
+  namespace: spark-history
 spec:
   selector:
     app: spark-history-server
@@ -10,4 +11,33 @@ spec:
       port: {{ .Values.service.port }}
       targetPort: 18080
   type: {{ .Values.service.type }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: spark-history-ingress
+  namespace: spark-history
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: dashboard-auth
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - spark-history.datamaster.internal
+    secretName: certificates-secrets
+  rules:
+  - host: spark-history.datamaster.internal
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: spark-history-server
+            port:
+              number: 18080
 
