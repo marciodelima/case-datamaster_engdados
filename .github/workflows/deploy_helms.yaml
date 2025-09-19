@@ -187,5 +187,5 @@ jobs:
               echo "IP público do NGINX não foi provisionado."
               exit 1
             else
-              echo "✅ IP público do NGINX provisionado com sucesso: $IP"
+              echo "IP público do NGINX provisionado com sucesso: $IP"
             fi
