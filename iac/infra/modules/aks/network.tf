@@ -81,7 +81,7 @@ resource "azurerm_nat_gateway" "nat" {
 
 resource "azurerm_nat_gateway_public_ip_association" "nat_ip_assoc" {
   nat_gateway_id       = azurerm_nat_gateway.nat.id
-  public_ip_address_id = azurerm_public_ip.nginx_ip.id
+  public_ip_address_id = azurerm_public_ip.appgw_ip.id
 }
 
 resource "azurerm_subnet_nat_gateway_association" "nat_assoc" {
@@ -119,6 +119,6 @@ resource "azurerm_private_dns_a_record" "namespace_dns_records" {
   zone_name           = azurerm_private_dns_zone.internal_dns.name
   resource_group_name = var.resource_group
   ttl                 = 300
-  records             = [azurerm_public_ip.nginx_ip.ip_address]
+  records             = [azurerm_public_ip.appgw_ip.ip_address]
 }
 
