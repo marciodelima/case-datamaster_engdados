@@ -23,3 +23,4 @@ variable "admin_group_object_ids" {
   type    = list(string)
   default = []
 }
+
