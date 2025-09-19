@@ -35,7 +35,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   depends_on = [
     data.azurerm_user_assigned_identity.integration_identity, 
     azurerm_subnet.aks_subnet, 
-    azurerm_public_ip.appgw_ip,
     azurerm_subnet_nat_gateway_association.nat_assoc,
     azurerm_nat_gateway_public_ip_association.nat_ip_assoc  
   ]
