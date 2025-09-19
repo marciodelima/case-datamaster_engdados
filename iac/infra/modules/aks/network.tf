@@ -87,6 +87,23 @@ resource "azurerm_private_dns_a_record" "namespace_dns_records" {
   records             = [azurerm_public_ip.appgw_ip.ip_address]
 }
 
+resource "azurerm_route_table" "aks_rt" {
+  name                    = "aks-route-table"
+  location                = var.location
+  resource_group_name     = var.resource_group
+}
 
+resource "azurerm_subnet_route_table_association" "aks_rt_assoc" {
+  subnet_id      = azurerm_subnet.aks_subnet.id
+  route_table_id = azurerm_route_table.aks_rt.id
+}
 
+resource "azurerm_route" "default_route_nat" {
+  name                   = "default-route"
+  resource_group_name    = var.resource_group
+  route_table_name       = azurerm_route_table.aks_rt.name
+  address_prefix         = "0.0.0.0/0"
+  next_hop_type          = "VirtualAppliance"
+  next_hop_in_ip_address = azurerm_public_ip.appgw_ip.ip_address
+}
 
