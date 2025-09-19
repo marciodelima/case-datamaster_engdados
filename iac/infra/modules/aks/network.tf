@@ -119,6 +119,6 @@ resource "azurerm_private_dns_a_record" "namespace_dns_records" {
   zone_name           = azurerm_private_dns_zone.internal_dns.name
   resource_group_name = var.resource_group
   ttl                 = 300
-  records             = [azurerm_public_ip.nginx_ip.ip_address]
+  records             = [azurerm_public_ip.appgw_ip.ip_address]
 }
 
