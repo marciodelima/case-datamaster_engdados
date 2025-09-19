@@ -6,7 +6,7 @@ resource "azurerm_role_assignment" "aks_to_acr" {
 }
 
 resource "azurerm_role_assignment" "ip_permission" {
-  scope                = azurerm_public_ip.appgw_ip.id
+  scope                = azurerm_public_ip.nginx_ingress_ip.id
   role_definition_name = "Network Contributor"
   principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
   depends_on           = [azurerm_kubernetes_cluster.aks]

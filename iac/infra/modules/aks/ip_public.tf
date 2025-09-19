@@ -1,13 +1,12 @@
-data "azurerm_kubernetes_cluster" "aks" {
-  name                = azurerm_kubernetes_cluster.aks.name
-  resource_group_name = azurerm_kubernetes_cluster.aks.aks_resource_group
+locals {
+  node_resource_group_name = format("MC_%s_%s_%s", var.resource_group, azurerm_kubernetes_cluster.aks.name, var.location)
   depends_on          = [azurerm_kubernetes_cluster.aks]
 }
 
 resource "azurerm_public_ip" "nginx_ingress_ip" {
   name                = "aks-ingress-ip"
-  location            = data.azurerm_kubernetes_cluster.aks.location
-  resource_group_name = data.azurerm_kubernetes_cluster.aks.node_resource_group
+  location            = var.location
+  resource_group_name = local.node_resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
   tags = {
