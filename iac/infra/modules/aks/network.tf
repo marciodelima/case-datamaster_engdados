@@ -40,6 +40,19 @@ resource "azurerm_network_security_group" "aks_nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+
+  security_rule {
+    name                       = "Allow-HTTPS-Outbound"
+    priority                   = 120
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
 }
 
 resource "azurerm_subnet_network_security_group_association" "aks_nsg_assoc" {
@@ -103,7 +116,6 @@ resource "azurerm_route" "default_route_nat" {
   resource_group_name    = var.resource_group
   route_table_name       = azurerm_route_table.aks_rt.name
   address_prefix         = "0.0.0.0/0"
-  next_hop_type          = "VirtualAppliance"
-  next_hop_in_ip_address = azurerm_public_ip.appgw_ip.ip_address
+  next_hop_type          = "Internet"
 }
 
