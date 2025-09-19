@@ -3,9 +3,8 @@ output "aks_cluster_name" {
   value       = azurerm_kubernetes_cluster.aks.name
 }
 
-output "ingress_ip" {
-  description = "IP público"
-  value       = azurerm_public_ip.appgw_ip.ip_address
+output "nginx_ingress_ip" {
+  value = azurerm_public_ip.nginx_ingress_ip.ip_address
 }
 
 output "kube_config" {

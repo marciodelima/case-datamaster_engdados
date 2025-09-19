@@ -41,6 +41,7 @@ jobs:
             --name aks-ingress-ip \
             --query ipAddress -o tsv)
           echo "INGRESS_IP=$IP" >> $GITHUB_ENV
+          echo $IP
 
       - name: Create namespaces
         run: >
