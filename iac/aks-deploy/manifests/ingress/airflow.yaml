@@ -41,7 +41,7 @@ spec:
   tls:
   - hosts:
     - airflow.datamaster.internal
-    secretName: certificates-secrets
+    secretName: certificate-tls
   rules:
   - host: airflow.datamaster.internal
     http:

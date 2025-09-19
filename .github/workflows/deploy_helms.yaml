@@ -110,21 +110,6 @@ jobs:
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
             --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update && helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx --namespace nginx \
-            --version 4.9.0 \
-            --set controller.ingressClassResource.name=nginx \
-            --set controller.ingressClassResource.enabled=true \
-            --set controller.ingressClassResource.default=true \
-            --set controller.service.type=LoadBalancer \
-            --set controller.service.loadBalancerIP=${{ env.INGRESS_IP }} \
-            --set controller.extraArgs.default-ssl-certificate=nginx/certificates-secrets \
-            --set controller.tls.enabled=true \
-            --set controller.tls.secretName=certificates-secrets \            
-            --set controller.watchNamespace=\"\""
-
-          az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
             --command "helm repo add spark-operator https://kubeflow.github.io/spark-operator && helm repo update && helm upgrade --install spark-operator spark-operator/spark-operator --namespace spark-operator --set webhook.enable=true --set sparkJobNamespace=spark"
 
           helm package charts/spark-history-server --destination charts/packaged/
@@ -149,6 +134,28 @@ jobs:
                 --set protocol=https \
                 --set service.externalPort=443 "
            
+      - name: Deploy NGINX Ingress Controller
+        run: |
+            az aks command invoke \
+              --resource-group ${{ secrets.AKS_RG }} \
+              --name ${{ secrets.AKS_NAME }} \
+              --command "
+                helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
+                helm repo update && \
+                helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
+                  --namespace nginx \
+                  --create-namespace \
+                  --version 4.9.0 \
+                  --set controller.ingressClassResource.name=nginx \
+                  --set controller.ingressClassResource.enabled=true \
+                  --set controller.ingressClassResource.default=true \
+                  --set controller.service.type=LoadBalancer \
+                  --set controller.service.loadBalancerIP=${{ env.INGRESS_IP }} \
+                  --set controller.extraArgs.default-ssl-certificate=nginx/certificate-tls \
+                  --set controller.tls.enabled=true \
+                  --set controller.tls.secretName=certificate-tls \
+                  --set controller.watchNamespace=\"\""
+
       - name: Create federated identity for each namespace
         run: >
           OIDC_URL=$(az aks show \
@@ -165,3 +172,20 @@ jobs:
               --subject system:serviceaccount:${NS}:${NS}-sa \
               --audiences api://AzureADTokenExchange
           done
+
+      - name: Verificar IP público do NGINX
+        run: |
+            IP=$(az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "kubectl get svc nginx-ingress-ingress-nginx-controller -n nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'" \
+            --query "commandResult" -o tsv)
+
+            echo "NGINX EXTERNAL IP: $IP"
+
+            if [ -z "$IP" ]; then
+              echo "IP público do NGINX não foi provisionado."
+              exit 1
+            else
+              echo "✅ IP público do NGINX provisionado com sucesso: $IP"
+            fi

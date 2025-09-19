@@ -44,7 +44,7 @@ spec:
   tls:
   - hosts:
     - grafana.datamaster.internal
-    secretName: certificates-secrets
+    secretName: certificate-tls
   rules:
   - host: grafana.datamaster.internal
     http:

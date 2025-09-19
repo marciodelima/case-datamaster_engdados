@@ -14,7 +14,7 @@ spec:
   tls:
   - hosts:
     - portal.datamaster.internal
-    secretName: certificates-secrets
+    secretName: certificate-tls
   rules:
   - host: portal.datamaster.internal
     http:
