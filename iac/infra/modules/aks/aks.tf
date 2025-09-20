@@ -20,14 +20,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   identity {
-    type         = "UserAssigned"
-    identity_ids = [data.azurerm_user_assigned_identity.integration_identity.id]
+    type         = "SystemAssigned"
   }
 
   network_profile {
     network_plugin          = "azure"
     service_cidr            = "10.240.0.0/16"
     dns_service_ip          = "10.240.0.10"
+    load_balancer_sku       = "standard"
     outbound_type           = "userAssignedNATGateway"
     outbound_ip_address_ids = [azurerm_public_ip.nat_ip.id]
   }
