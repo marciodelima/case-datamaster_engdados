@@ -19,10 +19,6 @@ resource "azurerm_role_assignment" "aks_network_contributor" {
   depends_on           = [azurerm_kubernetes_cluster.aks]
 }
 
-locals {
-  node_resource_group_name = format("MC_%s_%s_%s", var.resource_group, azurerm_kubernetes_cluster.aks.name, var.location)
-}
-
 data "azurerm_resource_group" "node_rg" {
   name       = local.node_resource_group_name
   depends_on = [azurerm_kubernetes_cluster.aks]
