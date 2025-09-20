@@ -19,3 +19,28 @@ resource "azurerm_role_assignment" "aks_network_contributor" {
   depends_on           = [azurerm_kubernetes_cluster.aks]
 }
 
+locals {
+  node_resource_group_name = format("MC_%s_%s_%s", var.resource_group, azurerm_kubernetes_cluster.aks.name, var.location)
+}
+
+data "azurerm_resource_group" "node_rg" {
+  name       = local.node_resource_group_name
+  depends_on = [azurerm_kubernetes_cluster.aks]
+}
+
+data "azurerm_resource_group" "aks_rg" {
+  name = var.resource_group
+}
+
+resource "azurerm_role_assignment" "aks_network_contributor_rsg" {
+  scope                = data.azurerm_resource_group.node_rg.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+}
+
+resource "azurerm_role_assignment" "aks_network_contributor_rsg2" {
+  scope                = data.azurerm_resource_group.aks_rg.id
+  role_definition_name = "Network Contributor"
+  principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
+}
+
