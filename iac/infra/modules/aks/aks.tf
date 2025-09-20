@@ -29,7 +29,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     dns_service_ip          = "10.240.0.10"
     load_balancer_sku       = "standard"
     outbound_type           = "userAssignedNATGateway"
-    outbound_ip_address_ids = [azurerm_public_ip.nat_ip.id]
   }
   
   depends_on = [
