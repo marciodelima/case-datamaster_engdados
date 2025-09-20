@@ -10,10 +10,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - www.marcio_datamaster.com
+        - www.marcio-datamaster.com
       secretName: certificate-tls
   rules:
-    - host: www.marcio_datamaster.com
+    - host: www.marcio-datamaster.com
       http:
         paths:
           - path: /

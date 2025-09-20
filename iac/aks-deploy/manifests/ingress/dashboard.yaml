@@ -3,8 +3,8 @@ kind: Service
 metadata:
   name: dashboard-kubernetes
   namespace: dashboard
-labels:
-  app.kubernetes.io/name: kubernetes-dashboard
+  labels:
+    app.kubernetes.io/name: kubernetes-dashboard
 spec:
   type: ClusterIP
   ports:

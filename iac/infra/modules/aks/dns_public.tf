@@ -1,5 +1,5 @@
 resource "azurerm_dns_zone" "public_dns" {
-  name                = "marcio_datamaster.com"
+  name                = "marcio-datamaster.com"
   resource_group_name = var.resource_group
 }
 

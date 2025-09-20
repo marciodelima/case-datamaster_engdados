@@ -9,13 +9,13 @@ req_extensions     = req_ext
 distinguished_name = dn
 
 [dn]
-CN = *.marcio_datamaster.com
+CN = *.marcio-datamaster.com
 
 [req_ext]
 subjectAltName = @alt_names
 
 [alt_names]
-DNS.1 = *.marcio_datamaster.com
+DNS.1 = *.marcio-datamaster.com
 DNS.2 = *.datamaster.internal
 
 [ext]

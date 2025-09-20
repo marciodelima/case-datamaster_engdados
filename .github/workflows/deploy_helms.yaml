@@ -154,9 +154,26 @@ jobs:
                   --namespace nginx \
                   --create-namespace \
                   --version 4.9.0 \
+                  --set controller.replicaCount=1 \
                   --set controller.ingressClassResource.name=nginx \
                   --set controller.ingressClassResource.enabled=true \
                   --set controller.ingressClassResource.default=true \
+                  --set controller.config.use-forwarded-headers=true \
+                  --set controller.config.proxy-body-size=50m \
+                  --set controller.config.enable-underscores-in-headers=true \
+                  --set controller.metrics.enabled=true \
+                  --set controller.metrics.serviceMonitor.enabled=true \
+                  --set controller.metrics.serviceMonitor.additionalLabels.release=prometheus \
+                  --set controller.resources.requests.cpu=100m \
+                  --set controller.resources.requests.memory=128Mi \
+                  --set controller.resources.limits.cpu=500m \
+                  --set controller.resources.limits.memory=512Mi \
+                  --set controller.nodeSelector.kubernetes\\.io/os=linux \
+                  --set controller.tolerations[0].key=node-role.kubernetes.io/control-plane \
+                  --set controller.tolerations[0].effect=NoSchedule \
+                  --set serviceAccount.create=false \
+                  --set serviceAccount.name=nginx-sa \
+                  --set podSecurityPolicy.enabled=false \
                   --set controller.service.type=LoadBalancer \
                   --set controller.service.loadBalancerIP=${{ env.INGRESS_IP }} \
                   --set controller.extraArgs.default-ssl-certificate=nginx/certificate-tls \
@@ -191,9 +208,3 @@ jobs:
 
             echo "NGINX EXTERNAL IP: $IP"
 
-            if [ -z "$IP" ]; then
-              echo "IP público do NGINX não foi provisionado."
-              exit 1
-            else
-              echo "IP público do NGINX provisionado com sucesso: $IP"
-            fi
