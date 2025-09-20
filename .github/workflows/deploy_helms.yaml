@@ -33,15 +33,22 @@ jobs:
           cluster-name: ${{ secrets.AKS_NAME }}
           resource-group: ${{ secrets.AKS_RG }}
 
-      - name: Get Public IP
-        id: get-ip
+      - name: Get Public IP from AKS node resource group
         run: |
-          IP=$(az network public-ip show \
+          NODE_RG=$(az aks show \
+            --name ${{ secrets.AKS_NAME }} \
             --resource-group ${{ secrets.AKS_RG }} \
+            --query nodeResourceGroup -o tsv)
+
+          echo "AKS Node Resource Group: $NODE_RG"
+
+          IP=$(az network public-ip show \
+            --resource-group "$NODE_RG" \
             --name aks-ingress-ip \
             --query ipAddress -o tsv)
+
           echo "INGRESS_IP=$IP" >> $GITHUB_ENV
-          echo $IP
+          echo "Public IP: $IP"
 
       - name: Create namespaces
         run: >
