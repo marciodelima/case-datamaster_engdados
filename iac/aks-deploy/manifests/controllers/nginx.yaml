@@ -1,0 +1,61 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: main-ingress
+  namespace: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - www.marcio_datamaster.com
+      secretName: certificate-tls
+  rules:
+    - host: www.marcio_datamaster.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: observability-portal
+                port:
+                  number: 80
+          - path: /airflow
+            pathType: Prefix
+            backend:
+              service:
+                name: airflow-web
+                port:
+                  number: 8080
+          - path: /dashboard
+            pathType: Prefix
+            backend:
+              service:
+                name: dashboard-kubernetes
+                port:
+                  number: 443
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+          - path: /kibana
+            pathType: Prefix
+            backend:
+              service:
+                name: kibana
+                port:
+                  number: 5601
+          - path: /spark-history
+            pathType: Prefix
+            backend:
+              service:
+                name: spark-history
+                port:
+                  number: 18080
+
