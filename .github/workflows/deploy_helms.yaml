@@ -150,15 +150,10 @@ jobs:
               --command "
                 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
                 helm repo update && \
-                helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
+                helm upgrade --debug --install nginx-ingress ingress-nginx/ingress-nginx \
                   --namespace nginx \
                   --create-namespace \
                   --version 4.9.0 \
-                  --set controller.metrics.enabled=true \
-                  --set controller.metrics.serviceMonitor.enabled=true \
-                  --set controller.metrics.serviceMonitor.additionalLabels.release=prometheus \
-                  --set serviceAccount.create=false \
-                  --set serviceAccount.name=nginx-sa \
                   --set controller.service.type=LoadBalancer \
                   --set controller.service.loadBalancerIP=${{ env.INGRESS_IP }} \
                   --set controller.extraArgs.default-ssl-certificate=nginx/certificate-tls \
