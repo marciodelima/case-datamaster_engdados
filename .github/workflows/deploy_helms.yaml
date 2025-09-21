@@ -101,9 +101,9 @@ jobs:
               "
           done
             
-      - name: Apply Kubernetes Artifacts
+      - name: Apply Kubernetes Artifacts - PRE
         run: |
-          for DIR in secrets controllers ingress pvc rbac; do
+          for DIR in secrets ingress pvc rbac; do
             for FILE in manifests/$DIR/*.yaml; do
                 if [ -f "$FILE" ]; then
                 FILENAME=$(basename "$FILE")
@@ -181,6 +181,23 @@ jobs:
                   --set serviceAccount.name=nginx-sa \
                   --set podSecurityPolicy.enabled=false \
                   --set controller.watchNamespace=\"\""
+
+      - name: Apply Kubernetes Artifacts - POS
+        run: |
+          for DIR in controllers; do
+            for FILE in manifests/$DIR/*.yaml; do
+                if [ -f "$FILE" ]; then
+                FILENAME=$(basename "$FILE")
+                az aks command invoke \
+                  --resource-group ${{ secrets.AKS_RG }} \
+                  --name ${{ secrets.AKS_NAME }} \
+                  --command "kubectl apply -f $FILENAME" \
+                  --file "$FILE"
+              else
+                echo "Nenhum arquivo em $DIR."
+              fi
+            done
+          done
 
       - name: Create federated identity for each namespace
         run: >
