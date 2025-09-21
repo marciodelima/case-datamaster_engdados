@@ -146,9 +146,7 @@ jobs:
                   --set controller.resources.limits.memory=256Mi \
                   --set controller.service.type=LoadBalancer \
                   --set controller.service.loadBalancerIP=${{ env.INGRESS_IP }} \
-                  --set controller.extraArgs.default-ssl-certificate=nginx/certificate-tls \
-                  --set controller.tls.enabled=true \
-                  --set controller.tls.secretName=certificate-tls \
+                  --set controller.config.ssl-redirect=false
                   --set serviceAccount.create=false \
                   --set serviceAccount.name=nginx-sa \
                   --set podSecurityPolicy.enabled=false \
@@ -171,12 +169,4 @@ jobs:
               --audiences api://AzureADTokenExchange
           done
 
-      - name: Verificar IP público do NGINX
-        run: |
-            IP=$(az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
-            --command "kubectl get svc nginx-ingress-ingress-nginx-controller -n nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}'" \
-            --query "commandResult" -o tsv)
 
-            echo "NGINX EXTERNAL IP: $IP"
