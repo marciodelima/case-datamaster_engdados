@@ -75,10 +75,10 @@ jobs:
       - name: Gerar certificado TLS assinado por CA para IP
         run: |
           INGRESS_IP=${{ secrets.INGRESS_IP }}
-      
+
           echo "Gerando chave da CA..."
           openssl genrsa -out ca.key 4096
-      
+
           echo "Gerando certificado raiz da CA..."
           openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 \
             -out ca.crt \
@@ -86,26 +86,26 @@ jobs:
 
           echo "Criando arquivo de configuração para SAN com IP..."
           cat > ip.cnf <<EOF
-          [req]
-          default_bits       = 2048
-          prompt             = no
-          default_md         = sha256
-          req_extensions     = req_ext
-          distinguished_name = dn
+[req]
+default_bits       = 2048
+prompt             = no
+default_md         = sha256
+req_extensions     = req_ext
+distinguished_name = dn
 
-          [dn]
-          C = BR
-          ST = SP
-          L = SaoPaulo
-          O = MyCompany
-          CN = ${INGRESS_IP}
-      
-          [req_ext]
-          subjectAltName = @alt_names
-      
-          [alt_names]
-          IP.1 = ${INGRESS_IP}
-          EOF
+[dn]
+C = BR
+ST = SP
+L = SaoPaulo
+O = MyCompany
+CN = ${INGRESS_IP}
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = ${INGRESS_IP}
+EOF
 
           echo "Gerando chave privada do certificado..."
           openssl genrsa -out tls.key 2048

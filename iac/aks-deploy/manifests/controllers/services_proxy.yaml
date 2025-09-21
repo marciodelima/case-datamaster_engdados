@@ -19,6 +19,7 @@ spec:
   externalName: dashboard-kubernetes-dashboard-web.dashboard.svc.cluster.local
   ports:
     - port: 443
+      targetPort: 8000
 ---
 apiVersion: v1
 kind: Service

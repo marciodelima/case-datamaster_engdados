@@ -3,11 +3,11 @@ executor: KubernetesExecutor
 airflow:
   image:
     repository: apache/airflow
-    tag: 2.8.1
+    tag: 2.9.3
   config:
     AIRFLOW__CORE__FERNET_KEY: _agpsPrbStaDK78nsbuA__yLffauxKiIhSICmYL7tm8=
     AIRFLOW__KUBERNETES__NAMESPACE: airflow
-    AIRFLOW__KUBERNETES__WORKER_CONTAINER_IMAGE: apache/airflow:2.8.1
+    AIRFLOW__KUBERNETES__WORKER_CONTAINER_IMAGE: apache/airflow:2.9.3
 
   extraContainers:
     - name: filebeat

@@ -5,7 +5,7 @@ metadata:
   namespace: airflow
 spec:
   selector:
-    app: airflow-web
+    component: webserver
   ports:
     - protocol: TCP
       port: 8080
@@ -20,7 +20,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: airflow-web
+      app: webserver
   endpoints:
     - port: metrics
       interval: 30s
