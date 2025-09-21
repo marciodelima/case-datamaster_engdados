@@ -97,13 +97,13 @@ jobs:
           ST = SP
           L = SaoPaulo
           O = MyCompany
-          CN = ${INGRESS_IP}
+          CN = ${{ env.INGRESS_IP }}
           
           [req_ext]
           subjectAltName = @alt_names
           
           [alt_names]
-          IP.1 = ${INGRESS_IP}
+          IP.1 = ${{ env.INGRESS_IP }}
           EOF
 
           echo "Gerando chave privada do certificado..."
