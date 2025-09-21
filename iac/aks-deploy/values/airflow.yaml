@@ -37,6 +37,10 @@ webserver:
     enabled: true
     username: admin
     password: admin
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
 
 scheduler:
   resources:
