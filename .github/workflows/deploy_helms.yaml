@@ -80,23 +80,25 @@ jobs:
 
       - name: Create TLS secret in NGINX
         run: |
-          kubectl create secret tls certificate-tls \
-            --cert=tls.crt \
-            --key=tls.key \
-            -n nginx || \
-          kubectl delete secret certificate-tls -n nginx && \
-          kubectl create secret tls certificate-tls \
-            --cert=tls.crt \
-            --key=tls.key \
-            -n nginx
+          az aks command invoke \
+            --resource-group ${{ secrets.AKS_RG }} \
+            --name ${{ secrets.AKS_NAME }} \
+            --command "kubectl create secret tls certificate-tls --cert=tls.crt --key=tls.key -n nginx || kubectl delete secret certificate-tls -n nginx && kubectl create secret tls certificate-tls --cert=tls.crt --key=tls.key -n nginx" \
+            --file tls.crt \
+            --file tls.key
 
-      - name: Create TLS secret to some namespaces
+      - name: Replicate TLS secret to some namespaces
         run: |
           for NS in airflow elk app spark-history grafana dashboard; do
-            kubectl delete secret certificate-tls -n $NS --ignore-not-found
-            kubectl get secret certificate-tls -n nginx -o yaml | \
-              sed "s/namespace: nginx/namespace: $NS/" | \
-              kubectl apply -f -
+            az aks command invoke \
+              --resource-group ${{ secrets.AKS_RG }} \
+              --name ${{ secrets.AKS_NAME }} \
+              --command "
+                kubectl delete secret certificate-tls -n $NS --ignore-not-found && \
+                kubectl get secret certificate-tls -n nginx -o yaml | \
+                sed 's/namespace: nginx/namespace: $NS/' | \
+                kubectl apply -f -
+              "
           done
             
       - name: Apply Kubernetes Artifacts
