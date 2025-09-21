@@ -27,7 +27,7 @@ metadata:
   namespace: nginx
 spec:
   type: ExternalName
-  externalName: grafana.grafana.svc.cluster.local
+  externalName: grafana.prometheus.svc.cluster.local
   ports:
     - port: 3000
 ---
