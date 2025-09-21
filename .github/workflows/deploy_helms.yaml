@@ -100,24 +100,6 @@ jobs:
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
             --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add elastic https://helm.elastic.co && helm repo update && helm upgrade --install elasticsearch elastic/elasticsearch --namespace elk --values elk.yaml" \
-            --file values/elk.yaml
-
-          az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add elastic https://helm.elastic.co && helm repo update && helm upgrade --install kibana elastic/kibana --namespace elk --values kibana.yaml" \
-            --file values/kibana.yaml
-
-          az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update && helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus --values prometheus.yaml" \
-            --file values/prometheus.yaml
-
-          az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
             --command "helm repo add spark-operator https://kubeflow.github.io/spark-operator && helm repo update && helm upgrade --install spark-operator spark-operator/spark-operator --namespace spark-operator --set webhook.enable=true --set sparkJobNamespace=spark"
 
           helm package charts/spark-history-server --destination charts/packaged/
@@ -128,12 +110,6 @@ jobs:
             --command "helm upgrade --install spark-history spark-history-server-0.1.0.tgz --namespace spark-history --values values.yaml" \
             --file charts/packaged/spark-history-server-0.1.0.tgz \
             --file charts/spark-history-server/values.yaml
-
-          az aks command invoke \
-            --resource-group ${{ secrets.AKS_RG }} \
-            --name ${{ secrets.AKS_NAME }} \
-            --command "helm repo add kedacore https://kedacore.github.io/charts && helm repo update && helm upgrade --install keda kedacore/keda --namespace keda --values keda.yaml" \
-            --file values/keda.yaml
 
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
@@ -204,4 +180,3 @@ jobs:
             --query "commandResult" -o tsv)
 
             echo "NGINX EXTERNAL IP: $IP"
-
