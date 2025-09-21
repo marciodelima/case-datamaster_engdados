@@ -10,22 +10,61 @@ data:
     <head>
       <title>Portal de Observabilidade - DataMaster</title>
       <style>
-        body { font-family: sans-serif; background: #f4f4f4; padding: 40px; }
-        h1 { color: #333; }
-        ul { list-style: none; padding: 0; }
-        li { margin: 10px 0; }
-        a { text-decoration: none; color: #0078d4; font-size: 18px; }
+        body {
+          font-family: sans-serif;
+          background-image: url('https://cdn.pixabay.com/photo/2020/04/07/08/36/data-5018112_1280.jpg');
+          background-size: cover;
+          background-position: center;
+          color: #fff;
+          padding: 40px;
+          backdrop-filter: brightness(0.6);
+        }
+        h1 {
+          color: #00ffff;
+          text-shadow: 1px 1px 2px #000;
+        }
+        ul {
+          list-style: none;
+          padding: 0;
+        }
+        li {
+          margin: 10px 0;
+        }
+        a {
+          text-decoration: none;
+          color: #ffcc00;
+          font-size: 18px;
+          text-shadow: 1px 1px 2px #000;
+        }
+        footer {
+          margin-top: 40px;
+          font-size: 14px;
+          color: #ccc;
+        }
       </style>
+      <script>
+        const base = window.location.protocol + "//" + window.location.host;
+        window.onload = function() {
+          document.getElementById("grafana").href = base + "/grafana";
+          document.getElementById("airflow").href = base + "/airflow";
+          document.getElementById("kibana").href = base + "/kibana";
+          document.getElementById("spark").href = base + "/spark-history";
+          document.getElementById("dashboard").href = base + "/dashboard";
+        };
+      </script>
     </head>
     <body>
-      <h1>Portal de Observabilidade</h1>
+      <h1>Portal - Links Uteis</h1>
       <ul>
-        <li><a href="https://grafana.datamaster.internal">Grafana</a></li>
-        <li><a href="https://airflow.datamaster.internal">Airflow</a></li>
-        <li><a href="https://kibana.datamaster.internal">Kibana</a></li>
-        <li><a href="https://spark-history.datamaster.internal">Spark History</a></li>
-        <li><a href="https://dashboard.datamaster.internal">Kubernetes Dashboard</a></li>
+        <li><a id="grafana" target="_blank">Grafana</a></li>
+        <li><a id="airflow" target="_blank">Airflow</a></li>
+        <li><a id="kibana" target="_blank">Kibana</a></li>
+        <li><a id="spark" target="_blank">Spark History</a></li>
+        <li><a id="dashboard" target="_blank">Kubernetes Dashboard</a></li>
       </ul>
+      <footer>
+        Autor: Marcio de Lima
+      </footer>
     </body>
     </html>
 ---

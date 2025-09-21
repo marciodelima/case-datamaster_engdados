@@ -71,6 +71,33 @@ jobs:
               helm upgrade --install prometheus-crds prometheus-community/prometheus-operator-crds \
                 --namespace prometheus
             "
+
+      - name: Generate TLS certificate for IP
+        run: |
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+            -keyout tls.key -out tls.crt \
+            -subj "/CN=${{ env.INGRESS_IP }}"
+
+      - name: Create TLS secret in NGINX
+        run: |
+          kubectl create secret tls certificate-tls \
+            --cert=tls.crt \
+            --key=tls.key \
+            -n nginx || \
+          kubectl delete secret certificate-tls -n nginx && \
+          kubectl create secret tls certificate-tls \
+            --cert=tls.crt \
+            --key=tls.key \
+            -n nginx
+
+      - name: Create TLS secret to some namespaces
+        run: |
+          for NS in airflow elk app spark-history grafana dashboard; do
+            kubectl delete secret certificate-tls -n $NS --ignore-not-found
+            kubectl get secret certificate-tls -n nginx -o yaml | \
+              sed "s/namespace: nginx/namespace: $NS/" | \
+              kubectl apply -f -
+          done
             
       - name: Apply Kubernetes Artifacts
         run: |
@@ -146,7 +173,8 @@ jobs:
                   --set controller.resources.limits.memory=256Mi \
                   --set controller.service.type=LoadBalancer \
                   --set controller.service.loadBalancerIP=${{ env.INGRESS_IP }} \
-                  --set controller.config.ssl-redirect=false
+                  --set controller.extraArgs.default-ssl-certificate=nginx/certificate-tls \
+                  --set controller.config.ssl-redirect=true \
                   --set serviceAccount.create=false \
                   --set serviceAccount.name=nginx-sa \
                   --set podSecurityPolicy.enabled=false \
