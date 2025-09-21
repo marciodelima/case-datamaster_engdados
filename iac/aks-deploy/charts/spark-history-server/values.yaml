@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  repository: gcr.io/spark-operator/spark-history-server
-  tag: v3.5.0
+  repository: public.ecr.aws/u3q2e8l3/spark-history-server
+  tag: v3.3.2
   pullPolicy: IfNotPresent
 
 service:

@@ -5,7 +5,7 @@ airflow:
     repository: apache/airflow
     tag: 2.8.1
   config:
-    AIRFLOW__CORE__FERNET_KEY: your_fernet_key
+    AIRFLOW__CORE__FERNET_KEY: _agpsPrbStaDK78nsbuA__yLffauxKiIhSICmYL7tm8=
     AIRFLOW__KUBERNETES__NAMESPACE: airflow
     AIRFLOW__KUBERNETES__WORKER_CONTAINER_IMAGE: apache/airflow:2.8.1
 
@@ -29,8 +29,10 @@ airflow:
         name: filebeat-config
 
 webserver:
+  enabled: true
   service:
     type: ClusterIP
+    port: 8080
   defaultUser:
     enabled: true
     username: admin
@@ -68,6 +70,5 @@ metrics:
       enabled: true
       labels:
         release: prometheus
-
 
 
