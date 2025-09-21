@@ -76,7 +76,8 @@ jobs:
         run: |
           openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
             -keyout tls.key -out tls.crt \
-            -subj "/CN=${{ env.INGRESS_IP }}"
+            -subj "/CN=${{ env.INGRESS_IP }}" \
+            -addext "subjectAltName=IP:${INGRESS_IP}"
 
       - name: Create TLS secret in NGINX
         run: |
@@ -94,9 +95,8 @@ jobs:
               --resource-group ${{ secrets.AKS_RG }} \
               --name ${{ secrets.AKS_NAME }} \
               --command "
-                kubectl delete secret certificate-tls -n $NS --ignore-not-found && \
-                kubectl get secret certificate-tls -n nginx -o yaml | \
-                sed 's/namespace: nginx/namespace: $NS/' | \
+                kubectl get secret certificate-tls -n nginx -o json | \
+                jq '.metadata.namespace=\"${NS}\"' | \
                 kubectl apply -f -
               "
           done
@@ -155,7 +155,7 @@ jobs:
               --command "
                 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
                 helm repo update && \
-                helm upgrade --debug --install nginx-ingress ingress-nginx/ingress-nginx \
+                helm upgrade --install nginx-ingress ingress-nginx/ingress-nginx \
                   --namespace nginx \
                   --create-namespace \
                   --version 4.9.0 \

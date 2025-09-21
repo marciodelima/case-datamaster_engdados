@@ -12,8 +12,6 @@ data:
       <style>
         body {
           font-family: sans-serif;
-          background-image: url('https://cdn.pixabay.com/photo/2020/04/07/08/36/data-5018112_1280.jpg');
-          background-size: cover;
           background-position: center;
           color: #fff;
           padding: 40px;
@@ -39,7 +37,7 @@ data:
         footer {
           margin-top: 40px;
           font-size: 14px;
-          color: #ccc;
+          color: #ffcc00;
         }
       </style>
       <script>
