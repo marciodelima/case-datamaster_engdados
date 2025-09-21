@@ -72,19 +72,57 @@ jobs:
                 --namespace prometheus
             "
 
-      - name: Generate TLS certificate for IP
+      - name: Gerar certificado TLS assinado por CA para IP
         run: |
-          openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-            -keyout tls.key -out tls.crt \
-            -subj "/CN=${{ env.INGRESS_IP }}" \
-            -addext "subjectAltName=IP:${INGRESS_IP}"
+          INGRESS_IP=${{ secrets.INGRESS_IP }}
+      
+          echo "Gerando chave da CA..."
+          openssl genrsa -out ca.key 4096
+      
+          echo "Gerando certificado raiz da CA..."
+          openssl req -x509 -new -nodes -key ca.key -sha256 -days 3650 \
+            -out ca.crt \
+            -subj "/C=BR/ST=SP/L=SaoPaulo/O=MyCompany/CN=MyRootCA"
 
-      - name: Create TLS secret in NGINX
+          echo "Criando arquivo de configuração para SAN com IP..."
+          cat > ip.cnf <<EOF
+          [req]
+          default_bits       = 2048
+          prompt             = no
+          default_md         = sha256
+          req_extensions     = req_ext
+          distinguished_name = dn
+
+          [dn]
+          C = BR
+          ST = SP
+          L = SaoPaulo
+          O = MyCompany
+          CN = ${INGRESS_IP}
+      
+          [req_ext]
+          subjectAltName = @alt_names
+      
+          [alt_names]
+          IP.1 = ${INGRESS_IP}
+          EOF
+
+          echo "Gerando chave privada do certificado..."
+          openssl genrsa -out tls.key 2048
+
+          echo "Gerando CSR..."
+          openssl req -new -key tls.key -out tls.csr -config ip.cnf
+
+          echo "Assinando certificado com a CA..."
+          openssl x509 -req -in tls.csr -CA ca.crt -CAkey ca.key -CAcreateserial \
+            -out tls.crt -days 365 -sha256 -extfile ip.cnf -extensions req_ext
+
+      - name: Criar Secret TLS no AKS
         run: |
           az aks command invoke \
             --resource-group ${{ secrets.AKS_RG }} \
             --name ${{ secrets.AKS_NAME }} \
-            --command "kubectl create secret tls certificate-tls --cert=tls.crt --key=tls.key -n nginx || kubectl delete secret certificate-tls -n nginx && kubectl create secret tls certificate-tls --cert=tls.crt --key=tls.key -n nginx" \
+            --command "kubectl delete secret certificate-tls -n nginx --ignore-not-found && kubectl create secret tls certificate-tls --cert=tls.crt --key=tls.key -n nginx" \
             --file tls.crt \
             --file tls.key
 
