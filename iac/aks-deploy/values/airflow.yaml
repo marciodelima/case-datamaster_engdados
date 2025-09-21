@@ -75,4 +75,3 @@ metrics:
       labels:
         release: prometheus
 
-
