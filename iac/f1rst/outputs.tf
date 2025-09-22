@@ -1,9 +1,5 @@
 data "azurerm_subscription" "primary" {}
 
-output "acr_login_server" {
-  value = azurerm_container_registry.acr.login_server
-}
-
 output "azure_client_id" {
   value = azuread_application.github_app.client_id
 }

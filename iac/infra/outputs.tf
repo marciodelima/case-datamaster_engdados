@@ -2,13 +2,11 @@ output "storage_account_name" {
   value = azurerm_storage_account.storage.name
 }
 
-output "eventhub_namespace" {
-  description = "Namespace do Event Hub"
-  value       = azurerm_eventhub_namespace.streaming_ns.name
+output "fabric_workspace_id" {
+  value = module.fabric.id
 }
 
-output "eventhub_name" {
-  description = "Nome do Event Hub"
-  value       = azurerm_eventhub.streaming_hub.name
+output "databricks_workspace_url" {
+  value = module.databricks.workspace_url
 }
 

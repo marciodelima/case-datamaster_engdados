@@ -1,44 +1,36 @@
-terraform {
-  required_version = ">= 1.3.0"
-  
-  backend "azurerm" {}
-
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.0"
-    }
-
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = ">= 3.0.0"
-    }
-
-    azapi = {
-      source  = "azure/azapi"
-      version = ">= 2.0.0"
-    }
-  }
-}
-
 provider "azurerm" {
   features {}
 }
 
-provider "kubernetes" {
-  host                   = module.aks.kube_config[0].host
-  client_certificate     = base64decode(module.aks.kube_config[0].client_certificate)
-  client_key             = base64decode(module.aks.kube_config[0].client_key)
-  cluster_ca_certificate = base64decode(module.aks.kube_config[0].cluster_ca_certificate)
-
-  alias = "aks"
+module "fabric" {
+  source = "./modules/fabric_workspace"
+  name   = var.fabric_name
+  location = var.location
 }
 
-provider "azuread" {}
+module "databricks" {
+  source = "./modules/databricks_workspace"
+  name   = var.databricks_name
+  location = var.location
+}
 
-provider "azapi" {}
+module "storage" {
+  source = "./modules/storage"
+  location = var.location
+}
 
-module "aks" {
-  source = "./modules/aks"
+module "event_hubs" {
+  source = "./modules/event_hubs"
+  name   = var.eventhub_name
+}
+
+module "purview" {
+  source = "./modules/purview"
+  name   = var.purview_name
+}
+
+module "log_analytics" {
+  source = "./modules/log_analytics"
+  name   = var.log_name
 }
 

@@ -4,18 +4,6 @@ variable "spn_name" { default = "github-deploy-spn" }
 variable "keyvault_name" { default = "kv-secrets-datamastermdl" }
 variable "keyvault_rg" { default = "rsg-datamaster" }
 
-variable "namespaces" {
-  type    = list(string)
-  default = ["airflow", "elk", "spark", "spark-operator", "grafana", "prometheus", "nginx", "app"]
-}
-
-variable "cert_password" {
-  type      = string
-  sensitive = true
-  default   = "12345678"
-}
-variable "cert_path" { default = "certificado.pfx" }
-
 variable "tags" {
   description = "Tags padrão"
   type        = map(string)
@@ -28,6 +16,26 @@ variable "tags" {
 
 variable "folders" {
   default = ["raw", "bronze", "silver", "gold", "stage"]
+}
+
+variable "location" {
+  default = "East US"
+}
+
+variable "fabric_name" {
+  default = "fabric-finance"
+}
+
+variable "databricks_name" {
+  default = "databricks-finance"
+}
+
+variable "eventhub_name" {
+  default = "finance-events"
+}
+
+variable "log_name" {
+  default = "finance-logs"
 }
 
 
