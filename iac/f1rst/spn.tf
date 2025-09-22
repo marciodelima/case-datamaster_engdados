@@ -15,13 +15,6 @@ resource "azuread_application_password" "github_secret" {
   end_date       = timeadd(timestamp(), "8760h") # 1 ano
 }
 
-resource "azurerm_role_assignment" "acr_pull" {
-  scope                = azurerm_container_registry.acr.id
-  role_definition_name = "AcrPull"
-  principal_id         = azuread_service_principal.github_spn.object_id
-  depends_on           = [azurerm_container_registry.acr]
-}
-
 resource "azurerm_role_assignment" "kv_reader" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Reader"
