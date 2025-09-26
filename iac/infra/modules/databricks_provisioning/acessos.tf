@@ -23,13 +23,11 @@ resource "databricks_token" "admin_token" {
 
 resource "null_resource" "store_token_in_github" {
   provisioner "local-exec" {
-    command = <<EOT
-      gh secret set DATABRICKS_ADMIN_TOKEN --body "${token}" --repo "${repo}"
-    EOT
+    command = "gh secret set DATABRICKS_ADMIN_TOKEN --body \"$TOKEN\" --repo \"$REPO\""
 
     environment = {
-      token = databricks_token.admin_token.token_value
-      repo  = "marciodelima/case-datamaster_engdados"
+      TOKEN = databricks_token.admin_token.token_value
+      REPO  = var.github_repo
     }
   }
 

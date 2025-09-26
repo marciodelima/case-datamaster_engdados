@@ -8,10 +8,6 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   storage_mb             = 32768
   sku_name               = "GP_Standard_D2s_v3"
 
-  high_availability {
-    mode = "Disabled"
-  }
-
   authentication {
     active_directory_auth_enabled = true
   }

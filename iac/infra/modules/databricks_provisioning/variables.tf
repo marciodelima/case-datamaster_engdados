@@ -11,3 +11,4 @@ variable "bootstrap_token" {
   sensitive = true
 }
 
+variable "github_repo" {default="marciodelima/case-datamaster_engdados"}
