@@ -25,9 +25,14 @@ jobs:
           -p ${{ secrets.AZURE_CLIENT_SECRET }} \
           --tenant ${{ secrets.AZURE_TENANT_ID }}
 
+    - name: Validate JSON
+      run: |
+         echo '${{ secrets.AZURE_CREDENTIALS }}' > azure_credentials.json
+         jq . azure_credentials.json
+
     - name: Parse AZURE_CREDENTIALS JSON
       run: |
-            echo "${{ secrets.AZURE_CREDENTIALS }}" > azure_credentials.json
+            echo '${{ secrets.AZURE_CREDENTIALS }}' > azure_credentials.json
             
             export ARM_CLIENT_ID=$(jq -r .clientId azure_credentials.json)
             export ARM_CLIENT_SECRET=$(jq -r .clientSecret azure_credentials.json)
