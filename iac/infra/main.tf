@@ -49,7 +49,6 @@ module "databricks_provisioning" {
 
   databricks_workspace_url = module.databricks.workspace_url
   admin_email              = var.admin_email
-  depends_on               = [module.databricks]
 }
 
 module "storage" {
