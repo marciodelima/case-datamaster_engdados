@@ -8,12 +8,13 @@ resource "null_resource" "create_fabric_workspace" {
     command = <<EOT
       az extension add --name microsoft-fabric || echo "Fabric extension already installed"
 
-      az microsoft-fabric workspace create \
-        --name ${var.name} \
+      az fabric capacity create \
         --resource-group ${var.resource_group_name} \
+        --capacity-name ${var.name} \
+        --sku "{name:F2,tier:Fabric}" \
+        --administration "{members:[\"${var.admin_email}\"]}" \
         --location ${var.location} \
-        --identity-type SystemAssigned \
-        --tags environment=prod
+        --tags "{environment:prod}"
     EOT
   }
 

@@ -9,7 +9,7 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   sku_name               = "GP_Standard_D2s_v3"
 
   high_availability {
-    mode = "ZoneRedundant"
+    mode = "Disabled"
   }
 
   authentication {
