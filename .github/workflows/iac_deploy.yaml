@@ -26,7 +26,7 @@ jobs:
           --tenant ${{ secrets.AZURE_TENANT_ID }}
 
     - name: Parse AZURE_CREDENTIALS JSON
-        run: |
+      run: |
             echo "${{ secrets.AZURE_CREDENTIALS }}" > azure_credentials.json
             
             export ARM_CLIENT_ID=$(jq -r .clientId azure_credentials.json)
