@@ -11,6 +11,7 @@ variable "bootstrap_token" {
   description = "Token temporário para provisionamento inicial"
   type        = string
   sensitive   = true
+  default     = ""
 }
 
 variable "fabric_name" {
