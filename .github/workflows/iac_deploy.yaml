@@ -25,14 +25,19 @@ jobs:
           -p ${{ secrets.AZURE_CLIENT_SECRET }} \
           --tenant ${{ secrets.AZURE_TENANT_ID }}
 
-    - name: Get secrets from Key Vault
-      run: |
-        export TF_SP_SECRET=$(az keyvault secret show \
-          --name spn-client-secret \
-          --vault-name kv-secret-datamastermdl \
-          --query value -o tsv)
-
-        echo "TF_SP_SECRET=$TF_SP_SECRET" >> $GITHUB_ENV
+    - name: Parse AZURE_CREDENTIALS JSON
+    run: |
+        echo "${{ secrets.AZURE_CREDENTIALS }}" > azure_credentials.json
+        
+        export ARM_CLIENT_ID=$(jq -r .clientId azure_credentials.json)
+        export ARM_CLIENT_SECRET=$(jq -r .clientSecret azure_credentials.json)
+        export ARM_SUBSCRIPTION_ID=$(jq -r .subscriptionId azure_credentials.json)
+        export ARM_TENANT_ID=$(jq -r .tenantId azure_credentials.json)
+        
+        echo "ARM_CLIENT_ID=$ARM_CLIENT_ID" >> $GITHUB_ENV
+        echo "ARM_CLIENT_SECRET=$ARM_CLIENT_SECRET" >> $GITHUB_ENV
+        echo "ARM_SUBSCRIPTION_ID=$ARM_SUBSCRIPTION_ID" >> $GITHUB_ENV
+        echo "ARM_TENANT_ID=$ARM_TENANT_ID" >> $GITHUB_ENV
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -61,9 +66,6 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply -auto-approve tfplan
-      env:
-        ARM_CLIENT_SECRET: ${{ env.TF_SP_SECRET }}
 
     - name: Export Terraform Outputs
       run: terraform output -json > tfoutputs.json
-
