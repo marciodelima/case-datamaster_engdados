@@ -11,6 +11,10 @@ provider "azurerm" {
   features {}
 }
 
+terraform {
+  backend "azurerm" {}
+}
+
 module "fabric" {
   source              = "./modules/fabric_workspace"
   name                = var.fabric_name
