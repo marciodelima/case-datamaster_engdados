@@ -46,7 +46,8 @@ module "databricks_provisioning" {
   providers = {
     databricks = databricks.workspace
   }
-
+  
+  bootstrap_token          = var.bootstrap_token
   databricks_workspace_url = module.databricks.workspace_url
   admin_email              = var.admin_email
 }
