@@ -18,5 +18,23 @@ resource "databricks_group_member" "admin_assignment" {
 resource "databricks_token" "admin_token" {
   provider         = databricks.workspace
   comment          = "Token pessoal para ${var.admin_email}"
-  lifetime_seconds = 604800 # 7 dias
+  lifetime_seconds = 1209600
 }
+
+resource "null_resource" "store_token_in_github" {
+  provisioner "local-exec" {
+    command = <<EOT
+      gh secret set DATABRICKS_ADMIN_TOKEN --body "${token}" --repo "${repo}"
+    EOT
+
+    environment = {
+      token = databricks_token.admin_token.token_value
+      repo  = "marciodelima/case-datamaster_engdados"
+    }
+  }
+
+  triggers = {
+    token = databricks_token.admin_token.token_value
+  }
+}
+
