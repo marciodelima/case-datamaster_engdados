@@ -18,7 +18,6 @@ provider "azurerm" {
 provider "databricks" {
   alias = "workspace"
   host  = module.databricks.workspace_url
-  token = var.bootstrap_token
 }
 
 terraform {
