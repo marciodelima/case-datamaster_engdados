@@ -6,6 +6,8 @@ resource "azurerm_resource_group" "fabric_rg" {
 resource "null_resource" "create_fabric_workspace" {
   provisioner "local-exec" {
     command = <<EOT
+      az extension add --name fabric
+
       az fabric workspace create \
         --name ${var.name} \
         --resource-group ${var.resource_group_name} \
@@ -38,8 +40,8 @@ az monitor diagnostic-settings create \
   --name "fabric-diagnostics" \
   --resource ${var.log_analytics_workspace_id} \
   --workspace ${var.log_analytics_workspace_id} \
-  --logs '[{"category":"AllLogs","enabled":true}]' \
-  --metrics '[{"category":"AllMetrics","enabled":true}]'
+  --logs '[{"category": "AuditLogs", "enabled": true}]' \
+  --metrics '[{"category": "Metrics", "enabled": true}]'
 EOT
   }
 }

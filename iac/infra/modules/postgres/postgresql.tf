@@ -1,5 +1,5 @@
 resource "azurerm_postgresql_flexible_server" "ri_db" {
-  name                   = "db-postgres"
+  name                   = "finance-db-postgres-2025"
   resource_group_name    = var.resource_group_name
   location               = var.location
   administrator_login    = "adminuser"

@@ -13,7 +13,7 @@ resource "azurerm_cognitive_deployment" "gpt4" {
   model {
     format  = "OpenAI"
     name    = "gpt-4"
-    version = "2023-07-01-preview"
+    version = "0125-Preview"
   }
 
   sku {

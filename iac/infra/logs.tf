@@ -25,17 +25,14 @@ resource "azurerm_monitor_diagnostic_setting" "storage_diag" {
   target_resource_id         = module.storage.storage_id
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
 
-  enabled_log {
-    category = "StorageRead"
-  }
-
-  enabled_log {
-    category = "StorageWrite"
-  }
-
   enabled_metric {
     category = "Transaction"
   }
+
+  enabled_metric {
+    category = "Capacity"
+  }
+
 }
 
 resource "azurerm_monitor_diagnostic_setting" "eventhub_diag" {

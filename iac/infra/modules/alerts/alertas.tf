@@ -2,7 +2,7 @@ resource "azurerm_monitor_action_group" "alert_email_group" {
   name                = "alert-email-group"
   resource_group_name = var.resource_group_name
   short_name          = "emailgrp"
-  location            = var.location
+  location            = "global"
 
   email_receiver {
     name                    = "admin-alert"
