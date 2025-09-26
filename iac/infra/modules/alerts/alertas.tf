@@ -53,7 +53,7 @@ resource "azurerm_monitor_metric_alert" "job_duration_alert" {
     metric_name      = "JobDuration"
     aggregation      = "Average"
     operator         = "GreaterThan"
-    threshold        = 300000  # 5 minutos em ms
+    threshold        = 300000 # 5 minutos em ms
   }
 
   action {

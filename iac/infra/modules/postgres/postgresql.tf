@@ -15,24 +15,24 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   authentication {
     active_directory_auth_enabled = true
   }
-  
+
   tags = {
     environment = "production"
   }
 }
 
 resource "azurerm_postgresql_flexible_server_database" "ri_db_main" {
-  name      = "finance-db"
-  server_id = azurerm_postgresql_flexible_server.ri_db.id
-  collation = "C.UTF-8"
-  charset   = "UTF8"
+  name       = "finance-db"
+  server_id  = azurerm_postgresql_flexible_server.ri_db.id
+  collation  = "C.UTF-8"
+  charset    = "UTF8"
   depends_on = [azurerm_postgresql_flexible_server.ri_db]
 }
 
 resource "azurerm_postgresql_flexible_server_configuration" "pgvector" {
-  name      = "shared_preload_libraries"
-  server_id = azurerm_postgresql_flexible_server.ri_db.id
-  value     = "vector"
+  name       = "shared_preload_libraries"
+  server_id  = azurerm_postgresql_flexible_server.ri_db.id
+  value      = "vector"
   depends_on = [azurerm_postgresql_flexible_server_database.ri_db_main]
 }
 

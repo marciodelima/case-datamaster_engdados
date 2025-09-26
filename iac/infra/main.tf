@@ -8,11 +8,17 @@ terraform {
       source  = "databricks/databricks"
       version = ">= 1.0.0"
     }
- }
+  }
 }
 
 provider "azurerm" {
   features {}
+}
+
+provider "databricks" {
+  alias = "workspace"
+  host  = module.databricks.workspace_url
+  token = var.bootstrap_token
 }
 
 terraform {
@@ -20,10 +26,10 @@ terraform {
 }
 
 module "fabric" {
-  source              = "./modules/fabric_workspace"
-  name                = var.fabric_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
+  source                     = "./modules/fabric_workspace"
+  name                       = var.fabric_name
+  location                   = var.location
+  resource_group_name        = var.resource_group_name
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
 }
 
@@ -32,6 +38,17 @@ module "databricks" {
   name                = var.databricks_name
   location            = var.location
   resource_group_name = var.resource_group_name
+}
+
+module "databricks_provisioning" {
+  source = "./modules/databricks_provisioning"
+
+  providers = {
+    databricks = databricks.workspace
+  }
+
+  admin_email = var.admin_email
+  depends_on  = [module.databricks]
 }
 
 module "storage" {

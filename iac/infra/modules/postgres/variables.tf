@@ -1,6 +1,6 @@
 variable "location" {}
 variable "resource_group_name" {}
 variable "db_password" {
-  type        = string
-  sensitive   = true
+  type      = string
+  sensitive = true
 }

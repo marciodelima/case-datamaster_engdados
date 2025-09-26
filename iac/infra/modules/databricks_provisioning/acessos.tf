@@ -1,0 +1,22 @@
+data "databricks_group" "admins" {
+  provider     = databricks.workspace
+  display_name = "admins"
+}
+
+resource "databricks_user" "admin_user" {
+  provider         = databricks.workspace
+  user_name        = var.admin_email
+  workspace_access = true
+}
+
+resource "databricks_group_member" "admin_assignment" {
+  provider  = databricks.workspace
+  group_id  = data.databricks_group.admins.id
+  member_id = databricks_user.admin_user.id
+}
+
+resource "databricks_token" "admin_token" {
+  provider         = databricks.workspace
+  comment          = "Token pessoal para ${var.admin_email}"
+  lifetime_seconds = 604800 # 7 dias
+}

@@ -7,8 +7,8 @@ resource "azurerm_cognitive_account" "openai" {
 }
 
 resource "azurerm_cognitive_deployment" "gpt4" {
-  name                  = "gpt-4"
-  cognitive_account_id  = azurerm_cognitive_account.openai.id
+  name                 = "gpt-4"
+  cognitive_account_id = azurerm_cognitive_account.openai.id
 
   model {
     format  = "OpenAI"
