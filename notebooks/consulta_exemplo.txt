@@ -1,0 +1,15 @@
+# Consulta semântica: busca por similaridade
+consulta = "Quais empresas têm boa governança e baixo endividamento?"
+consulta_embedding = llm.embeddings.create(input=[consulta], model="text-embedding-ada-002").data[0].embedding
+
+cur.execute("""
+SELECT empresa, trimestre, texto
+FROM ri_embeddings
+ORDER BY embedding <-> %s
+LIMIT 3
+""", (consulta_embedding,))
+resultados = cur.fetchall()
+
+for empresa, trimestre, texto in resultados:
+    print(f"\n🔹 {empresa} ({trimestre})\nResumo: {texto[:500]}...")
+

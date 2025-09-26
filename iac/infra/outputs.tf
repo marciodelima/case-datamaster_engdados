@@ -1,9 +1,9 @@
 output "storage_account_name" {
-  value = azurerm_storage_account.storage.name
+  value = module.storage.storage_name
 }
 
 output "fabric_workspace_id" {
-  value = module.fabric.id
+  value = module.fabric.fabric_workspace_id
 }
 
 output "databricks_workspace_url" {

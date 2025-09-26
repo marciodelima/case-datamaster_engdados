@@ -1,0 +1,96 @@
+{
+  "lenses": {
+    "0": {
+      "order": 0,
+      "parts": {
+        "0": {
+          "position": { "x": 0, "y": 0, "rowSpan": 2, "colSpan": 12 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/MarkdownPart",
+            "settings": {
+              "content": "# Dashboard de Execução de Jobs\nMonitoramento visual de sucesso, falhas e duração média"
+            }
+          }
+        },
+        "1": {
+          "position": { "x": 0, "y": 2, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${databricks_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Column",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "JobSuccessCount",
+                    "Aggregation": "Total"
+                  },
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "JobFailureCount",
+                    "Aggregation": "Total"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "2": {
+          "position": { "x": 6, "y": 2, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${databricks_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Line",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "JobDuration",
+                    "Aggregation": "Average"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "3": {
+          "position": { "x": 0, "y": 8, "rowSpan": 6, "colSpan": 12 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${databricks_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Area",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "ActiveClusters",
+                    "Aggregation": "Maximum"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "metadata": {
+    "model": {
+      "timeRange": {
+        "value": {
+          "relative": {
+            "duration": 24,
+            "timeUnit": 1
+          }
+        }
+      }
+    }
+  }
+}
+

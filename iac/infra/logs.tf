@@ -1,0 +1,55 @@
+resource "azurerm_log_analytics_workspace" "logs" {
+  name                = "finance-logs"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
+}
+
+resource "azurerm_monitor_diagnostic_setting" "dbx_diag" {
+  name                       = "dbx-diagnostics"
+  target_resource_id         = module.databricks.workspace_id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
+
+  enabled_log {
+    category = "AuditLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "storage_diag" {
+  name                       = "storage-diagnostics"
+  target_resource_id         = module.storage.storage_id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
+
+  enabled_log {
+    category = "StorageRead"
+  }
+
+  enabled_log {
+    category = "StorageWrite"
+  }
+
+  enabled_metric {
+    category = "Transaction"
+  }
+}
+
+resource "azurerm_monitor_diagnostic_setting" "eventhub_diag" {
+  name                       = "eventhub-diagnostics"
+  target_resource_id         = module.event_hubs.eventhub_namespace_id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
+
+  enabled_log {
+    category = "OperationalLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
+}
+
+

@@ -5,7 +5,7 @@ resource "azurerm_key_vault" "kv" {
   tenant_id                = data.azurerm_client_config.current.tenant_id
   sku_name                 = "standard"
   purge_protection_enabled = false
-  depends_on = [azurerm_resource_group.rsg_datamaster]
+  depends_on               = [azurerm_resource_group.rsg_datamaster]
 }
 
 

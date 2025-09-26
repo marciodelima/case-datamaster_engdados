@@ -1,0 +1,166 @@
+{
+  "lenses": {
+    "0": {
+      "order": 0,
+      "parts": {
+        "0": {
+          "position": { "x": 0, "y": 0, "rowSpan": 2, "colSpan": 12 },
+          "metadata": {
+            "type": "Extension/HubsExtension/PartType/MarkdownPart",
+            "settings": {
+              "content": "# Observabilidade\Monitoramento"
+            }
+          }
+        },
+        "1": {
+          "position": { "x": 0, "y": 2, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${databricks_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Line",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "ClusterCount",
+                    "Aggregation": "Average"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "2": {
+          "position": { "x": 6, "y": 2, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${databricks_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Column",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "JobSuccessCount",
+                    "Aggregation": "Total"
+                  },
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "JobFailureCount",
+                    "Aggregation": "Total"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "3": {
+          "position": { "x": 0, "y": 8, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${databricks_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Area",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "JobDuration",
+                    "Aggregation": "Average"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "4": {
+          "position": { "x": 6, "y": 8, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${databricks_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Line",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Databricks/workspaces",
+                    "MetricName": "ActiveClusters",
+                    "Aggregation": "Maximum"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "5": {
+          "position": { "x": 0, "y": 14, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${storage_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Area",
+                "Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.Storage/storageAccounts",
+                    "MetricName": "UsedCapacity",
+                    "Aggregation": "Average"
+                  },
+                  {
+                    "MetricNamespace": "Microsoft.Storage/storageAccounts",
+                    "MetricName": "Transactions",
+                    "Aggregation": "Total"
+                  }
+		]
+              }
+            }
+          }
+        },
+        "6": {
+          "position": { "x": 6, "y": 14, "rowSpan": 6, "colSpan": 6 },
+          "metadata": {
+            "type": "Extension/MetricsExplorerPart",
+            "inputs": { "scope": "${eventhub_id}" },
+            "settings": {
+              "Content": {
+                "Version": "1.0",
+                "ChartType": "Column",
+		"Metrics": [
+                  {
+                    "MetricNamespace": "Microsoft.EventHub/namespaces",
+                    "MetricName": "IncomingMessages",
+                    "Aggregation": "Total"
+                  },
+                  {
+                    "MetricNamespace": "Microsoft.EventHub/namespaces",
+                    "MetricName": "OutgoingMessages",
+                    "Aggregation": "Total"
+                  }
+                ]              
+               }
+            }
+          }
+        }
+      }
+    }
+  },
+  "metadata": {
+    "model": {
+      "timeRange": {
+        "value": {
+          "relative": {
+            "duration": 24,
+            "timeUnit": 1
+          }
+        }
+      }
+    }
+  }
+}
+

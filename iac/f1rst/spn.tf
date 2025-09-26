@@ -7,7 +7,7 @@ resource "azuread_application" "github_app" {
 }
 
 resource "azuread_service_principal" "github_spn" {
-  client_id = azuread_application.github_app.client_id
+  client_id  = azuread_application.github_app.client_id
   depends_on = [azuread_application.github_app]
 }
 
