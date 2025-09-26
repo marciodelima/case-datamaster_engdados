@@ -6,9 +6,9 @@ resource "azurerm_resource_group" "fabric_rg" {
 resource "null_resource" "create_fabric_workspace" {
   provisioner "local-exec" {
     command = <<EOT
-      az extension add --name fabric
+      az extension add --name microsoft-fabric || echo "Fabric extension already installed"
 
-      az fabric workspace create \
+      az microsoft-fabric workspace create \
         --name ${var.name} \
         --resource-group ${var.resource_group_name} \
         --location ${var.location} \
