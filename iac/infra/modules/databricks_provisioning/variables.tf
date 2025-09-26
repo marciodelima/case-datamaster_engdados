@@ -1,10 +1,13 @@
-variable "databricks_workspace_url" {
-  description = "URL do workspace Databricks criado dinamicamente"
+variable "admin_email" {
   type        = string
 }
 
-variable "admin_email" {
-  description = "Email do usuário que será promovido como administrador"
-  type        = string
+variable "databricks_workspace_url" {
+  type = string
+}
+
+variable "bootstrap_token" {
+  type      = string
+  sensitive = true
 }
 

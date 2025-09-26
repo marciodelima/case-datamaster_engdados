@@ -7,3 +7,8 @@ terraform {
   }
 }
 
+provider "databricks" {
+  alias = "workspace"
+  host  = var.databricks_workspace_url
+  token = var.bootstrap_token
+}
