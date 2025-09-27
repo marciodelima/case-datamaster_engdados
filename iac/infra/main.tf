@@ -93,7 +93,7 @@ module "alerts" {
   source              = "./modules/alerts"
   resource_group_name = var.resource_group_name
   location            = var.location
-  databricks_wk_id    = module.databricks.workspace_id
+  workspace_logs_id   = azurerm_log_analytics_workspace.logs.id
 }
 
 
