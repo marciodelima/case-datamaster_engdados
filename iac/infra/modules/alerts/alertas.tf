@@ -35,9 +35,7 @@ QUERY
     threshold = 0
   }
 
-  action {
-    action_group_id = azurerm_monitor_action_group.alert_email_group.id
-  }
+  action_group = [azurerm_monitor_action_group.alert_email_group.id]
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert" "job_duration_alert" {
@@ -66,8 +64,6 @@ QUERY
     threshold = 0
   }
 
-  action {
-    action_group_id = azurerm_monitor_action_group.alert_email_group.id
-  }
+  action_group = [azurerm_monitor_action_group.alert_email_group.id]
 }
 
