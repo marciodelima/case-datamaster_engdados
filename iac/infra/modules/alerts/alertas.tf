@@ -19,7 +19,7 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "job_failure_alert" {
   frequency           = 5
   time_window         = 5
 
-  data_source_id = azurerm_log_analytics_workspace.logs.id
+  data_source_id = var.workspace_logs_id
 
   query = <<QUERY
 AzureDiagnostics
