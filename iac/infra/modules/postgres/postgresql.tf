@@ -21,7 +21,7 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
 resource "azurerm_postgresql_flexible_server_database" "ri_db_main" {
   name       = "finance-db"
   server_id  = azurerm_postgresql_flexible_server.ri_db.id
-  collation  = "C.UTF-8"
+  collation  = "en_US.utf8"
   charset    = "UTF8"
   depends_on = [azurerm_postgresql_flexible_server.ri_db]
 }
