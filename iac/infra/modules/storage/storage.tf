@@ -36,7 +36,7 @@ resource "null_resource" "enable_last_access_tracking" {
 
 resource "azurerm_storage_container" "dados" {
   name                  = "dados"
-  storage_account_name  = azurerm_storage_account.storage.name
+  storage_account_id    = azurerm_storage_account.storage.id
   container_access_type = "private"
 
   lifecycle {
