@@ -7,6 +7,7 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   version                = "13"
   storage_mb             = 32768
   sku_name               = "GP_Standard_D2s_v3"
+  zone                   = "1"
 
   authentication {
     active_directory_auth_enabled = true

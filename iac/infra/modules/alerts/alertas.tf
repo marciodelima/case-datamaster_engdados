@@ -15,49 +15,70 @@ resource "azurerm_monitor_action_group" "alert_email_group" {
   }
 }
 
-resource "azurerm_monitor_metric_alert" "job_failure_alert" {
+resource "azurerm_monitor_scheduled_query_rules_alert" "job_failure_alert" {
   name                = "job-failure-alert"
   resource_group_name = var.resource_group_name
-  scopes              = [var.databricks_wk_id]
-  description         = "Alerta para falhas em jobs Databricks"
-  severity            = 2
-  frequency           = "PT5M"
-  window_size         = "PT5M"
-  enabled             = true
-
-  criteria {
-    metric_namespace = "Microsoft.Databricks/workspaces"
-    metric_name      = "JobFailureCount"
-    aggregation      = "Total"
-    operator         = "GreaterThan"
-    threshold        = 0
-  }
-
+  location            = var.location
   action {
     action_group_id = azurerm_monitor_action_group.alert_email_group.id
+  }
+
+  data_source_id = var.workspace_logs_id
+  description    = "Alerta para falhas de jobs no Databricks"
+  severity       = 2
+  frequency      = 5
+  time_window    = 5
+  query          = <<QUERY
+AzureDiagnostics
+| where Category == "WorkspaceLogs"
+| where OperationName == "JobRun"
+| where RunState == "FAILED"
+| summarize Falhas = count() by bin(TimeGenerated, 5m)
+| where Falhas > 0
+QUERY
+
+  trigger {
+    operator  = "GreaterThan"
+    threshold = 0
+  }
+
+  criteria {
+    metric_trigger {
+      metric_column = "Falhas"
+    }
   }
 }
 
-resource "azurerm_monitor_metric_alert" "job_duration_alert" {
+resource "azurerm_monitor_scheduled_query_rules_alert" "job_duration_alert" {
   name                = "job-duration-alert"
   resource_group_name = var.resource_group_name
-  scopes              = [var.databricks_wk_id]
-  description         = "Alerta para jobs com duração acima do esperado"
-  severity            = 3
-  frequency           = "PT5M"
-  window_size         = "PT5M"
-  enabled             = true
-
-  criteria {
-    metric_namespace = "Microsoft.Databricks/workspaces"
-    metric_name      = "JobDuration"
-    aggregation      = "Average"
-    operator         = "GreaterThan"
-    threshold        = 300000 # 5 minutos em ms
-  }
-
+  location            = var.location
   action {
     action_group_id = azurerm_monitor_action_group.alert_email_group.id
+  }
+
+  data_source_id = var.workspace_logs_id
+  description    = "Alerta para Jobs no Databricks com alto tempo de execução"
+  severity       = 2
+  frequency      = 5
+  time_window    = 5
+  query          = <<QUERY
+AzureDiagnostics
+| where Category == "WorkspaceLogs"
+| where OperationName == "JobRun"
+| where RunDuration > 3600
+| summarize Longos = count() by bin(TimeGenerated, 5m)
+QUERY
+
+  trigger {
+    operator  = "GreaterThan"
+    threshold = 0
+  }
+
+  criteria {
+    metric_trigger {
+      metric_column = "Longos"
+    }
   }
 }
 

@@ -15,9 +15,10 @@ resource "azurerm_monitor_diagnostic_setting" "dbx_diag" {
     category = "AuditLogs"
   }
 
-  enabled_metric {
-    category = "AllMetrics"
+  enabled_log {
+    category = "WorkspaceLogs"
   }
+
 }
 
 resource "azurerm_monitor_diagnostic_setting" "storage_diag" {

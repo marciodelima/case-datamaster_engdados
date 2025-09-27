@@ -1,4 +1,4 @@
-resource "azurerm_app_service_plan" "plan" {
+resource "azurerm_service_plan" "plan" {
   name                = "appservice-plan"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -14,7 +14,7 @@ resource "azurerm_app_service" "frontend" {
   name                = "frontend-investimentos"
   location            = var.location
   resource_group_name = var.resource_group_name
-  app_service_plan_id = azurerm_app_service_plan.plan.id
+  app_service_plan_id = azurerm_service_plan.plan.id
 
   site_config {
     linux_fx_version = "NODE|18-lts"
@@ -29,7 +29,7 @@ resource "azurerm_app_service" "backend" {
   name                = "backend-investimentos"
   location            = var.location
   resource_group_name = var.resource_group_name
-  app_service_plan_id = azurerm_app_service_plan.plan.id
+  app_service_plan_id = azurerm_service_plan.plan.id
 
   site_config {
     linux_fx_version = "PYTHON|3.11"

@@ -1,4 +1,4 @@
 variable "location" {}
 variable "resource_group_name" {}
-variable "databricks_wk_id" {}
+variable "workspace_logs_id" {}
 

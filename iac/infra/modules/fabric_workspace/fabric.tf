@@ -12,7 +12,7 @@ resource "null_resource" "create_fabric_workspace" {
         --resource-group ${var.resource_group_name} \
         --capacity-name ${var.name} \
         --sku "{name:F2,tier:Fabric}" \
-        --administration "{members:[\"${var.admin_email}\"]}" \
+        --administration '{members:[\"${var.admin_email}\"]}' \
         --location ${var.location} \
         --tags "{environment:prod}"
     EOT
@@ -42,7 +42,7 @@ az monitor diagnostic-settings create \
   --resource ${var.log_analytics_workspace_id} \
   --workspace ${var.log_analytics_workspace_id} \
   --logs '[{"category": "AuditLogs", "enabled": true}]' \
-  --metrics '[{"category": "Metrics", "enabled": true}]'
+  --metrics '[{"category": "AllMetrics", "enabled": true}]'
 EOT
   }
 }
