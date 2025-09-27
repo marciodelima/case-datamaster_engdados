@@ -1,0 +1,9 @@
+<h3>Assessor Virtual</h3>
+<input [(ngModel)]="pergunta" placeholder="Digite sua pergunta sobre ações..." />
+<button (click)="enviar()">Perguntar</button>
+
+<div *ngIf="resposta">
+  <strong>Resposta:</strong>
+  <p>{{ resposta }}</p>
+</div>
+

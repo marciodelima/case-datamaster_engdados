@@ -1,6 +1,6 @@
 resource "null_resource" "provision_databricks" {
   provisioner "local-exec" {
-    command = "bash ./scripts/provision-databricks.sh"
+    command = "bash ./provision-databricks.sh"
 
     environment = {
       WORKSPACE_URL        = var.databricks_workspace_url
