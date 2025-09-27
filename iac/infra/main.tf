@@ -4,20 +4,11 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.0.0"
     }
-    databricks = {
-      source  = "databricks/databricks"
-      version = ">= 1.0.0"
-    }
   }
 }
 
 provider "azurerm" {
   features {}
-}
-
-provider "databricks" {
-  alias = "workspace"
-  host  = module.databricks.workspace_url
 }
 
 terraform {
@@ -42,12 +33,14 @@ module "databricks" {
 module "databricks_provisioning" {
   source = "./modules/databricks_provisioning"
 
-  providers = {
-    databricks = databricks.workspace
-  }
-  
   databricks_workspace_url = module.databricks.workspace_url
   admin_email              = var.admin_email
+  keyvault_name            = var.keyvault_name
+  keyvault_resource_id     = data.azurerm_key_vault.kv.id
+  keyvault_dns             = data.azurerm_key_vault.kv.vault_uri
+  github_repo              = var.github_repo
+
+  depends_on = [module.databricks]
 }
 
 module "storage" {

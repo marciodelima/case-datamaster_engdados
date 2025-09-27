@@ -8,9 +8,9 @@ resource "azurerm_eventhub_namespace" "streaming_ns" {
 }
 
 resource "azurerm_eventhub" "streaming_hub" {
-  name                = "topic_dados_streaming"
-  namespace_id        = azurerm_eventhub_namespace.streaming_ns.id
-  partition_count     = 2
-  message_retention   = 1
+  name              = "topic_dados_streaming"
+  namespace_id      = azurerm_eventhub_namespace.streaming_ns.id
+  partition_count   = 2
+  message_retention = 1
 }
 
