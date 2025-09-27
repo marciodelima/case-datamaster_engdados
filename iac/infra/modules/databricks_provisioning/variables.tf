@@ -18,4 +18,4 @@ variable "keyvault_dns" {
   type = string
 }
 
-variable "github_repo" { default = "marciodelima/case-datamaster_engdados" }
+variable "github_repo" {}

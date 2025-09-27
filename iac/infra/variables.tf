@@ -6,13 +6,7 @@ variable "keyvault_rg" { default = "rsg-datamaster" }
 
 variable "db_password" { default = "admin" }
 variable "admin_email" { default = "marcio.lima.f1rst@gmail.com" }
-
-variable "bootstrap_token" {
-  description = "Token temporário para provisionamento inicial"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
+variable "github_repo" { default = "marciodelima/case-datamaster_engdados" }
 
 variable "fabric_name" {
   default = "finance-fabric"
