@@ -1,34 +1,25 @@
 resource "azurerm_monitor_action_group" "alert_email_group" {
   name                = "alert-email-group"
   resource_group_name = var.resource_group_name
-  short_name          = "emailgrp"
-  location            = "global"
+  short_name          = "emailGroup"
 
   email_receiver {
-    name                    = "admin-alert"
-    email_address           = "marcio.lima.f1rst@gmail.com"
-    use_common_alert_schema = true
-  }
-
-  tags = {
-    environment = "production"
+    name          = "adminEmail"
+    email_address = "marcio.lima.f1rst@gmail.com"
   }
 }
 
 resource "azurerm_monitor_scheduled_query_rules_alert" "job_failure_alert" {
   name                = "job-failure-alert"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  action {
-    action_group_id = azurerm_monitor_action_group.alert_email_group.id
-  }
-
-  data_source_id = var.workspace_logs_id
-  description    = "Alerta para falhas de jobs no Databricks"
-  severity       = 2
-  frequency      = 5
-  time_window    = 5
-  query          = <<QUERY
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  description         = "Alerta para falhas de jobs no Databricks"
+  severity            = 2
+  enabled             = true
+  frequency           = 5
+  time_window         = 5
+  scopes              = [azurerm_log_analytics_workspace.logs.id]
+  query               = <<QUERY
 AzureDiagnostics
 | where Category == "WorkspaceLogs"
 | where OperationName == "JobRun"
@@ -42,10 +33,8 @@ QUERY
     threshold = 0
   }
 
-  criteria {
-    metric_trigger {
-      metric_column = "Falhas"
-    }
+  action {
+    action_group_id = azurerm_monitor_action_group.alert_email_group.id
   }
 }
 
@@ -57,12 +46,12 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "job_duration_alert" {
     action_group_id = azurerm_monitor_action_group.alert_email_group.id
   }
 
-  data_source_id = var.workspace_logs_id
-  description    = "Alerta para Jobs no Databricks com alto tempo de execução"
-  severity       = 2
-  frequency      = 5
-  time_window    = 5
-  query          = <<QUERY
+  scopes      = [var.workspace_logs_id]
+  description = "Alerta para Jobs no Databricks com alto tempo de execução"
+  severity    = 2
+  frequency   = 5
+  time_window = 5
+  query       = <<QUERY
 AzureDiagnostics
 | where Category == "WorkspaceLogs"
 | where OperationName == "JobRun"

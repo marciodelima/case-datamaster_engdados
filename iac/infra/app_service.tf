@@ -1,14 +1,13 @@
 resource "azurerm_service_plan" "plan" {
-  name                = "appservice-plan"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  kind                = "Linux"
-  reserved            = true
-  sku {
-    tier = "Standard"
-    size = "S1"
-  }
+  name                   = "appservice-plan"
+  location               = var.location
+  resource_group_name    = var.resource_group_name
+  os_type                = "Linux"
+  sku_name               = "S1"
+  worker_count           = 1
+  zone_balancing_enabled = false
 }
+
 
 resource "azurerm_app_service" "frontend" {
   name                = "frontend-investimentos"
