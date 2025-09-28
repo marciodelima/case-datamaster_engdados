@@ -15,11 +15,11 @@ resource "azurerm_monitor_diagnostic_setting" "dbx_diag" {
     category = "Jobs"
   }
 
-  enable_log {
+  enabled_log {
     category = "ClusterEvent"
   }
-
-  enable_log {
+  
+  enabled_log {
     category = "WorkspaceLogs"
   }
 
