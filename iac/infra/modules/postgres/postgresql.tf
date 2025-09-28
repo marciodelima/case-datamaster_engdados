@@ -26,13 +26,6 @@ resource "azurerm_postgresql_flexible_server_database" "ri_db_main" {
   depends_on = [azurerm_postgresql_flexible_server.ri_db]
 }
 
-resource "azurerm_postgresql_flexible_server_configuration" "pgvector" {
-  name       = "shared_preload_libraries"
-  server_id  = azurerm_postgresql_flexible_server.ri_db.id
-  value      = "vector"
-  depends_on = [azurerm_postgresql_flexible_server_database.ri_db_main]
-}
-
 resource "null_resource" "enable_pgvector" {
   provisioner "local-exec" {
     command = <<EOT
@@ -43,11 +36,23 @@ resource "null_resource" "enable_pgvector" {
         -c "CREATE EXTENSION IF NOT EXISTS vector;"
     EOT
   }
-  depends_on = [azurerm_postgresql_flexible_server_configuration.pgvector]
+  depends_on = [azurerm_postgresql_flexible_server_database.ri_db_main]
+}
+
+data "external" "github_runner_ip" {
+  program = ["bash", "-c", "echo '{\"ip\": \"'$(curl -s https://ifconfig.me)'\"}'"]
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "github_actions_ip" {
+  name                = "AllowGitHubActions"
+  resource_group_name = azurerm_postgresql_flexible_server.db.resource_group_name
+  server_name         = azurerm_postgresql_flexible_server.db.name
+  start_ip_address    = data.external.github_runner_ip.result.ip
+  end_ip_address      = data.external.github_runner_ip.result.ip
 }
 
 resource "null_resource" "init_sql" {
-  depends_on = [azurerm_postgresql_flexible_server_database.ri_db_main]
+  depends_on = [azurerm_postgresql_flexible_server.ri_db]
 
   triggers = {
     always_run = timestamp()
@@ -55,6 +60,7 @@ resource "null_resource" "init_sql" {
 
   provisioner "local-exec" {
     command = <<EOT
+      sleep(60)
       echo "Executando init.sql no PostgreSQL..."
       PGPASSWORD=${var.db_password} psql \
         -h ${azurerm_postgresql_flexible_server.ri_db.fqdn} \

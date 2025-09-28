@@ -12,8 +12,8 @@ resource "null_resource" "create_fabric_workspace" {
         --resource-group ${var.resource_group_name} \
         --capacity-name ${var.name} \
         --sku "{name:F2,tier:Fabric}" \
-	--administration "{members:['${var.admin_email}']}"
-        --location ${var.location} \
+	--administration '{"members":["${var.admin_email}"]}' \
+	--location ${var.location} \
         --tags "{environment:prod}"
     EOT
   }

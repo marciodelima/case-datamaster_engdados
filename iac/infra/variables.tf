@@ -9,7 +9,7 @@ variable "admin_email" { default = "marcio.lima.f1rst@gmail.com" }
 variable "github_repo" { default = "marciodelima/case-datamaster_engdados" }
 
 variable "fabric_name" {
-  default = "finance-fabric"
+  default = "financefabric"
 }
 
 variable "databricks_name" {

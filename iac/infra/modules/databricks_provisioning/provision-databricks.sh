@@ -3,8 +3,6 @@ set -e
 
 echo "Instalando databricks CLI e jq..."
 pip uninstall -y databricks-cli || true
-
-pip install databricks-cli --upgrade
 curl -Lk https://github.com/databricks/cli/releases/download/v0.270.0/databricks_cli_0.270.0_linux_amd64.tar.gz -o databricks.tar.gz
 tar -xvzf databricks.tar.gz
 sudo mv databricks /usr/local/bin/
@@ -15,10 +13,9 @@ echo "Autenticando via Azure AD..."
 token_response=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d)
 export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
 
-echo "Logando no workspace Databricks..."
-databricks auth login --aad-token --host "https://${WORKSPACE_URL}"
-
+echo "Logando no workspace Databricks com token AAD..."
 export DATABRICKS_HOST="https://${WORKSPACE_URL}"
+databricks auth login --host "$DATABRICKS_HOST" --token "$DATABRICKS_AAD_TOKEN"
 
 echo "Gerando token bootstrap..."
 BOOTSTRAP_TOKEN=$(databricks tokens create --comment "Bootstrap token" --lifetime-seconds 1209600 | jq -r ".token_value")

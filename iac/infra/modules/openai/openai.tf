@@ -12,8 +12,8 @@ resource "azurerm_cognitive_deployment" "gpt4" {
 
   model {
     format  = "OpenAI"
-    name    = "gpt-3.5-turbo"
-    version = "2024-04-09"
+    name    = "gpt-4.1"
+    version = "2025-04-14"
   }
 
   sku {
