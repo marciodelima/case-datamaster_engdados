@@ -13,14 +13,16 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
     active_directory_auth_enabled = true
   }
 
-  configuration {
-    name  = "azure.extensions"
-    value = "VECTOR"
-  }
-  
   tags = {
     environment = "production"
   }
+}
+
+resource "azurerm_postgresql_flexible_server_configuration" "enable_vector" {
+  name       = "azure.extensions"
+  server_id  = azurerm_postgresql_flexible_server.ri_db.id
+  value      = "VECTOR"
+  depends_on = [azurerm_postgresql_flexible_server.ri_db]
 }
 
 resource "azurerm_postgresql_flexible_server_database" "ri_db_main" {
@@ -41,7 +43,10 @@ resource "null_resource" "enable_pgvector" {
         -c "CREATE EXTENSION IF NOT EXISTS vector;"
     EOT
   }
-  depends_on = [azurerm_postgresql_flexible_server_database.ri_db_main]
+  depends_on = [
+    azurerm_postgresql_flexible_server_database.ri_db_main,
+    azurerm_postgresql_flexible_server_configuration.enable_vector
+  ]
 }
 
 data "external" "github_runner_ip" {
@@ -49,10 +54,10 @@ data "external" "github_runner_ip" {
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "github_actions_ip" {
-  name                = "AllowGitHubActions"
-  server_id           = azurerm_postgresql_flexible_server.ri_db.id
-  start_ip_address    = data.external.github_runner_ip.result.ip
-  end_ip_address      = data.external.github_runner_ip.result.ip
+  name             = "AllowGitHubActions"
+  server_id        = azurerm_postgresql_flexible_server.ri_db.id
+  start_ip_address = data.external.github_runner_ip.result.ip
+  end_ip_address   = data.external.github_runner_ip.result.ip
 }
 
 resource "null_resource" "init_sql" {
