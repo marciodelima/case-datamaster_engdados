@@ -12,16 +12,23 @@ sudo apt-get install -y jq
 echo "Autenticando via Azure AD..."
 token_response=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d)
 export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
-
-echo "Logando no workspace Databricks com token AAD..."
 export DATABRICKS_HOST="https://${WORKSPACE_URL}"
-databricks auth login --host "$DATABRICKS_HOST" --token "$DATABRICKS_AAD_TOKEN"
+
+cat > ~/.databrickscfg <<EOF
+[DEFAULT]
+host = $DATABRICKS_HOST
+token = $DATABRICKS_AAD_TOKEN
+EOF
+
 
 echo "Gerando token bootstrap..."
 BOOTSTRAP_TOKEN=$(databricks tokens create --comment "Bootstrap token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
-echo "Autenticando com token bootstrap..."
-databricks auth login --host "$DATABRICKS_HOST" --token "$BOOTSTRAP_TOKEN"
+cat > ~/.databrickscfg <<EOF
+[DEFAULT]
+host = $DATABRICKS_HOST
+token = $BOOTSTRAP_TOKEN
+EOF
 
 echo "Criando usuário admin..."
 databricks users create --user-name "$ADMIN_EMAIL" --workspace-access true || true

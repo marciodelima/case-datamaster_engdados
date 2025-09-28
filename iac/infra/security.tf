@@ -25,3 +25,17 @@ resource "azurerm_role_assignment" "fabric_pg_access" {
   ]
 }
 
+# Grupo de recursos onde o Fabric será provisionado
+data "azurerm_resource_group" "fabric_rg" {
+  name = var.resource_group_name
+}
+
+data "azuread_service_principal" "fabric_spn" {
+  application_name = var.spn_name
+}
+
+resource "azurerm_role_assignment" "fabric_admin" {
+  scope                = data.azurerm_resource_group.fabric_rg.id
+  role_definition_name = "Contributor"
+  principal_id         = data.azuread_service_principal.fabric_spn.object_id
+}

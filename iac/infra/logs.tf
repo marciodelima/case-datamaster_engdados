@@ -12,9 +12,13 @@ resource "azurerm_monitor_diagnostic_setting" "dbx_diag" {
   log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
 
   enabled_log {
-    category = "AuditLogs"
+    category = "Jobs"
   }
 
+  enable_log {
+    category = "ClusterEvent"
+  }
+  
   enabled_log {
     category = "WorkspaceLogs"
   }

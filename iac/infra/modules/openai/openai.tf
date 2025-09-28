@@ -1,19 +1,19 @@
 resource "azurerm_cognitive_account" "openai" {
   name                = "openai-ri"
-  location            = var.location
+  location            = "eastus2"
   resource_group_name = var.resource_group_name
   kind                = "OpenAI"
   sku_name            = "S0"
 }
 
-resource "azurerm_cognitive_deployment" "gpt4" {
-  name                 = "gpt-4"
+resource "azurerm_cognitive_deployment" "gpt-4o-mini" {
+  name                 = "gpt-4o-mini"
   cognitive_account_id = azurerm_cognitive_account.openai.id
 
   model {
     format  = "OpenAI"
-    name    = "gpt-4.1"
-    version = "2025-04-14"
+    name    = "gpt-4o-mini"
+    version = "2024-07-18"
   }
 
   sku {
