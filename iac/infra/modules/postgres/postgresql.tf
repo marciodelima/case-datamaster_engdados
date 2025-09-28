@@ -45,8 +45,8 @@ data "external" "github_runner_ip" {
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "github_actions_ip" {
   name                = "AllowGitHubActions"
-  resource_group_name = azurerm_postgresql_flexible_server.db.resource_group_name
-  server_name         = azurerm_postgresql_flexible_server.db.name
+  resource_group_name = var.resource_group_name
+  server_name         = azurerm_postgresql_flexible_server.ri_db.name
   start_ip_address    = data.external.github_runner_ip.result.ip
   end_ip_address      = data.external.github_runner_ip.result.ip
 }
