@@ -31,11 +31,11 @@ token = $BOOTSTRAP_TOKEN
 EOF
 
 echo "Criando usuário admin..."
-databricks users create --user-name "$ADMIN_EMAIL" --workspace-access true || true
+databricks users create --user-name "$ADMIN_EMAIL" --active || true
 
 echo "Adicionando ao grupo admins..."
-ADMIN_ID=$(databricks users list | jq -r ".[] | select(.userName==\"$ADMIN_EMAIL\") | .id")
-GROUP_ID=$(databricks groups list | jq -r ".[] | select(.displayName==\"admins\") | .id")
+ADMIN_ID=$(databricks users list -o json | jq -r '.[] | select(.userName=="'"$ADMIN_EMAIL"'") | .id')
+GROUP_ID=$(databricks groups list -o json | jq -r '.[] | select(.displayName=="admins") | .id')
 databricks groups add-member --group-id "$GROUP_ID" --user-id "$ADMIN_ID"
 
 echo "Gerando token pessoal..."

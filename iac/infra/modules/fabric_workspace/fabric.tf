@@ -21,6 +21,8 @@ resource "null_resource" "create_fabric_workspace" {
   triggers = {
     workspace_name = var.name
   }
+
+  depends_on = [azurerm_role_assignment.fabric_admin]
 }
 
 data "external" "fabric_identity" {
