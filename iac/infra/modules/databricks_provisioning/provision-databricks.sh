@@ -3,11 +3,15 @@ set -e
 
 echo "Instalando databricks CLI e jq..."
 pip uninstall -y databricks-cli || true
-curl -fsSL https://databricks.com/install-cli | bash
+
+pip install databricks-cli --upgrade
+curl -Lk https://github.com/databricks/cli/releases/download/v0.270.0/databricks_cli_0.270.0_linux_amd64.tar.gz -o databricks.tar.gz
+tar -xvzf databricks.tar.gz
+sudo mv databricks /usr/local/bin/
+
 sudo apt-get install -y jq
 
 echo "Autenticando via Azure AD..."
-az login
 token_response=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d)
 export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
 
