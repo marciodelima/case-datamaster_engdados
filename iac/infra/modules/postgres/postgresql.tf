@@ -13,6 +13,11 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
     active_directory_auth_enabled = true
   }
 
+  configuration {
+    name  = "azure.extensions"
+    value = "VECTOR"
+  }
+  
   tags = {
     environment = "production"
   }
@@ -59,7 +64,7 @@ resource "null_resource" "init_sql" {
 
   provisioner "local-exec" {
     command = <<EOT
-      sleep(60)
+      sleep 60
       echo "Executando init.sql no PostgreSQL..."
       PGPASSWORD=${var.db_password} psql \
         -h ${azurerm_postgresql_flexible_server.ri_db.fqdn} \
