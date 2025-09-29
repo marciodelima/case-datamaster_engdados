@@ -17,7 +17,6 @@ resource "azurerm_role_definition" "fabric_admin_role" {
   permissions {
     actions = [
       "Microsoft.Fabric/capacities/*",
-      "Microsoft.Fabric/workspaces/*",
       "Microsoft.Fabric/*",
       "Microsoft.Resources/subscriptions/resourceGroups/read",
       "Microsoft.Authorization/*/read"
