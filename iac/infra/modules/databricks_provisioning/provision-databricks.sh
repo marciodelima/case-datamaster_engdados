@@ -44,7 +44,9 @@ fi
 
 echo "Adicionando usuário ao grupo 'admins'..."
 ADMIN_ID=$(databricks users list -o json | jq -r '.[] | select(.userName=="'"$ADMIN_EMAIL"'") | .id')
-databricks groups patch --group-name admins --json '{
+GROUP_ID=$(databricks groups list -o json | jq -r '.[] | select(.displayName=="admins") | .id')
+
+databricks groups patch "$GROUP_ID" --json '{
   "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
   "Operations": [
     {
