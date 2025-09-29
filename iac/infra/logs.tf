@@ -15,10 +15,6 @@ resource "azurerm_monitor_diagnostic_setting" "dbx_diag" {
     category = "Jobs"
   }
 
-  enabled_log {
-    category = "WorkspaceLogs"
-  }
-
 }
 
 resource "azurerm_monitor_diagnostic_setting" "storage_diag" {

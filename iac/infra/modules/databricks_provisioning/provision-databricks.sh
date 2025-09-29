@@ -33,10 +33,31 @@ EOF
 echo "Criando usuário admin..."
 databricks users create --user-name "$ADMIN_EMAIL" --active || true
 
-echo "Adicionando ao grupo admins..."
+echo "Verificando se o grupo 'admins' existe..."
+GROUP_EXISTS=$(databricks groups list -o json | jq -e '.[] | select(.displayName=="admins")' > /dev/null && echo "yes" || echo "no")
+if [ "$GROUP_EXISTS" = "no" ]; then
+  echo "Criando grupo 'admins'..."
+  databricks groups create --display-name admins
+else
+  echo "Grupo 'admins' já existe."
+fi
+
+echo "Adicionando usuário ao grupo 'admins'..."
 ADMIN_ID=$(databricks users list -o json | jq -r '.[] | select(.userName=="'"$ADMIN_EMAIL"'") | .id')
-GROUP_ID=$(databricks groups list -o json | jq -r '.[] | select(.displayName=="admins") | .id')
-databricks groups add-member --group-id "$GROUP_ID" --user-id "$ADMIN_ID"
+databricks groups patch --group-name admins --json '{
+  "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+  "Operations": [
+    {
+      "op": "add",
+      "path": "members",
+      "value": [
+        {
+          "value": "'"$ADMIN_ID"'"
+        }
+      ]
+    }
+  ]
+}'
 
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")

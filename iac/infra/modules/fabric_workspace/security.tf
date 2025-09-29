@@ -8,6 +8,7 @@ data "azuread_service_principal" "fabric_spn" {
 
 resource "azurerm_role_assignment" "fabric_admin" {
   scope                = data.azurerm_resource_group.fabric_rg.id
-  role_definition_name = "Contributor"
+  role_definition_name = "Fabric Admin"
   principal_id         = data.azuread_service_principal.fabric_spn.object_id
 }
+
