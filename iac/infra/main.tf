@@ -31,14 +31,14 @@ module "databricks_provisioning" {
   keyvault_resource_id     = data.azurerm_key_vault.kv.id
   keyvault_dns             = data.azurerm_key_vault.kv.vault_uri
   github_repo              = var.github_repo
-
-  depends_on = [module.databricks]
+  depends_on               = [module.databricks, module.storage]
 }
 
 module "storage" {
   source              = "./modules/storage"
   location            = var.location
   resource_group_name = var.resource_group_name
+  nome_storage        = var.nome_storage
 }
 
 module "event_hubs" {

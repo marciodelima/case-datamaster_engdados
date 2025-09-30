@@ -10,7 +10,7 @@ resource "azurerm_service_plan" "plan" {
 
 
 resource "azurerm_app_service" "frontend" {
-  name                = "frontend-investimentos"
+  name                = "frontend-investimentos-2025"
   location            = var.location
   resource_group_name = var.resource_group_name
   app_service_plan_id = azurerm_service_plan.plan.id
@@ -25,7 +25,7 @@ resource "azurerm_app_service" "frontend" {
 }
 
 resource "azurerm_app_service" "backend" {
-  name                = "backend-investimentos"
+  name                = "backend-investimentos-2025"
   location            = var.location
   resource_group_name = var.resource_group_name
   app_service_plan_id = azurerm_service_plan.plan.id
