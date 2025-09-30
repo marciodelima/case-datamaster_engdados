@@ -89,7 +89,8 @@ module "dashboard" {
   databricks_id       = module.databricks.workspace_id
   storage_id          = module.storage.storage_id
   eventhub_id         = module.event_hubs.eventhub_namespace_id
-  depends_on          = [module.storage, module.event_hubs, module.databricks]
+  postgres_id         = module.postgres.server_id
+  depends_on          = [module.storage, module.event_hubs, module.databricks, module.postgres, module.function]
 }
 
 module "alerts" {

@@ -46,3 +46,17 @@ resource "azurerm_monitor_diagnostic_setting" "eventhub_diag" {
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "postgres_diag" {
+  name                       = "diag-postgres"
+  target_resource_id         = module.postgres.server_id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
+
+  enabled_log {
+    category = "PostgreSQLLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
+}
+

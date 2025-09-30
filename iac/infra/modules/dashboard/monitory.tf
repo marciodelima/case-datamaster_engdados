@@ -1,3 +1,10 @@
+locals {
+  function_ids = {
+    for name in var.function_names :
+    name => azurerm_function_app[name].id
+  }
+}
+
 resource "azurerm_portal_dashboard" "finance_dashboard" {
   name                = "finance-observability"
   resource_group_name = var.resource_group_name
@@ -5,9 +12,11 @@ resource "azurerm_portal_dashboard" "finance_dashboard" {
   tags                = { dash = "geral" }
 
   dashboard_properties = templatefile("${path.module}/dashboard.tftpl", {
-    databricks_id = var.databricks_id
-    storage_id    = var.storage_id
-    eventhub_id   = var.eventhub_id
+    databricks_id   = var.databricks_id
+    storage_id      = var.storage_id
+    eventhub_id     = var.eventhub_id
+    postgres_id     = var.postgres_id
+    function_ids    = jsonencode(local.function_ids) 
   })
 }
 
