@@ -7,7 +7,7 @@ data "azurerm_function_app" "functions" {
 locals {
   function_ids = {
     for name in var.function_names :
-    name => data.azurerm_function_app.functions[name].id
+    name => lookup(data.azurerm_function_app.functions, name, null) != null ? data.azurerm_function_app.functions[name].id : ""
   }
 }
 
