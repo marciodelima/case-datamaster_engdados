@@ -77,6 +77,7 @@ module "function" {
   keyvault_name                      = var.keyvault_name
   eventhub_namespace_name            = module.event_hubs.eventhub_namespace_name
   azurerm_log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
+  depends_on                         = [module.storage, module.event_hubs, azurerm_log_analytics_workspace.logs]
 }
 
 module "dashboard" {
@@ -86,6 +87,7 @@ module "dashboard" {
   databricks_id       = module.databricks.workspace_id
   storage_id          = module.storage.storage_id
   eventhub_id         = module.event_hubs.eventhub_namespace_id
+  depends_on          = [module.storage, module.event_hubs, module.databricks]
 }
 
 module "alerts" {
@@ -94,6 +96,7 @@ module "alerts" {
   location            = var.location
   workspace_logs_id   = azurerm_log_analytics_workspace.logs.id
   email               = var.admin_email
+  depends_on          = [azurerm_log_analytics_workspace.logs]
 }
 
 
