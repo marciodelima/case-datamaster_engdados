@@ -101,7 +101,7 @@ resource "azurerm_storage_management_policy" "policy" {
 
 resource "azurerm_storage_data_lake_gen2_path" "folders" {
   count              = length(var.folders)
-  path               = "${var.folders[count.index]}"
+  path               = var.folders[count.index]
   filesystem_name    = azurerm_storage_container.dados.name
   storage_account_id = azurerm_storage_account.storage.id
   resource           = "directory"
