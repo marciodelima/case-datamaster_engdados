@@ -1,11 +1,11 @@
 variable "location" { default = "brazilsouth" }
 variable "resource_group_name" { default = "rsg-datamaster" }
 variable "spn_name" { default = "github-deploy-spn" }
-variable "keyvault_name" { default = "kv-secret-datamastermdl1" }
+variable "keyvault_name" { default = "kv-secret-datamastermdl2" }
 variable "keyvault_rg" { default = "rsg-datamaster" }
 
 variable "db_password" { default = "admin" }
-variable "admin_email" { default = "marcio.lima.f1rst@gmail.com" }
+variable "admin_email" { default = "marcio.lima.f1rst.2025@gmail.com" }
 variable "github_repo" { default = "marciodelima/case-datamaster_engdados" }
 
 variable "fabric_name" {

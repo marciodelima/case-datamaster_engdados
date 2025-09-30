@@ -90,6 +90,7 @@ module "alerts" {
   resource_group_name = var.resource_group_name
   location            = var.location
   workspace_logs_id   = azurerm_log_analytics_workspace.logs.id
+  email               = var.admin_email
 }
 
 

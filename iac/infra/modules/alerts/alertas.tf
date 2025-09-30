@@ -5,7 +5,7 @@ resource "azurerm_monitor_action_group" "alert_email_group" {
 
   email_receiver {
     name          = "adminEmail"
-    email_address = "marcio.lima.f1rst@gmail.com"
+    email_address = var.email
   }
 }
 
