@@ -73,6 +73,7 @@ module "function" {
   existing_storage_account_name = module.storage.storage_name
   keyvault_name                 = var.keyvault_name
   eventhub_namespace_name       = module.event_hubs.eventhub_namespace_name
+  postgres_conn_string          = module.postgres.postgres_connection_string
 }
 
 module "dashboard" {

@@ -61,3 +61,16 @@ resource "azurerm_role_assignment" "postgres_blob_access" {
   principal_id         = azurerm_function_app.postgres_ingestor.identity.principal_id
 }
 
+resource "azurerm_role_assignment" "sentiment_blob_access" {
+  scope                = data.azurerm_storage_account.existing_storage.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_function_app.news_sentiment_analyzer.identity.principal_id
+}
+
+resource "azurerm_role_assignment" "sentiment_keyvault_access" {
+  scope                = data.azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_function_app.news_sentiment_analyzer.identity.principal_id
+}
+
+

@@ -42,3 +42,11 @@ resource "azurerm_storage_account" "postgres_storage" {
   account_replication_type = "LRS"
 }
 
+resource "azurerm_storage_account" "sentiment_storage" {
+  name                     = "sentimentfuncstorage${random_id.suffix.hex}"
+  resource_group_name      = var.resource_group_name
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+

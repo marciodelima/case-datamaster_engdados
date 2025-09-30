@@ -46,4 +46,21 @@ resource "azurerm_monitor_diagnostic_setting" "eventhub_diag" {
   }
 }
 
+resource "azurerm_monitor_diagnostic_setting" "func_diag" {
+  name                       = "func-diag-${azurerm_function_app.news_producer.name}"
+  target_resource_id         = azurerm_function_app.news_producer.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.main.id
+
+  enabled_log {
+    category = "FunctionAppLogs"
+  }
+
+  enabled_log {
+    category = "AppServiceConsoleLogs"
+  }
+
+  enabled_metric {
+    category = "AllMetrics"
+  }
+}
 
