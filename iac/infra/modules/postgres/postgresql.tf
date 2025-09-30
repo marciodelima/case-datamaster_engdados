@@ -76,7 +76,7 @@ resource "null_resource" "init_sql" {
         -U adminuser \
         -d finance-db \
         -f ${path.module}/init.sql \
-        --set ON_ERROR_STOP=on
+        --set ON_ERROR_STOP=off
     EOT
   }
 }
