@@ -1,0 +1,9 @@
+azure-functions
+azure-eventhub
+azure-identity
+azure-keyvault-secrets
+openai
+requests
+beautifulsoup4
+feedparser
+
