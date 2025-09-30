@@ -65,7 +65,9 @@ echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
 echo "Criando catálogo 'finance' e schemas..."
-databricks catalogs create finance --comment "Catálogo financeiro de investimentos"
+databricks catalogs create finance --comment "Catálogo financeiro de investimentos" \
+  --storage-root "abfss://dados@datamasterstore.dfs.core.windows.net/"
+
 for schema in r_inv b_inv s_inv stage g_inv; do
   echo "Criando schema '$schema' no catálogo 'finance'..."
   databricks schemas create "$schema" --catalog-name finance

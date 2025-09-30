@@ -15,14 +15,6 @@ terraform {
   backend "azurerm" {}
 }
 
-module "fabric" {
-  source                     = "./modules/fabric_workspace"
-  name                       = var.fabric_name
-  location                   = var.location
-  resource_group_name        = var.resource_group_name
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
-}
-
 module "databricks" {
   source              = "./modules/databricks_workspace"
   name                = var.databricks_name
@@ -75,9 +67,12 @@ module "openai" {
 }
 
 module "function" {
-  source              = "./modules/azure_functions"
-  resource_group_name = var.resource_group_name
-  location            = var.location
+  source                        = "./modules/azure_functions"
+  resource_group_name           = var.resource_group_name
+  location                      = var.location
+  existing_storage_account_name = module.storage.storage_name
+  keyvault_name                 = var.keyvault_name
+  eventhub_namespace_name       = module.event_hubs.eventhub_namespace_name
 }
 
 module "dashboard" {

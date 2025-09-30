@@ -1,5 +1,6 @@
 variable "location" {}
 variable "resource_group_name" {}
+variable "nome_storage" { default = "datamasterstore" }
 
 variable "tags" {
   description = "Tags padrão"

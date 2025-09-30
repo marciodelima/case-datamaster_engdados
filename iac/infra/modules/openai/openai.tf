@@ -21,3 +21,28 @@ resource "azurerm_cognitive_deployment" "gpt-4o-mini" {
   }
 }
 
+data "azurerm_key_vault" "openai_kv" {
+  name                = var.keyvault_name
+  resource_group_name = var.resource_group_name
+}
+
+data "azurerm_cognitive_account_keys" "openai_keys" {
+  name                = azurerm_cognitive_account.openai.name
+  resource_group_name = var.resource_group_name
+}
+
+# Armazena o endpoint no Key Vault
+resource "azurerm_key_vault_secret" "openai_endpoint" {
+  name         = "OpenAI-Endpoint"
+  value        = azurerm_cognitive_account.openai.endpoint
+  key_vault_id = data.azurerm_key_vault.openai_kv.id
+}
+
+# Armazena a chave de acesso no Key Vault
+resource "azurerm_key_vault_secret" "openai_key" {
+  name         = "OpenAI-Key"
+  value        = data.azurerm_cognitive_account_keys.openai_keys.primary_key
+  key_vault_id = data.azurerm_key_vault.openai_kv.id
+}
+
+
