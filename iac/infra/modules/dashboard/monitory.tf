@@ -1,10 +1,15 @@
 data "azurerm_function_app" "functions" {
-  for_each = toset(var.function_names)
-
+  for_each            = toset(var.function_names)
   name                = each.key
   resource_group_name = var.resource_group_name
 }
 
+locals {
+  function_ids = {
+    for name in var.function_names :
+    name => data.azurerm_function_app.functions[name].id
+  }
+}
 
 resource "azurerm_portal_dashboard" "finance_dashboard" {
   name                = "finance-observability"
