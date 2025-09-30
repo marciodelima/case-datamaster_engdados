@@ -64,6 +64,7 @@ module "openai" {
   source              = "./modules/openai"
   resource_group_name = var.resource_group_name
   location            = var.location
+  keyvault_name       = var.keyvault_name
 }
 
 module "function" {
