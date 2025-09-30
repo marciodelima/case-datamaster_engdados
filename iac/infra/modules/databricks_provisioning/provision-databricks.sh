@@ -64,6 +64,17 @@ databricks groups patch "$GROUP_ID" --json '{
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
+echo "Criando storage credential 'finance-cred'..."
+databricks storage-credentials create finance-cred \
+  --azure-managed-identity \
+  --comment "Credencial gerenciada para acesso ao storage ${STORAGE_NAME}"
+
+echo "Registrando external location 'finance-ext'..."
+databricks external-locations create finance-ext \
+  --url "abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/" \
+  --credential-name "finance-cred" \
+  --comment "Local externo para catálogo financeiro"
+
 echo "Criando catálogo 'finance' e schemas..."
 databricks catalogs create finance --comment "Catálogo financeiro de investimentos" \
   --storage-root "abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"

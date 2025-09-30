@@ -35,7 +35,7 @@ resource "azurerm_storage_account" "finance_storage" {
 }
 
 resource "azurerm_storage_account" "postgres_storage" {
-  name                     = "postgresfuncstorage${random_id.suffix.hex}"
+  name                     = "dbfuncstorage${random_id.suffix.hex}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
@@ -43,7 +43,7 @@ resource "azurerm_storage_account" "postgres_storage" {
 }
 
 resource "azurerm_storage_account" "sentiment_storage" {
-  name                     = "sentimentfuncstorage${random_id.suffix.hex}"
+  name                     = "sentfuncstorage${random_id.suffix.hex}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
