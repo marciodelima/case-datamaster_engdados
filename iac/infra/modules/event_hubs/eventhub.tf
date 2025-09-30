@@ -19,7 +19,7 @@ resource "azurerm_eventhub_namespace" "streaming_ns" {
 resource "azurerm_role_assignment" "eventhub_storage_writer" {
   scope                = data.azurerm_storage_account.existing_storage.id
   role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = azurerm_eventhub_namespace.streaming_ns.identity.principal_id
+  principal_id         = azurerm_eventhub_namespace.streaming_ns.identity[0].principal_id
 }
 
 resource "azurerm_eventhub" "streaming_hub" {

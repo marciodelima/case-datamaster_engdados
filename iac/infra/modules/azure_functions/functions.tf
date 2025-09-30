@@ -24,7 +24,7 @@ resource "azurerm_function_app" "news_producer" {
   }
 
   app_settings = {
-    EVENTHUB_NAME      = var.eventhub_name
+    EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     STORAGE_URL        = "https://${var.existing_storage_account_name}.blob.core.windows.net"
     KEYVAULT_URI       = "https://${var.keyvault_name}.vault.azure.net"
