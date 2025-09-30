@@ -8,10 +8,6 @@ variable "db_password" { default = "admin" }
 variable "admin_email" { default = "marcio.lima.f1rst.2025@gmail.com" }
 variable "github_repo" { default = "marciodelima/case-datamaster_engdados" }
 
-variable "fabric_name" {
-  default = "financefabric"
-}
-
 variable "databricks_name" {
   default = "finance-databricks"
 }

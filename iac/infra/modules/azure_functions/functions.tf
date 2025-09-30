@@ -2,8 +2,12 @@ resource "azurerm_app_service_plan" "func_plan" {
   name                = "func-plan"
   location            = var.location
   resource_group_name = var.resource_group_name
-  os_type             = "Linux"
-  sku_name            = "Y1"
+  kind                = "FunctionApp"
+
+  sku {
+    tier = "Dynamic"
+    size = "Y1"
+  }
 }
 
 resource "azurerm_function_app" "news_producer" {
@@ -61,8 +65,8 @@ resource "azurerm_function_app" "ri_collector" {
   }
 
   app_settings = {
-    POSTGRES_CONN = var.postgres_conn_string
-    STORAGE_URL   = "https://${var.existing_storage_account_name}.blob.core.windows.net"
+    KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
+    STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
   }
 }
 
@@ -98,8 +102,8 @@ resource "azurerm_function_app" "postgres_ingestor" {
   }
 
   app_settings = {
-    POSTGRES_CONN = var.postgres_conn_string
-    STORAGE_URL   = "https://${var.existing_storage_account_name}.blob.core.windows.net"
+    KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
+    STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
   }
 }
 

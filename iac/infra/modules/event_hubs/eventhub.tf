@@ -27,22 +27,19 @@ resource "azurerm_eventhub" "streaming_hub" {
   namespace_id      = azurerm_eventhub_namespace.streaming_ns.id
   partition_count   = 2
   message_retention = 1
-}
 
-resource "azurerm_eventhub_capture_description" "streaming_capture" {
-  eventhub_name       = azurerm_eventhub.streaming_hub.name
-  namespace_name      = azurerm_eventhub_namespace.streaming_ns.name
-  resource_group_name = var.resource_group_name
-  enabled             = true
-  encoding            = "Avro"
-  interval_in_seconds = 300
-  size_limit_in_bytes = 104857600
+  capture_description {
+    enabled             = true
+    encoding            = "Avro"
+    interval_in_seconds = 300
+    size_limit_in_bytes = 104857600
 
-  destination {
-    name                = "EventHubArchive.AzureBlockBlob"
-    storage_account_id  = data.azurerm_storage_account.existing_storage.id
-    blob_container_name = "dados"
-    archive_name_format = "raw/noticias/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+    destination {
+      name                = "EventHubArchive.AzureBlockBlob"
+      storage_account_id  = data.azurerm_storage_account.existing_storage.id
+      blob_container_name = "dados"
+      archive_name_format = "raw/noticias/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+    }
   }
 }
 

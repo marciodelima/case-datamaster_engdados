@@ -81,3 +81,15 @@ resource "null_resource" "init_sql" {
   }
 }
 
+data "azurerm_key_vault" "main" {
+  name                = var.keyvault_name
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_key_vault_secret" "postgres_conn_string" {
+  name         = "Postgres-Conn"
+  key_vault_id = data.azurerm_key_vault.main.id
+
+  value = "Host=${azurerm_postgresql_flexible_server.ri_db.fqdn};Port=5432;Database=${azurerm_postgresql_flexible_server_database.ri_db_main.name};User Id=${azurerm_postgresql_flexible_server.ri_db.administrator_login}@${azurerm_postgresql_flexible_server.ri_db.name};Password=${var.db_password};Ssl Mode=Require"
+}
+

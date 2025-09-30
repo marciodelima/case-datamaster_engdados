@@ -73,4 +73,21 @@ resource "azurerm_role_assignment" "sentiment_keyvault_access" {
   principal_id         = azurerm_function_app.news_sentiment_analyzer.identity.principal_id
 }
 
+resource "azurerm_role_assignment" "ri_collector_keyvault_reader" {
+  scope                = data.azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_function_app.ri_collector.identity.principal_id
+}
+
+resource "azurerm_role_assignment" "finance_keyvault_reader" {
+  scope                = data.azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_function_app.finance_csv_ingestor.identity.principal_id
+}
+
+resource "azurerm_role_assignment" "postgres_keyvault_reader" {
+  scope                = data.azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_function_app.postgres_ingestor.identity.principal_id
+}
 
