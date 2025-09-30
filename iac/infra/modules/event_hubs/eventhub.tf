@@ -38,7 +38,7 @@ resource "azurerm_eventhub" "streaming_hub" {
       name                = "EventHubArchive.AzureBlockBlob"
       storage_account_id  = data.azurerm_storage_account.existing_storage.id
       blob_container_name = "dados"
-      archive_name_format = "raw/noticias/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
+      archive_name_format = "raw/noticias/{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
     }
   }
 }

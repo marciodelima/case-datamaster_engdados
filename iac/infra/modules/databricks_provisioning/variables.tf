@@ -19,3 +19,6 @@ variable "keyvault_dns" {
 }
 
 variable "github_repo" {}
+
+variable "storage_name" {}
+

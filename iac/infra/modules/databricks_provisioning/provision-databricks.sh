@@ -66,7 +66,7 @@ TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209
 
 echo "Criando catálogo 'finance' e schemas..."
 databricks catalogs create finance --comment "Catálogo financeiro de investimentos" \
-  --storage-root "abfss://dados@datamasterstore.dfs.core.windows.net/"
+  --storage-root "abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
 
 for schema in r_inv b_inv s_inv stage g_inv; do
   echo "Criando schema '$schema' no catálogo 'finance'..."
@@ -104,5 +104,14 @@ az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-to
 
 echo "Subindo token para GitHub Actions..."
 gh secret set DATABRICKS_ADMIN_TOKEN --body "$TOKEN" --repo "$GITHUB_REPO"
+
+echo "Criando cluster SQL para consultas..."
+databricks clusters create --json '{
+  "cluster_name": "finance-sql",
+  "spark_version": "14.3.x-scala2.12",
+  "node_type_id": "Standard_DS3_v2",
+  "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'", 
+  "num_workers": 1,
+}'
 
 echo "Provisionamento Databricks concluído com sucesso."

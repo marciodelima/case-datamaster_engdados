@@ -9,6 +9,7 @@ resource "null_resource" "provision_databricks" {
       KEYVAULT_RESOURCE_ID = var.keyvault_resource_id
       KEYVAULT_DNS         = var.keyvault_dns
       GITHUB_REPO          = var.github_repo
+      STORAGE_NAME         = var.storage_name
     }
   }
 
