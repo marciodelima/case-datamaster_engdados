@@ -27,7 +27,7 @@ resource "azurerm_storage_account" "ri_collector_storage" {
 }
 
 resource "azurerm_storage_account" "finance_storage" {
-  name                     = "financefuncstorage${random_id.suffix.hex}"
+  name                     = "finfuncstorage${random_id.suffix.hex}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
