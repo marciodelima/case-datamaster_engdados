@@ -25,4 +25,3 @@ variable "log_name" {
 }
 
 
-
