@@ -11,6 +11,7 @@ resource "null_resource" "provision_databricks" {
       GITHUB_REPO          = var.github_repo
       STORAGE_NAME         = var.storage_name
       ACCESS_CONNECTOR_ID  = var.databricks_connector_id
+      DATABRICKS_RESOURCE  = var.databricks_resource
     }
   }
 

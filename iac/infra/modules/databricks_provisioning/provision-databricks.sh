@@ -10,7 +10,6 @@ sudo mv databricks /usr/local/bin/
 sudo apt-get install -y jq
 
 echo "Autenticando via Azure AD..."
-DATABRICKS_RESOURCE=$(az ad sp list --display-name "AzureDatabricks" --query "[0].appId" -o tsv)
 token_response=$(az account get-access-token --resource "$DATABRICKS_RESOURCE")
 export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
 export DATABRICKS_HOST="https://${WORKSPACE_URL}"
