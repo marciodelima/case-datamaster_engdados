@@ -98,6 +98,8 @@ for schema in r-inv b-inv s-inv stage g-inv; do
 done
 
 KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS_NAME" | sed 's:/*$::')
+echo "resource_id: $KEYVAULT_RESOURCE_ID"
+echo "dns_name: $KEYVAULT_DNS_NAME_CLEAN"
 
 if databricks secrets list-scopes -o json | jq -e '.scopes[] | select(.name == "finance-secrets")' > /dev/null; then
   echo "Secret scope 'finance-secrets' já existe. Pulando criação."
