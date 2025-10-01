@@ -65,7 +65,9 @@ echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
 echo "Verificando se a storage credential 'finance-cred' já existe..."
-if databricks storage-credentials list | jq -e '.[] | select(.name == "finance-cred")' > /dev/null; then
+CREDENTIALS_JSON=$(databricks storage-credentials list 2>/dev/null)
+
+if echo "$CREDENTIALS_JSON" | jq -e '.[] | select(.name == "finance-cred")' >/dev/null 2>&1; then
   echo "Storage credential 'finance-cred' já existe. Pulando criação."
 else
   echo "Criando storage credential 'finance-cred'..."
