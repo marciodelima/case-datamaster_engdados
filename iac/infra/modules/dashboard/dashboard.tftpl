@@ -8,7 +8,7 @@
           "metadata": {
             "type": "Extension/HubsExtension/PartType/MarkdownPart",
             "settings": {
-              "content": "# Observabilidade - Infraestrutura • Dados • Funções • Banco"
+              "content": "# Observabilidade - Infraestrutura • Dados • Banco • Funções"
             }
           }
         },
@@ -105,15 +105,20 @@
 
         // 🔹 Funções: Azure Functions (dinâmico via function_ids)
         <% for name, id in jsondecode(function_ids) : %>
-        "<%= 6 + index(jsondecode(function_ids), name) %>": {
-          "position": { "x": <%= index(jsondecode(function_ids), name) % 2 == 0 ? 6 : 0 %>, "y": <%= 20 + floor(index(jsondecode(function_ids), name) / 2) * 6 %>, "rowSpan": 6, "colSpan": 6 },
+        "<%= 100 + index(jsondecode(function_ids), name) %>": {
+          "position": {
+            "x": <%= index(jsondecode(function_ids), name) % 2 == 0 ? 0 : 6 %>,
+            "y": <%= 20 + floor(index(jsondecode(function_ids), name) / 2) * 6 %>,
+            "rowSpan": 6,
+            "colSpan": 6
+          },
           "metadata": {
             "type": "Extension/MetricsExplorerPart",
             "inputs": { "scope": "<%= id %>" },
             "settings": {
               "Content": {
                 "Version": "1.0",
-                "ChartType": "<%= name == "news_producer" ? "Column" : "Area" %>",
+                "ChartType": "Column",
                 "Metrics": [
                   { "MetricNamespace": "Microsoft.Web/sites", "MetricName": "FunctionExecutionCount", "Aggregation": "Total" },
                   { "MetricNamespace": "Microsoft.Web/sites", "MetricName": "Http5xx", "Aggregation": "Total" }
