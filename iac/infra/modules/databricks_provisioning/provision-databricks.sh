@@ -64,8 +64,8 @@ databricks groups patch "$GROUP_ID" --json '{
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
-echo "Verificando storage credential 'finance-cred'..."
-if databricks storage-credentials list | grep '"name": "finance-cred"' &>/dev/null; then
+echo "Verificando se a storage credential 'finance-cred' já existe..."
+if databricks storage-credentials list | jq -e '.[] | select(.name == "finance-cred")' > /dev/null; then
   echo "Storage credential 'finance-cred' já existe. Pulando criação."
 else
   echo "Criando storage credential 'finance-cred'..."
