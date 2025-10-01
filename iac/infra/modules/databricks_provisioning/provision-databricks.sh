@@ -65,13 +65,18 @@ echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
 echo "Criando storage credential 'finance-cred'..."
-databricks storage-credentials create --json '{
-  "name": "finance-cred",
-  "comment": "Credencial gerenciada para acesso ao storage '"${STORAGE_NAME}"'",
-  "azure_managed_identity": {
-    "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
-  }
-}'
+if databricks storage-credentials list | grep '"name": "finance-cred"' &>/dev/null; then
+  echo "Storage credential 'finance-cred' já existe. Pulando criação."
+else
+  echo "Criando storage credential 'finance-cred'..."
+  databricks storage-credentials create --json '{
+    "name": "finance-cred",
+    "comment": "Credencial gerenciada para acesso ao storage '"${STORAGE_NAME}"'",
+    "azure_managed_identity": {
+      "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
+    }
+  }'
+fi
 
 echo "Registrando external location 'finance-ext'..."
 databricks external-locations create --json '{
