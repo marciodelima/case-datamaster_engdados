@@ -13,12 +13,11 @@
           }
         },
 
-        // 🔹 Infraestrutura: Databricks
         "1": {
           "position": { "x": 0, "y": 2, "rowSpan": 6, "colSpan": 6 },
           "metadata": {
             "type": "Extension/MetricsExplorerPart",
-            "inputs": { "scope": "${databricks_id}" },
+            "inputs": { "scope": <%= jsonencode(databricks_id) %> },
             "settings": {
               "Content": {
                 "Version": "1.0",
@@ -30,11 +29,12 @@
             }
           }
         },
+
         "2": {
           "position": { "x": 6, "y": 2, "rowSpan": 6, "colSpan": 6 },
           "metadata": {
             "type": "Extension/MetricsExplorerPart",
-            "inputs": { "scope": "${databricks_id}" },
+            "inputs": { "scope": <%= jsonencode(databricks_id) %> },
             "settings": {
               "Content": {
                 "Version": "1.0",
@@ -48,12 +48,11 @@
           }
         },
 
-        // 🔹 Dados: Storage + Event Hub
         "3": {
           "position": { "x": 0, "y": 8, "rowSpan": 6, "colSpan": 6 },
           "metadata": {
             "type": "Extension/MetricsExplorerPart",
-            "inputs": { "scope": "${storage_id}" },
+            "inputs": { "scope": <%= jsonencode(storage_id) %> },
             "settings": {
               "Content": {
                 "Version": "1.0",
@@ -66,11 +65,12 @@
             }
           }
         },
+
         "4": {
           "position": { "x": 6, "y": 8, "rowSpan": 6, "colSpan": 6 },
           "metadata": {
             "type": "Extension/MetricsExplorerPart",
-            "inputs": { "scope": "${eventhub_id}" },
+            "inputs": { "scope": <%= jsonencode(eventhub_id) %> },
             "settings": {
               "Content": {
                 "Version": "1.0",
@@ -84,12 +84,11 @@
           }
         },
 
-        // 🔹 Banco: PostgreSQL
         "5": {
           "position": { "x": 0, "y": 14, "rowSpan": 6, "colSpan": 6 },
           "metadata": {
             "type": "Extension/MetricsExplorerPart",
-            "inputs": { "scope": "${postgres_id}" },
+            "inputs": { "scope": <%= jsonencode(postgres_id) %> },
             "settings": {
               "Content": {
                 "Version": "1.0",
@@ -103,18 +102,17 @@
           }
         },
 
-        // 🔹 Funções: Azure Functions (dinâmico via function_ids)
-        <% for name, id in jsondecode(function_ids) : %>
-        "<%= 100 + index(jsondecode(function_ids), name) %>": {
+        <% for name, id in function_ids : %>
+        "<%= 100 + index(function_ids, name) %>": {
           "position": {
-            "x": <%= index(jsondecode(function_ids), name) % 2 == 0 ? 0 : 6 %>,
-            "y": <%= 20 + floor(index(jsondecode(function_ids), name) / 2) * 6 %>,
+            "x": <%= index(function_ids, name) % 2 == 0 ? 0 : 6 %>,
+            "y": <%= 20 + floor(index(function_ids, name) / 2) * 6 %>,
             "rowSpan": 6,
             "colSpan": 6
           },
           "metadata": {
             "type": "Extension/MetricsExplorerPart",
-            "inputs": { "scope": "<%= id %>" },
+            "inputs": { "scope": <%= jsonencode(id) %> },
             "settings": {
               "Content": {
                 "Version": "1.0",
