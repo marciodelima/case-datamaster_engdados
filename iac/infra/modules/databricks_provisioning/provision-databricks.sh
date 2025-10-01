@@ -64,21 +64,14 @@ databricks groups patch "$GROUP_ID" --json '{
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
-echo "Verificando se a storage credential 'finance-cred' já existe..."
-CREDENTIALS_JSON=$(databricks storage-credentials list 2>/dev/null)
-
-if echo "$CREDENTIALS_JSON" | jq -e '.[] | select(.name == "finance-cred")' >/dev/null 2>&1; then
-  echo "Storage credential 'finance-cred' já existe. Pulando criação."
-else
-  echo "Criando storage credential 'finance-cred'..."
-  databricks storage-credentials create --json '{
-    "name": "finance-cred",
-    "comment": "Credencial gerenciada para acesso ao storage '"${STORAGE_NAME}"'",
-    "azure_managed_identity": {
-      "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
-    }
-  }'
-fi
+echo "Criando storage credential 'finance-cred'..."
+databricks storage-credentials create --json '{
+  "name": "finance-cred",
+  "comment": "Credencial gerenciada",
+  "azure_managed_identity": {
+    "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
+  }
+}' || echo "Credencial já existe, ignorando erro."
 
 echo "Registrando external location 'finance-ext'..."
 databricks external-locations create --json '{
@@ -86,14 +79,14 @@ databricks external-locations create --json '{
   "url": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/",
   "credential_name": "finance-cred",
   "comment": "Local externo para catálogo financeiro"
-}'
+}' || echo "external location já existe, ignorando erro."
 
 echo "Criando catálogo 'finance'..."
 databricks catalogs create --json '{
   "name": "finance",
   "comment": "Catálogo financeiro de investimentos",
   "storage_root": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/"
-}'
+}' || echo "Catálogo já existe, ignorando erro."
 
 echo "Criando schemas no catálogo 'finance'..."
 for schema in r-inv b-inv s-inv stage g-inv; do
@@ -101,7 +94,7 @@ for schema in r-inv b-inv s-inv stage g-inv; do
   databricks schemas create --json '{
     "name": "'"$schema"'",
     "catalog_name": "finance"
-  }'
+  }' || echo "Schema já existe" 
 done
 
 echo "Criando secret scope com Azure Key Vault..."
