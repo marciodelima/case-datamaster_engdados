@@ -10,7 +10,8 @@ sudo mv databricks /usr/local/bin/
 sudo apt-get install -y jq
 
 echo "Autenticando via Azure AD..."
-token_response=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d)
+DATABRICKS_RESOURCE=$(az ad sp list --display-name "AzureDatabricks" --query "[0].appId" -o tsv)
+token_response=$(az account get-access-token --resource "$DATABRICKS_RESOURCE")
 export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
 export DATABRICKS_HOST="https://${WORKSPACE_URL}"
 
@@ -97,17 +98,23 @@ for schema in r-inv b-inv s-inv stage g-inv; do
   }' || echo "Schema já existe" 
 done
 
-echo "Criando secret scope com Azure Key Vault..."
-databricks secrets create-scope \
-  --json '{
+KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS_NAME" | sed 's:/*$::')
+
+if databricks secrets list-scopes -o json | jq -e '.scopes[] | select(.name == "finance-secrets")' > /dev/null; then
+  echo "Secret scope 'finance-secrets' já existe. Pulando criação."
+else
+  echo "Criando secret scope 'finance-secrets' com Azure Key Vault..."
+  databricks secrets create-scope --json '{
     "scope": "finance-secrets",
     "scope_backend_type": "AZURE_KEYVAULT",
     "initial_manage_principal": "users",
     "backend_azure_keyvault": {
       "resource_id": "'"${KEYVAULT_RESOURCE_ID}"'",
-      "dns_name": "'"${KEYVAULT_DNS_NAME}"'"
+      "dns_name": "'"${KEYVAULT_DNS_NAME_CLEAN}"'"
     }
   }'
+fi
+
 
 echo "Criando policy padrão para clusters..."
 cat <<EOF > policy.json
