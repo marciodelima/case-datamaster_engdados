@@ -22,7 +22,7 @@ resource "azurerm_portal_dashboard" "finance_dashboard" {
     storage_id    = var.storage_id
     eventhub_id   = var.eventhub_id
     postgres_id   = var.postgres_id
-    function_ids  = jsonencode(local.function_ids)
+    #function_ids  = jsonencode(local.function_ids)
   })
 }
 
