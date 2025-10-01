@@ -16,3 +16,13 @@ resource "azurerm_role_assignment" "identity_storage_access_dbx" {
   ]
 }
 
+resource "azurerm_role_assignment" "access_connector_keyvault_access" {
+  scope                = data.azurerm_key_vault.kv.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = module.databricks.access_connector_principal_id
+
+  depends_on = [
+    module.databricks
+  ]
+}
+
