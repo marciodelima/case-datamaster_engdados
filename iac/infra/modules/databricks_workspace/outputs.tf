@@ -13,3 +13,7 @@ output "workspace_url" {
   value       = azurerm_databricks_workspace.dbx.workspace_url
 }
 
+output "access_connector_id" {
+  value = azurerm_databricks_access_connector.finance.id
+}
+

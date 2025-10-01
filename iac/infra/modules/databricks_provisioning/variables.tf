@@ -1,3 +1,5 @@
+variable "databricks_connector_id" {}
+
 variable "databricks_workspace_url" {
   type = string
 }

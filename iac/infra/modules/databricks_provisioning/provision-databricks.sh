@@ -68,7 +68,9 @@ echo "Criando storage credential 'finance-cred'..."
 databricks storage-credentials create --json '{
   "name": "finance-cred",
   "comment": "Credencial gerenciada para acesso ao storage '"${STORAGE_NAME}"'",
-  "azure_managed_identity": {}
+  "azure_managed_identity": {
+    "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
+  }
 }'
 
 echo "Registrando external location 'finance-ext'..."
