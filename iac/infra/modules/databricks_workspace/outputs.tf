@@ -17,3 +17,7 @@ output "access_connector_id" {
   value = azurerm_databricks_access_connector.finance.id
 }
 
+output "access_connector_principal_id" {
+  value = azurerm_databricks_access_connector.finance.identity.principal_id
+}
+
