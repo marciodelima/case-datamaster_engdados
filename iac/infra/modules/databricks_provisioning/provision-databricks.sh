@@ -65,38 +65,34 @@ echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
 echo "Criando storage credential 'finance-cred'..."
-databricks storage-credentials create finance-cred \
-  --json '{
-    "name": "finance-cred",
-    "comment": "Credencial gerenciada para acesso ao storage '"${STORAGE_NAME}"'",
-    "azure_managed_identity": {}
-  }'
+databricks storage-credentials create --json '{
+  "name": "finance-cred",
+  "comment": "Credencial gerenciada para acesso ao storage '"${STORAGE_NAME}"'",
+  "azure_managed_identity": {}
+}'
 
 echo "Registrando external location 'finance-ext'..."
-echo "Registrando external location 'finance-ext'..."
-databricks external-locations create finance-ext \
-  --json '{
-    "name": "finance-ext",
-    "url": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/",
-    "credential_name": "finance-cred",
-    "comment": "Local externo para catálogo financeiro"
-  }'
+databricks external-locations create --json '{
+  "name": "finance-ext",
+  "url": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/",
+  "credential_name": "finance-cred",
+  "comment": "Local externo para catálogo financeiro"
+}'
 
-echo "Criando catálogo 'finance' e schemas..."
-databricks catalogs create finance \
-  --json '{
-    "name": "finance",
-    "comment": "Catálogo financeiro de investimentos",
-    "storage_root": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/"
-  }'
+echo "Criando catálogo 'finance'..."
+databricks catalogs create --json '{
+  "name": "finance",
+  "comment": "Catálogo financeiro de investimentos",
+  "storage_root": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/"
+}'
 
-for schema in r_inv b_inv s_inv stage g_inv; do
-  echo "Criando schema '$schema' no catálogo 'finance'..."
-  databricks schemas create "$schema" \
-    --json '{
-      "name": "'"$schema"'",
-      "catalog_name": "finance"
-    }'
+echo "Criando schemas no catálogo 'finance'..."
+for schema in r-inv b-inv s-inv stage g-inv; do
+  echo "Criando schema '$schema'..."
+  databricks schemas create --json '{
+    "name": "'"$schema"'",
+    "catalog_name": "finance"
+  }'
 done
 
 echo "Criando secret scope com Azure Key Vault..."
