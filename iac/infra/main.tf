@@ -29,7 +29,7 @@ module "databricks_provisioning" {
   admin_email              = var.admin_email
   keyvault_name            = var.keyvault_name
   keyvault_resource_id     = data.azurerm_key_vault.kv.id
-  keyvault_dns             = data.azurerm_key_vault.kv.vault_uri
+  keyvault_dns             = trim(data.azurerm_key_vault.kv.vault_uri, "/")
   github_repo              = var.github_repo
   storage_name             = var.nome_storage
   databricks_connector_id  = module.databricks.access_connector_id
