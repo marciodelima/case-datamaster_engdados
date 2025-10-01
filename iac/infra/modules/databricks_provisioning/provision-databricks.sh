@@ -98,10 +98,11 @@ for schema in r-inv b-inv s-inv stage g-inv; do
 done
 
 echo "Criando secret scope com Azure Key Vault..."
-databricks secrets create-scope finance-secrets \
-  --scope-backend-type AZURE_KEYVAULT \
-  --initial-manage-principal "users" \
+databricks secrets create-scope \
   --json '{
+    "scope": "finance-secrets",
+    "scope_backend_type": "AZURE_KEYVAULT",
+    "initial_manage_principal": "users",
     "backend_azure_keyvault": {
       "resource_id": "'"${KEYVAULT_RESOURCE_ID}"'",
       "dns_name": "'"${KEYVAULT_DNS_NAME}"'"
