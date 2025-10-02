@@ -63,22 +63,23 @@ databricks groups patch "$GROUP_ID" --json '{
 
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
+STORAGE_ROOT = "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/"
 
 echo "Criando metastore '$METASTORE_NAME'..."
-databricks unity-catalog metastores create --json '{
-  "name": "'"${METASTORE_NAME}"'",
-  "region": "'"${REGION}"'",
-  "storage_root": "'"${STORAGE_ROOT}"'",
-  "owner": "users",
-  "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
-}' || true
+databricks metastores create \
+  --name "$METASTORE_NAME" \
+  --region "$REGION" \
+  --storage-root "$STORAGE_ROOT" \
+  --access-connectors "$ACCESS_CONNECTOR_ID" || true
 
-METASTORE_ID=$(databricks unity-catalog metastores list --output json | jq -r '.metastores[] | select(.name=="'"${METASTORE_NAME}"'") | .id')
+echo "Obtendo metastore ID..."
+METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[] | select(.name=="'"${METASTORE_NAME}"'") | .id')
+
 echo "Associando workspace ao metastore..."
-databricks unity-catalog metastores assign --metastore-id "$METASTORE_ID" --json '{
-  "workspace_id": "'"${WORKSPACE_ID}"'",
-  "default_catalog_name": "main"
-}' || true
+databricks metastores assign \
+  --metastore-id "$METASTORE_ID" \
+  --workspace-id "$WORKSPACE_ID" \
+  --default-catalog-name "main" || true
 
 echo "Criando storage credential 'finance-cred'..."
 databricks storage-credentials create --json '{
@@ -92,7 +93,7 @@ databricks storage-credentials create --json '{
 echo "Registrando external location 'finance-ext'..."
 databricks external-locations create --json '{
   "name": "finance-ext",
-  "url": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/",
+  "url": "$STORAGE_ROOT",
   "credential_name": "finance-cred",
   "comment": "Local externo para catálogo financeiro"
 }' || echo "external location já existe, ignorando erro."
@@ -101,7 +102,7 @@ echo "Criando catálogo 'finance'..."
 databricks catalogs create --json '{
   "name": "finance",
   "comment": "Catálogo financeiro de investimentos",
-  "storage_root": "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/"
+  "metastore-id": "$METASTORE_ID"
 }' || echo "Catálogo já existe, ignorando erro."
 
 echo "Criando schemas no catálogo 'finance'..."
@@ -131,10 +132,7 @@ cat <<EOF > policy.json
   "spark_conf.spark.sql.autoBroadcastJoinThreshold": { "type": "fixed", "value": "104857600" }
 }
 EOF
-databricks cluster-policies create --name "inv-policy" --definition "$(cat policy.json)"
-
-echo "Subindo token para GitHub Actions..."
-gh secret set DATABRICKS_ADMIN_TOKEN --body "$TOKEN" --repo "$GITHUB_REPO"
+databricks cluster-policies create --name "inv-policy" --definition "$(cat policy.json)" || true
 
 echo "Criando cluster SQL para consultas..."
 databricks clusters create --json '{
@@ -144,6 +142,12 @@ databricks clusters create --json '{
   "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'", 
   "num_workers": 1,
 }'
+
+echo "Subindo token para GitHub Actions..."
+gh auth status || gh auth login --with-token <<< "$GH_TOKEN"
+gh secret set DATABRICKS_ADMIN_TOKEN \
+  --body "$TOKEN" \
+  --repo "$GITHUB_REPO"
 
 echo "Salvando token no Azure Key Vault..."
 az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-token" --value "$TOKEN"
