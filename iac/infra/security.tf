@@ -8,7 +8,7 @@ resource "azurerm_role_assignment" "identity_storage_access" {
 }
 
 resource "azurerm_role_assignment" "identity_storage_access_dbx" {
-  principal_id         = module.databricks.access_connector_principal_id
+  principal_id         = module.databricks.unity_catalog_access_connector_principal_id
   role_definition_name = "Storage Blob Data Contributor"
   scope                = module.storage.storage_id
   depends_on = [
