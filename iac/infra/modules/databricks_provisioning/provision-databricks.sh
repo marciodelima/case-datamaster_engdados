@@ -65,14 +65,6 @@ echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
 
-echo "Criando metastore '$METASTORE_NAME'..."
-databricks metastores create --json '{
-  "name": "'"${METASTORE_NAME}"'",
-  "region": "'"${REGION}"'",
-  "storage_root": "'"${STORAGE_ROOT}"'",
-  "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
-}' || true
-
 echo "Obtendo metastore ID..."
 METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[] | select(.name=="'"${METASTORE_NAME}"'") | .id')
 
@@ -80,7 +72,7 @@ echo "Associando workspace ao metastore..."
 databricks metastores assign --json '{
   "metastore_id": "'"${METASTORE_ID}"'",
   "workspace_id": "'"${WORKSPACE_ID}"'",
-  "default_catalog_name": "main"
+  "default_catalog_name": "finance"
 }' || true
 
 echo "Criando storage credential 'finance-cred'..."
