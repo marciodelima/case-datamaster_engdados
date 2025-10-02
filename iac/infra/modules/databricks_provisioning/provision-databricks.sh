@@ -102,7 +102,7 @@ echo "resource_id: $KEYVAULT_RESOURCE_ID"
 echo "dns_name: $KEYVAULT_DNS"
 echo "dns_name_clean: $KEYVAULT_DNS_NAME_CLEAN"
 
-if databricks secrets list-scopes -o json | jq -e '.scopes[] | select(.name == "finance-secrets")' > /dev/null; then
+if databricks secrets list-scopes -o json | jq -e '.[] | select(.name == "finance-kv-secrets")' > /dev/null; then
   echo "Secret scope 'finance-kv-secrets' já existe. Pulando criação."
 else
   echo "Criando secret scope 'finance-kv-secrets' com Azure Key Vault..."
@@ -112,7 +112,7 @@ else
     "initial_manage_principal": "users",
     "backend_azure_keyvault": {
       "resource_id": "'"${KEYVAULT_RESOURCE_ID}"'",
-      "dns_name": "'"${KEYVAULT_DNS_NAME_CLEAN}"'"
+      "dns_name": "'"${KEYVAULT_DNS_NAME}"'"
     }
   }'
 fi
