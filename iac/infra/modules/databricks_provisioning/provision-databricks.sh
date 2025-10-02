@@ -63,7 +63,7 @@ databricks groups patch "$GROUP_ID" --json '{
 
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
-STORAGE_ROOT = "abfss://dados@'"${STORAGE_NAME}"'.dfs.core.windows.net/"
+STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
 
 echo "Criando metastore '$METASTORE_NAME'..."
 databricks metastores create \
