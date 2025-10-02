@@ -66,20 +66,22 @@ TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209
 STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
 
 echo "Criando metastore '$METASTORE_NAME'..."
-databricks metastores create \
-  --name "$METASTORE_NAME" \
-  --region "$REGION" \
-  --storage-root "$STORAGE_ROOT" \
-  --access-connectors "$ACCESS_CONNECTOR_ID" || true
+databricks metastores create --json '{
+  "name": "'"${METASTORE_NAME}"'",
+  "region": "'"${REGION}"'",
+  "storage_root": "'"${STORAGE_ROOT}"'",
+  "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
+}' || true
 
 echo "Obtendo metastore ID..."
 METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[] | select(.name=="'"${METASTORE_NAME}"'") | .id')
 
 echo "Associando workspace ao metastore..."
-databricks metastores assign \
-  --metastore-id "$METASTORE_ID" \
-  --workspace-id "$WORKSPACE_ID" \
-  --default-catalog-name "main" || true
+databricks metastores assign --json '{
+  "metastore_id": "'"${METASTORE_ID}"'",
+  "workspace_id": "'"${WORKSPACE_ID}"'",
+  "default_catalog_name": "main"
+}' || true
 
 echo "Criando storage credential 'finance-cred'..."
 databricks storage-credentials create --json '{
@@ -93,10 +95,11 @@ databricks storage-credentials create --json '{
 echo "Registrando external location 'finance-ext'..."
 databricks external-locations create --json '{
   "name": "finance-ext",
-  "url": "$STORAGE_ROOT",
+  "url": "'"${STORAGE_ROOT}"'",
   "credential_name": "finance-cred",
-  "comment": "Local externo para catálogo financeiro"
-}' || echo "external location já existe, ignorando erro."
+  "comment": "Local de dados do metastore",
+  "read_only": false
+}'
 
 echo "Criando catálogo 'finance'..."
 databricks catalogs create --json '{
