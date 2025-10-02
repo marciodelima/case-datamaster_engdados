@@ -32,7 +32,7 @@ module "databricks_provisioning" {
   keyvault_dns             = data.azurerm_key_vault.kv.vault_uri
   github_repo              = var.github_repo
   storage_name             = var.nome_storage
-  databricks_connector_id  = module.databricks.access_connector_id
+  databricks_connector_id  = module.databricks.unity_catalog_access_connector_id
   location                 = var.location
   workspace_id             = module.databricks.workspace_id
   resource_group_name      = var.resource_group_name
