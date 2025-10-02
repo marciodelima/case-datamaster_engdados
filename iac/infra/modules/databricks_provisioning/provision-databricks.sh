@@ -64,6 +64,22 @@ databricks groups patch "$GROUP_ID" --json '{
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 
+echo "Criando metastore '$METASTORE_NAME'..."
+databricks unity-catalog metastores create --json '{
+  "name": "'"${METASTORE_NAME}"'",
+  "region": "'"${REGION}"'",
+  "storage_root": "'"${STORAGE_ROOT}"'",
+  "owner": "users",
+  "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
+}' || true
+
+METASTORE_ID=$(databricks unity-catalog metastores list --output json | jq -r '.metastores[] | select(.name=="'"${METASTORE_NAME}"'") | .id')
+echo "Associando workspace ao metastore..."
+databricks unity-catalog metastores assign --metastore-id "$METASTORE_ID" --json '{
+  "workspace_id": "'"${WORKSPACE_ID}"'",
+  "default_catalog_name": "main"
+}' || true
+
 echo "Criando storage credential 'finance-cred'..."
 databricks storage-credentials create --json '{
   "name": "finance-cred",
@@ -97,27 +113,6 @@ for schema in r-inv b-inv s-inv stage g-inv; do
   }' || echo "Schema já existe" 
 done
 
-KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS" | sed 's:/*$::')
-echo "resource_id: $KEYVAULT_RESOURCE_ID"
-echo "dns_name: $KEYVAULT_DNS"
-echo "dns_name_clean: $KEYVAULT_DNS_NAME_CLEAN"
-
-if databricks secrets list-scopes -o json | jq -e '.[] | select(.name == "finance-kv-secrets")' > /dev/null; then
-  echo "Secret scope 'finance-kv-secrets' já existe. Pulando criação."
-else
-  echo "Criando secret scope 'finance-kv-secrets' com Azure Key Vault..."
-  databricks secrets create-scope --json '{
-    "scope": "finance-kv-secrets",
-    "scope_backend_type": "AZURE_KEYVAULT",
-    "initial_manage_principal": "users",
-    "backend_azure_keyvault": {
-      "resource_id": "'"${KEYVAULT_RESOURCE_ID}"'",
-      "dns_name": "'"${KEYVAULT_DNS_NAME}"'"
-    }
-  }'
-fi
-
-
 echo "Criando policy padrão para clusters..."
 cat <<EOF > policy.json
 {
@@ -138,9 +133,6 @@ cat <<EOF > policy.json
 EOF
 databricks cluster-policies create --name "inv-policy" --definition "$(cat policy.json)"
 
-echo "Salvando token no Azure Key Vault..."
-az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-token" --value "$TOKEN"
-
 echo "Subindo token para GitHub Actions..."
 gh secret set DATABRICKS_ADMIN_TOKEN --body "$TOKEN" --repo "$GITHUB_REPO"
 
@@ -152,5 +144,23 @@ databricks clusters create --json '{
   "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'", 
   "num_workers": 1,
 }'
+
+echo "Salvando token no Azure Key Vault..."
+az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-token" --value "$TOKEN"
+
+KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS" | sed 's:/*$::')
+
+curl -Xkv POST "$DATABRICKS_HOST/api/2.0/secrets/scopes/create" \
+  -H "Authorization: Bearer $DATABRICKS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "scope": "finance-kv-secrets",
+    "scope_backend_type": "AZURE_KEYVAULT",
+    "initial_manage_principal": "users",
+    "backend_azure_keyvault": {
+      "resource_id": "'"${KEYVAULT_RESOURCE_ID}"'",
+      "dns_name": "'"${KEYVAULT_DNS_NAME_CLEAN}"'"
+    }
+  }'
 
 echo "Provisionamento Databricks concluído com sucesso."

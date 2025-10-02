@@ -28,3 +28,8 @@ variable "github_repo" {}
 
 variable "storage_name" {}
 
+variable "location" {}
+
+variable "workspace_id" {}
+
+variable "resource_group_name" {}

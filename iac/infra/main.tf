@@ -33,11 +33,13 @@ module "databricks_provisioning" {
   github_repo              = var.github_repo
   storage_name             = var.nome_storage
   databricks_connector_id  = module.databricks.access_connector_id
+  location                 = var.location
+  workspace_id             = module.databricks.workspace_id
+  resource_group_name      = var.resource_group_name
+
   depends_on = [
     module.databricks,
-    module.storage,
-    azurerm_role_assignment.identity_storage_access_dbx,
-    azurerm_role_assignment.access_connector_keyvault_access
+    module.storage
   ]
 }
 

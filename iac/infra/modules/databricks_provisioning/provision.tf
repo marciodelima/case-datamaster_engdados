@@ -12,6 +12,9 @@ resource "null_resource" "provision_databricks" {
       STORAGE_NAME         = var.storage_name
       ACCESS_CONNECTOR_ID  = var.databricks_connector_id
       DATABRICKS_RESOURCE  = var.databricks_resource
+      METASTORE_NAME       = "meta-prd"
+      REGION               = var.location
+      WORKSPACE_ID         = var.workspace_id
     }
   }
 
