@@ -63,10 +63,13 @@ databricks groups patch "$GROUP_ID" --json '{
 
 echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
 ACCOUNT_HOST="https://accounts.azuredatabricks.net"
+
+export DATABRICKS_HOST="https://accounts.azuredatabricks.net"
+export DATABRICKS_TOKEN="$BOOTSTRAP_TOKEN"
+
 ACCOUNT_ID=$(databricks account-users get-current --output json | jq -r '.account_id')
 
 curl -s -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/$ACCOUNT_ID/groups/account-admins" \
-  -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [{"user_id": "'"$ADMIN_ID"'"}]
