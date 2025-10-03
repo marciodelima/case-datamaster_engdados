@@ -59,10 +59,25 @@ databricks groups patch "$GROUP_ID" --json '{
       ]
     }
   ]
-}'
+}' || true
 
-echo "Gerando token pessoal..."
-TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
+echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
+GROUP_ID=$(databricks account-groups list --output json | jq -r '.groups[] | select(.display_name=="account-admins") | .id')
+databricks account-groups update "$GROUP_ID" --json '{
+  "members": [
+    {
+      "user_name": "'"${ADMIN_EMAIL}"'"
+    }
+  ]
+}' || true
+
+echo "Gerando token admin pessoal..."
+TOKEN=$(databricks account-access-tokens create --json '{
+  "lifetime_seconds": 1209600,
+  "comment": "Admin token gerado via script",
+  "user_id": "'"${ADMIN_ID}"'"
+}' | jq -r '.token_value')
+
 STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
 
 echo "Salvando token no Azure Key Vault..."
