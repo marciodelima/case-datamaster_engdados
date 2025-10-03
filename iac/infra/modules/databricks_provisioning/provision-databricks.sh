@@ -63,17 +63,28 @@ databricks groups patch "$GROUP_ID" --json '{
 
 echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
 ACCOUNT_HOST="https://accounts.azuredatabricks.net"
+ADMIN_TOKEN="$BOOTSTRAP_TOKEN"
 
-export DATABRICKS_HOST="https://accounts.azuredatabricks.net"
-export DATABRICKS_TOKEN="$BOOTSTRAP_TOKEN"
+ACCOUNT_ID=$(curl -s -X GET "$ACCOUNT_HOST/api/2.0/accounts/me" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" | jq -r '.account_id')
+echo "ACCOUNT_ID: $ACCOUNT_ID"
 
-ACCOUNT_ID=$(databricks account-users get-current --output json | jq -r '.account_id')
+USER_ID=$(curl -s -X GET "$ACCOUNT_HOST/api/2.0/accounts/$ACCOUNT_ID/users" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" | jq -r '.users[] | select(.user_name=="'"$ADMIN_EMAIL"'") | .id')
 
-curl -s -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/$ACCOUNT_ID/groups/account-admins" \
+if [ -z "$USER_ID" ]; then
+  echo "Usuário não encontrado. Crie o usuário primeiro."
+  exit 1
+fi
+
+echo "USER_ID: $USER_ID"
+curl -kvs -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/$ACCOUNT_ID/groups/account-admins" \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "members": [{"user_id": "'"$ADMIN_ID"'"}]
-  }'
+  }' || true
+
 
 echo "Gerando token admin pessoal..."
 TOKEN=$(databricks account-access-tokens create --json '{
