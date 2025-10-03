@@ -72,7 +72,7 @@ curl -s -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/me/groups/account-admins" \
       "path": "members",
       "value": [{"value": "'"$USER_ID"'"}]
     }]
-  }'
+  }' || true
 
 echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
 GROUP_ID=$(databricks account-groups list --output json | jq -r '.groups[] | select(.display_name=="account-admins") | .id')
