@@ -64,9 +64,7 @@ databricks groups patch "$GROUP_ID" --json '{
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
-
-echo "databricks-cli login ..."
-databricks auth login --host "$DATABRICKS_HOST" --token "$TOKEN"
+export DATABRICKS_TOKEN=TOKEN
 
 echo "Obtendo metastore ID Atual..."
 METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[0].id')
