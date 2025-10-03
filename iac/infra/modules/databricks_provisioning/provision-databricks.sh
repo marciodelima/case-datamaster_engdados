@@ -65,7 +65,7 @@ echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
 ACCOUNT_HOST="https://accounts.azuredatabricks.net"
 ADMIN_TOKEN="$BOOTSTRAP_TOKEN"
 
-ACCOUNT_ID=$(curl -s -X GET "$ACCOUNT_HOST/api/2.0/accounts/me" \
+ACCOUNT_ID=$(curl -s -X GET "$ACCOUNT_HOST/api/2.0/accounts/workspaces/$WORKSPACE_ID" \
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq -r '.account_id')
 echo "ACCOUNT_ID: $ACCOUNT_ID"
 
