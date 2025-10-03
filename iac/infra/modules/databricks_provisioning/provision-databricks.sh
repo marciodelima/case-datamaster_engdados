@@ -3,7 +3,7 @@ set -e
 
 echo "Instalando databricks CLI e jq..."
 pip uninstall -y databricks-cli || true
-curl -Lk https://github.com/databricks/cli/releases/download/v0.270.0/databricks_cli_0.270.0_linux_amd64.tar.gz -o databricks.tar.gz
+curl -Lk https://github.com/databricks/cli/releases/download/v0.271.0/databricks_cli_0.271.0_linux_amd64.tar.gz -o databricks.tar.gz
 tar -xvzf databricks.tar.gz
 sudo mv databricks /usr/local/bin/
 
@@ -62,8 +62,7 @@ databricks groups patch "$GROUP_ID" --json '{
 }' || true
 
 echo "Adicionando usuário ao grupo 'account-admins'..."
-ACCOUNT_HOST="https://accounts.azuredatabricks.net"
-curl -kvs -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/me/groups/account-admins" \
+curl -s -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/me/groups/account-admins" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -71,9 +70,19 @@ curl -kvs -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/me/groups/account-admins" \
     "Operations": [{
       "op": "add",
       "path": "members",
-      "value": [{"value": "'"$ADMIN_ID"'"}]
+      "value": [{"value": "'"$USER_ID"'"}]
     }]
   }'
+
+echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
+GROUP_ID=$(databricks account-groups list --output json | jq -r '.groups[] | select(.display_name=="account-admins") | .id')
+databricks account-groups update "$GROUP_ID" --json '{
+  "members": [
+    {
+      "user_name": "'"${ADMIN_EMAIL}"'"
+    }
+  ]
+}' || true
 
 echo "Gerando token admin pessoal..."
 TOKEN=$(databricks account-access-tokens create --json '{
