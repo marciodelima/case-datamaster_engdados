@@ -10,7 +10,7 @@ sudo mv databricks /usr/local/bin/
 sudo apt-get install -y jq
 
 echo "Autenticando via Azure AD..."
-token_response=$(az account get-access-token --resource "$DATABRICKS_RESOURCE")
+token_response=$(az account get-access-token --resource=https://accounts.azuredatabricks.net)
 export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
 export DATABRICKS_HOST="https://${WORKSPACE_URL}"
 
@@ -63,7 +63,7 @@ databricks groups patch "$GROUP_ID" --json '{
 
 echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
 ACCOUNT_HOST="https://accounts.azuredatabricks.net"
-ADMIN_TOKEN="$BOOTSTRAP_TOKEN"
+ADMIN_TOKEN="$DATABRICKS_AAD_TOKEN"
 
 ACCOUNT_ID=$(curl -s -X GET "$ACCOUNT_HOST/api/2.0/accounts/workspaces/$WORKSPACE_ID" \
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq -r '.account_id')
