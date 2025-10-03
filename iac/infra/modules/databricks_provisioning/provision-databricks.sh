@@ -64,7 +64,14 @@ databricks groups patch "$GROUP_ID" --json '{
 echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
+
+echo "Salvando token no Azure Key Vault..."
+az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-token" --value "$TOKEN"
+
 export DATABRICKS_TOKEN=TOKEN
+unset ARM_CLIENT_ID
+unset ARM_CLIENT_SECRET
+unset ARM_TENANT_ID
 
 echo "Obtendo metastore ID Atual..."
 METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[0].id')
@@ -150,9 +157,6 @@ gh auth status || gh auth login --with-token <<< "$GH_TOKEN"
 gh secret set DATABRICKS_ADMIN_TOKEN \
   --body "$TOKEN" \
   --repo "$GITHUB_REPO"
-
-echo "Salvando token no Azure Key Vault..."
-az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-token" --value "$TOKEN"
 
 echo "Criando secret pro AKV"
 KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS" | sed 's:/*$::')
