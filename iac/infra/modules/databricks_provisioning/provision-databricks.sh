@@ -61,25 +61,20 @@ databricks groups patch "$GROUP_ID" --json '{
   ]
 }' || true
 
-echo "Adicionando usuário ao grupo 'account-admins'..."
-curl -s -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/me/groups/account-admins" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
-    "Operations": [{
-      "op": "add",
-      "path": "members",
-      "value": [{"value": "'"$USER_ID"'"}]
-    }]
-  }' || true
-
 echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
 GROUP_ID=$(databricks account-groups list --output json | jq -r '.groups[] | select(.display_name=="account-admins") | .id')
-databricks account-groups update "$GROUP_ID" --json '{
-  "members": [
+
+databricks groups patch "$GROUP_ID" --json '{
+  "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+  "Operations": [
     {
-      "user_name": "'"${ADMIN_EMAIL}"'"
+      "op": "add",
+      "path": "members",
+      "value": [
+        {
+          "value": "'"$ADMIN_ID"'"
+        }
+      ]
     }
   ]
 }' || true
