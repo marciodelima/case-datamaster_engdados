@@ -65,8 +65,17 @@ echo "Gerando token pessoal..."
 TOKEN=$(databricks tokens create --comment "Admin token" --lifetime-seconds 1209600 | jq -r ".token_value")
 STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
 
-echo "Obtendo metastore ID..."
-METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[] | select(.name=="'"${METASTORE_NAME}"'") | .id')
+echo "databricks-cli login ..."
+databricks auth login --host "$DATABRICKS_HOST" --token "$TOKEN"
+
+echo "Obtendo metastore ID Atual..."
+METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[0].id')
+
+echo "Trocando nome - metastore ID..."
+databricks metastores update --json '{
+  "metastore_id": "'"${METASTORE_ID}"'",
+  "name": "'"${METASTORE_NAME}"'" 
+}' || true
 
 echo "Associando workspace ao metastore..."
 databricks metastores assign --json '{
@@ -136,7 +145,7 @@ databricks clusters create --json '{
   "node_type_id": "Standard_DS3_v2",
   "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'", 
   "num_workers": 1,
-}'
+}' || true
 
 echo "Subindo token para GitHub Actions..."
 gh auth status || gh auth login --with-token <<< "$GH_TOKEN"
@@ -147,8 +156,8 @@ gh secret set DATABRICKS_ADMIN_TOKEN \
 echo "Salvando token no Azure Key Vault..."
 az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-token" --value "$TOKEN"
 
+echo "Criando secret pro AKV"
 KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS" | sed 's:/*$::')
-
 curl -Xkv POST "$DATABRICKS_HOST/api/2.0/secrets/scopes/create" \
   -H "Authorization: Bearer $DATABRICKS_TOKEN" \
   -H "Content-Type: application/json" \
