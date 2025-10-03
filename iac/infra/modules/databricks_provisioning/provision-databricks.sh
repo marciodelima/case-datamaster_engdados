@@ -9,8 +9,21 @@ sudo mv databricks /usr/local/bin/
 
 sudo apt-get install -y jq
 
-echo "Autenticando via Azure AD..."
-token_response=$(az account get-access-token --resource=https://accounts.azuredatabricks.net)
+echo "Montando dados via Azure AD..."
+#(https://accounts.azuredatabricks.net)
+DATABRICKS_RESOURCE_APP_ID="a4ae5b76-5c63-4d36-bf27-3b3f9f5c4b4f"
+SPN_OBJECT_ID=$(az ad sp show --id "$ARM_CLIENT_ID" --query objectId -o tsv)
+
+echo "Autenticando via Azure AD... permission"
+az ad app permission grant \
+  --id "$SPN_OBJECT_ID" \
+  --api "$DATABRICKS_RESOURCE_APP_ID" \
+  --scope "user_impersonation"
+
+echo "Autenticando via Azure AD"
+export DATABRICKS_RESOURCE = "https://accounts.azuredatabricks.net"
+
+token_response=$(az account get-access-token --resource "$DATABRICKS_RESOURCE")
 export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
 export DATABRICKS_HOST="https://${WORKSPACE_URL}"
 
