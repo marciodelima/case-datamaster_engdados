@@ -68,7 +68,7 @@ STORAGE_ROOT="abfss://dados@${STORAGE_NAME}.dfs.core.windows.net/"
 echo "Salvando token no Azure Key Vault..."
 az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-admin-token" --value "$TOKEN"
 
-export DATABRICKS_TOKEN=TOKEN
+export DATABRICKS_TOKEN="$TOKEN"
 unset ARM_CLIENT_ID
 unset ARM_CLIENT_SECRET
 unset ARM_TENANT_ID
@@ -79,14 +79,13 @@ METASTORE_ID=$(databricks metastores list --output json | jq -r '.metastores[0].
 echo "Trocando nome - metastore ID..."
 databricks metastores update --json '{
   "metastore_id": "'"${METASTORE_ID}"'",
-  "name": "'"${METASTORE_NAME}"'" 
+  "new-name": "'"${METASTORE_NAME}"'" 
 }' || true
 
 echo "Associando workspace ao metastore..."
-databricks metastores assign --json '{
+databricks metastores assign "$WORKSPACE_ID" --json '{
   "metastore_id": "'"${METASTORE_ID}"'",
-  "workspace_id": "'"${WORKSPACE_ID}"'",
-  "default_catalog_name": "finance"
+  "default_catalog_name": "main"
 }' || true
 
 echo "Criando storage credential 'finance-cred'..."
