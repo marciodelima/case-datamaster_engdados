@@ -61,15 +61,19 @@ databricks groups patch "$GROUP_ID" --json '{
   ]
 }' || true
 
-echo "Atribuindo função de Account Admin ao usuário '$ADMIN_EMAIL'..."
-GROUP_ID=$(databricks account-groups list --output json | jq -r '.groups[] | select(.display_name=="account-admins") | .id')
-databricks account-groups update "$GROUP_ID" --json '{
-  "members": [
-    {
-      "user_name": "'"${ADMIN_EMAIL}"'"
-    }
-  ]
-}' || true
+echo "Adicionando usuário ao grupo 'account-admins'..."
+ACCOUNT_HOST="https://accounts.azuredatabricks.net"
+curl -kvs -X PATCH "$ACCOUNT_HOST/api/2.0/accounts/me/groups/account-admins" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+    "Operations": [{
+      "op": "add",
+      "path": "members",
+      "value": [{"value": "'"$ADMIN_ID"'"}]
+    }]
+  }'
 
 echo "Gerando token admin pessoal..."
 TOKEN=$(databricks account-access-tokens create --json '{
