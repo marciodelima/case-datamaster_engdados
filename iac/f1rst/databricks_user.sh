@@ -68,9 +68,10 @@ done
 echo "Criando policy padrão para clusters..."
 cat <<EOF > policy.json
 {
-  "spark_version": { "type": "fixed", "value": "14.3.x-scala2.12" },
-  "node_type_id": { "type": "fixed", "value": "Standard_DS3_v2" },
-  "autotermination_minutes": { "type": "fixed", "value": 30 },
+  "spark_version": { "type": "fixed", "value": "16.4.x-scala2.12" },
+  "node_type_id": { "type": "fixed", "value": "Standard_D4pds_v6" },
+  "autotermination_minutes": { "type": "fixed", "value": 20 },
+  "is_single_node": {"type": "fixed", "value": true }
   "enable_elastic_disk": { "type": "fixed", "value": true }
 }
 EOF
@@ -79,10 +80,10 @@ databricks cluster-policies create --name "inv-policy" --definition "$(cat polic
 echo "Criando cluster SQL para consultas..."
 databricks clusters create --json '{
   "cluster_name": "finance-sql",
-  "spark_version": "14.3.x-scala2.12",
+  "spark_version": "16.4.x-scala2.12",
   "node_type_id": "Standard_D4pds_v6",
-  "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'", 
-  "num_workers": 1
+  "is_single_node": true,
+  "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'"
 }' || echo "Cluster já existe ou falhou."
 
 echo "Salvando token bootstrap no Azure Key Vault..."
