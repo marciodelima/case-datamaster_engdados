@@ -35,7 +35,7 @@ databricks storage-credentials create --json '{
   "azure_managed_identity": {
     "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
   }
-}' || echo "Credencial já existe ou falhou."
+}' || true
 
 echo "Registrando external location 'finance-ext'..."
 databricks external-locations create --json '{
@@ -44,25 +44,24 @@ databricks external-locations create --json '{
   "credential_name": "finance-cred",
   "comment": "Local de dados do metastore",
   "read_only": false
-}' || echo "Local já existe ou falhou."
+}' || true
 
-echo "Detectando catálogo atual vinculado ao metastore..."
-CATALOG_NAME=$(databricks catalogs list --output json | jq -r '.[] | select(.metastore_id=="'"$METASTORE_ID"'") | .name' | head -n 1)
+echo "Detectando catálogo atual..."
+CATALOG_NAME=$(databricks catalogs list --output json | jq -r '.[] | select(.name | startswith("finance")) | .name' | head -n 1)
 
 if [ -z "$CATALOG_NAME" ]; then
-  echo "Nenhum catálogo encontrado para o metastore $METASTORE_ID. Abortando."
+  echo "Nenhum catálogo encontrado com prefixo 'databricks'. Abortando."
   exit 1
 fi
 
-echo "Catálogo detectado: $CATALOG_NAME"
-
-echo "Criando schemas no catálogo 'finance'..."
+echo "Catalogo detectado: $CATALOG_NAME"
+echo "Criando schemas no catálogo..."
 for schema in r-inv b-inv s-inv stage g-inv; do
   echo "Criando schema '$schema'..."
   databricks schemas create --json '{
     "name": "'"$schema"'",
-    "catalog_name": "finance"
-  }' || echo "Schema '$schema' já existe ou falhou."
+    "catalog_name": "'"$CATALOG_NAME"'"
+  }' || true
 done
 
 echo "Criando policy padrão para clusters..."
