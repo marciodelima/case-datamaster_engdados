@@ -36,8 +36,8 @@ module "databricks_provisioning" {
   location                 = var.location
   workspace_id             = module.databricks.workspace_id
   resource_group_name      = var.resource_group_name
-  spn_object_id            = data.azurerm_user_assigned_identity.integration_identity.object_id
-  
+  spn_object_id            = data.azurerm_user_assigned_identity.integration_identity.principal_id
+
   depends_on = [
     module.databricks,
     module.storage
