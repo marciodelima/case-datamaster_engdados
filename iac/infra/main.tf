@@ -22,28 +22,6 @@ module "databricks" {
   resource_group_name = var.resource_group_name
 }
 
-module "databricks_provisioning" {
-  source = "./modules/databricks_provisioning"
-
-  databricks_workspace_url = module.databricks.workspace_url
-  admin_email              = var.admin_email
-  keyvault_name            = var.keyvault_name
-  keyvault_resource_id     = data.azurerm_key_vault.kv.id
-  keyvault_dns             = data.azurerm_key_vault.kv.vault_uri
-  github_repo              = var.github_repo
-  storage_name             = var.nome_storage
-  databricks_connector_id  = module.databricks.unity_catalog_access_connector_id
-  location                 = var.location
-  workspace_id             = module.databricks.workspace_id
-  resource_group_name      = var.resource_group_name
-  spn_object_id            = data.azurerm_user_assigned_identity.integration_identity.principal_id
-
-  depends_on = [
-    module.databricks,
-    module.storage
-  ]
-}
-
 module "storage" {
   source              = "./modules/storage"
   location            = var.location

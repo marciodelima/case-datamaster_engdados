@@ -33,7 +33,7 @@ resource "azurerm_key_vault_access_policy" "github_owner_policy" {
   object_id    = data.azurerm_client_config.current.object_id
 
   secret_permissions = [
-    "Get", "Set", "Delete", "Recover", "List"
+    "Get", "Set", "Delete", "Recover", "List", "Purge"
   ]
 
   depends_on = [azurerm_key_vault.kv]
@@ -45,7 +45,7 @@ resource "azurerm_key_vault_access_policy" "github_spn_policy" {
   object_id    = azuread_service_principal.github_spn.object_id
 
   secret_permissions = [
-    "Get", "Set", "Delete", "Recover", "List"
+    "Get", "Set", "Delete", "Recover", "List", "Purge"
   ]
 
   depends_on = [azurerm_key_vault.kv, azuread_service_principal.github_spn]
