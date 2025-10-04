@@ -1,6 +1,0 @@
-{
-  "spark_version": { "type": "fixed", "value": "14.3.x-scala2.12" },
-  "node_type_id": { "type": "fixed", "value": "Standard_DS3_v2" },
-  "autotermination_minutes": { "type": "fixed", "value": 30 },
-  "enable_elastic_disk": { "type": "fixed", "value": true }
-}
