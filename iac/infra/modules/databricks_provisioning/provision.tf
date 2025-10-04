@@ -15,6 +15,8 @@ resource "null_resource" "provision_databricks" {
       METASTORE_NAME       = "meta-prd"
       REGION               = var.location
       WORKSPACE_ID         = var.workspace_id
+      SPN_OBJECT_ID        = var.spn_object_id
+      DATABRICKS_RESOURCE_APP_ID = "a4ae5b76-5c63-4d36-bf27-3b3f9f5c4b4f"
     }
   }
 

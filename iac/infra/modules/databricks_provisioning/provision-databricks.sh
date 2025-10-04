@@ -11,10 +11,7 @@ sudo apt-get install -y jq
 
 echo "Montando dados via Azure AD..."
 #(https://accounts.azuredatabricks.net)
-echo "$ARM_CLIENT_ID"
-
-DATABRICKS_RESOURCE_APP_ID="a4ae5b76-5c63-4d36-bf27-3b3f9f5c4b4f"
-SPN_OBJECT_ID=$(az ad sp list --filter "appId eq '$ARM_CLIENT_ID'" --query "[0].objectId" -o tsv)
+echo "$DATABRICKS_RESOURCE_APP_ID"
 echo "$SPN_OBJECT_ID"
 
 echo "Autenticando via Azure AD... permission"
