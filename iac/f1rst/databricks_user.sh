@@ -63,7 +63,6 @@ databricks clusters create --json '{
   "cluster_name": "finance-sql",
   "spark_version": "16.4.x-scala2.12",
   "node_type_id": "Standard_D4pds_v6",
-  "is_single_node": true,
   "cluster_source": "UI",
   "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'"
 }' || echo "Cluster já existe ou falhou."
@@ -72,6 +71,9 @@ echo "Salvando token bootstrap no Azure Key Vault..."
 az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-bootstrap-token" --value "$BOOTSTRAP_TOKEN"
 
 echo "Criando secret scope para AKV..."
+token_response=$(az account get-access-token --resource "$DATABRICKS_RESOURCE")
+export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
+
 KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS" | sed 's:/*$::')
 curl -s -X POST "$DATABRICKS_HOST/api/2.0/secrets/scopes/create" \
   -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
@@ -82,7 +84,8 @@ curl -s -X POST "$DATABRICKS_HOST/api/2.0/secrets/scopes/create" \
     "initial_manage_principal": "users",
     "backend_azure_keyvault": {
       "resource_id": "'"${KEYVAULT_RESOURCE_ID}"'",
-      "dns_name": "'"${KEYVAULT_DNS_NAME_CLEAN}"'"
+      "dns_name": "'"${KEYVAULT_DNS_NAME_CLEAN}"'",
+	  "user_aad_token": "'"${DATABRICKS_AAD_TOKEN}"'"
     }
   }' || echo "Secret scope já existe ou falhou."
 
