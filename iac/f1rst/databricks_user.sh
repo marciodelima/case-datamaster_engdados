@@ -2,10 +2,10 @@
 set -e
 
 echo "Instalando Databricks CLI e jq..."
-# sudo apt-get install -y jq || true
-# curl -L https://github.com/databricks/cli/releases/download/v0.271.0/databricks_cli_0.271.0_linux_amd64.tar.gz -o databricks.tar.gz
-# tar -xvzf databricks.tar.gz
-# sudo mv databricks /usr/local/bin/
+sudo apt-get install -y jq || true
+ curl -L https://github.com/databricks/cli/releases/download/v0.271.0/databricks_cli_0.271.0_linux_amd64.tar.gz -o databricks.tar.gz
+ tar -xvzf databricks.tar.gz
+ sudo mv databricks /usr/local/bin/
 
 echo "Gerando token via Azure CLI..."
 token_response=$(az account get-access-token --resource "$DATABRICKS_RESOURCE")
@@ -32,7 +32,7 @@ echo "Detectando catálogo atual..."
 CATALOG_NAME=$(databricks catalogs list --output json | jq -r '.[] | select(.name | startswith("finance")) | .name' | head -n 1)
 
 if [ -z "$CATALOG_NAME" ]; then
-  echo "Nenhum catálogo encontrado com prefixo 'databricks'. Abortando."
+  echo "Nenhum catálogo encontrado com prefixo 'finance'. Abortando."
   exit 1
 fi
 
@@ -63,30 +63,15 @@ databricks clusters create --json '{
   "cluster_name": "finance-sql",
   "spark_version": "16.4.x-scala2.12",
   "node_type_id": "Standard_D4pds_v6",
-  "cluster_source": "UI",
+  "num_workers": 0,
+  "runtime_engine": "STANDARD",
+  "data_security_mode": "DATA_SECURITY_MODE_AUTO",
+  "kind": "CLASSIC_PREVIEW",
   "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'"
 }' || echo "Cluster já existe ou falhou."
 
 echo "Salvando token bootstrap no Azure Key Vault..."
+az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-aad-token" --value "$DATABRICKS_AAD_TOKEN"
 az keyvault secret set --vault-name "$KEYVAULT_NAME" --name "databricks-bootstrap-token" --value "$BOOTSTRAP_TOKEN"
-
-echo "Criando secret scope para AKV..."
-token_response=$(az account get-access-token --resource "$DATABRICKS_RESOURCE")
-export DATABRICKS_AAD_TOKEN=$(jq -r .accessToken <<< "$token_response")
-
-KEYVAULT_DNS_NAME_CLEAN=$(echo "$KEYVAULT_DNS" | sed 's:/*$::')
-curl -s -X POST "$DATABRICKS_HOST/api/2.0/secrets/scopes/create" \
-  -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "scope": "finance-kv-secrets",
-    "scope_backend_type": "AZURE_KEYVAULT",
-    "initial_manage_principal": "users",
-    "backend_azure_keyvault": {
-      "resource_id": "'"${KEYVAULT_RESOURCE_ID}"'",
-      "dns_name": "'"${KEYVAULT_DNS_NAME_CLEAN}"'",
-	  "user_aad_token": "'"${DATABRICKS_AAD_TOKEN}"'"
-    }
-  }' || echo "Secret scope já existe ou falhou."
 
 echo "Provisionamento Databricks concluído com sucesso."

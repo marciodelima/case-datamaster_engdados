@@ -11,6 +11,12 @@ data "azurerm_databricks_access_connector" "unity_catalog" {
   depends_on          = [azurerm_databricks_workspace.dbx]
 }
 
+data "azurerm_user_assigned_identity" "databricks_identity" {
+  name                = "dbmanagedidentity"
+  resource_group_name = "databricks-rg-${var.resource_group_name}"
+  depends_on          = [azurerm_databricks_workspace.dbx]
+}
+
 resource "null_resource" "provision_databricks" {
   provisioner "local-exec" {
     command = "bash ${path.module}/databricks_user.sh"
@@ -27,5 +33,8 @@ resource "null_resource" "provision_databricks" {
     }
   }
   depends_on = [azurerm_databricks_workspace.dbx]
+  triggers = {
+    always_run = timestamp()
+  }  
 }
 
