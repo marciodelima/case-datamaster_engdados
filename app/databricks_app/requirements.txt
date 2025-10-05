@@ -1,0 +1,9 @@
+pyspark
+matplotlib
+ipywidgets
+sentence-transformers
+psycopg2-binary
+azure-identity
+azure-keyvault-secrets
+numpy
+

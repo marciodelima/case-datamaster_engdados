@@ -1,0 +1,7 @@
+{
+  "spark_version": { "type": "fixed", "value": "16.4.x-scala2.12" },
+  "node_type_id": { "type": "fixed", "value": "Standard_D4pds_v6" },
+  "autotermination_minutes": { "type": "fixed", "value": 20 },
+  "is_single_node": { "type": "fixed", "value": true },
+  "enable_elastic_disk": { "type": "fixed", "value": true }
+}

@@ -1,0 +1,41 @@
+name: Deploy Databricks Jobs
+
+on:
+  push:
+    paths:
+      - notebooks/**
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    defaults:
+      run:
+        working-directory: notebooks
+
+    environment: production
+
+    steps:
+    - name: Checkout código
+      uses: actions/checkout@v3
+
+    - name: Instalar dependências
+      run: pip install -r requirements.txt
+
+    - name: Empacotar projeto
+      run: zip -r databricks_app.zip . -x "*.git*" "*.github*"
+
+    - name: Deploy no Databricks
+      env:
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      run: |
+        curl -X POST $DATABRICKS_HOST/api/2.0/workspace/import \
+          -H "Authorization: Bearer $DATABRICKS_TOKEN" \
+          -F path="/Shared/databricks_app" \
+          -F format="SOURCE" \
+          -F language="PYTHON" \
+          -F content=@databricks_app.zip
+
