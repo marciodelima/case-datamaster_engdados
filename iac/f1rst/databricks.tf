@@ -16,11 +16,14 @@ resource "null_resource" "provision_databricks" {
     command = "bash ${path.module}/databricks_user.sh"
 
     environment = {
-      WORKSPACE_URL       = azurerm_databricks_workspace.dbx.workspace_url
-      ADMIN_EMAIL         = var.admin_email
-      DATABRICKS_RESOURCE = var.databricks_resource
-      REGION              = var.location
-      WORKSPACE_ID        = azurerm_databricks_workspace.dbx.id
+      WORKSPACE_URL        = azurerm_databricks_workspace.dbx.workspace_url
+      ADMIN_EMAIL          = var.admin_email
+      DATABRICKS_RESOURCE  = var.databricks_resource
+      REGION               = var.location
+      KEYVAULT_NAME        = var.keyvault_name
+      KEYVAULT_DNS         = azurerm_key_vault.kv.vault_uri
+      KEYVAULT_RESOURCE_ID = azurerm_key_vault.kv.id
+      WORKSPACE_ID         = azurerm_databricks_workspace.dbx.id
     }
   }
   depends_on = [azurerm_databricks_workspace.dbx]

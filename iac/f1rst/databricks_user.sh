@@ -28,24 +28,6 @@ host = $DATABRICKS_HOST
 token = $BOOTSTRAP_TOKEN
 EOF
 
-echo "Criando storage credential 'finance-cred'..."
-databricks storage-credentials create --json '{
-  "name": "finance-cred",
-  "comment": "Credencial gerenciada",
-  "azure_managed_identity": {
-    "access_connector_id": "'"${ACCESS_CONNECTOR_ID}"'"
-  }
-}' || true
-
-echo "Registrando external location 'finance-ext'..."
-databricks external-locations create --json '{
-  "name": "finance-ext",
-  "url": "'"${STORAGE_ROOT}"'",
-  "credential_name": "finance-cred",
-  "comment": "Local de dados do metastore",
-  "read_only": false
-}' || true
-
 echo "Detectando catálogo atual..."
 CATALOG_NAME=$(databricks catalogs list --output json | jq -r '.[] | select(.name | startswith("finance")) | .name' | head -n 1)
 
@@ -70,7 +52,7 @@ cat <<EOF > policy.json
   "spark_version": { "type": "fixed", "value": "16.4.x-scala2.12" },
   "node_type_id": { "type": "fixed", "value": "Standard_D4pds_v6" },
   "autotermination_minutes": { "type": "fixed", "value": 20 },
-  "is_single_node": {"type": "fixed", "value": true }
+  "is_single_node": { "type": "fixed", "value": true },
   "enable_elastic_disk": { "type": "fixed", "value": true }
 }
 EOF
@@ -82,6 +64,7 @@ databricks clusters create --json '{
   "spark_version": "16.4.x-scala2.12",
   "node_type_id": "Standard_D4pds_v6",
   "is_single_node": true,
+  "cluster_source": "UI",
   "policy_id": "'"$(databricks cluster-policies list -o json | jq -r '.[] | select(.name=="inv-policy") | .policy_id')"'"
 }' || echo "Cluster já existe ou falhou."
 
