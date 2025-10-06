@@ -84,7 +84,11 @@ resource "azurerm_function_app" "finance_csv_ingestor" {
   }
 
   app_settings = {
-    STORAGE_URL = "https://${var.existing_storage_account_name}.blob.core.windows.net"
+    FUNCTIONS_WORKER_RUNTIME = "python"
+    STORAGE_URL              = "https://${azurerm_storage_account.finance_storage.name}.blob.core.windows.net"
+    KEYVAULT_URL             = "https://${azurerm_key_vault.finance_kv.name}.vault.azure.net"
+    PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_RUN_FROM_PACKAGE = "1"
   }
 }
 

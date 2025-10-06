@@ -1,5 +1,8 @@
 azure-functions
-azure-storage-blob
 azure-identity
+azure-storage-blob
+psycopg2-binary
+pandas
 requests
+python-yahoofinance
 
