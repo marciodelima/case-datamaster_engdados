@@ -35,16 +35,9 @@ def main(mytimer: func.TimerRequest) -> None:
         blob = BlobServiceClient(account_url=os.environ["STORAGE_URL"], credential=credential)
         container = blob.get_container_client("dados")
 
-        # CVM - Fundos de investimento
-        download_and_upload(
-            "https://dados.cvm.gov.br/dados/FI/CAD/DADOS/cad_fi.csv",
-            "raw/financeiro/cvm/fundos.csv",
-            container
-        )
-
         # BACEN - Indicadores econômicos
         download_and_upload(
-            "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados?formato=csv",  # Selic
+            "https://api.bcb.gov.br/dados/serie/bcdata.sgs.4189/dados/ultimos/1?formato=csv",  # Selic
             "raw/financeiro/bacen/selic.csv",
             container
         )
