@@ -27,7 +27,7 @@ def get_pg_tickers():
         from azure.keyvault.secrets import SecretClient
         client = SecretClient(vault_url=kv_url, credential=credential)
 
-        conn_str = client.get_secret("pg-connection-string").value
+        conn_str = client.get_secret("Postgres-Conn").value
         conn = psycopg2.connect(conn_str)
         cur = conn.cursor()
         cur.execute("SELECT ticker FROM acoes")

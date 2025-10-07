@@ -78,18 +78,26 @@ def main(mytimer: func.TimerRequest) -> None:
             if not blob.name.endswith(".pdf"):
                 continue
 
+            blob_client = container.get_blob_client(blob.name)
             empresa = blob.name.split("/")[2]
-            pdf_bytes = container.get_blob_client(blob.name).download_blob().readall()
+            pdf_bytes = blob_client.download_blob().readall()
             texto = extract_text(pdf_bytes)
             resultado = analyze_ri_report(empresa, texto, client)
 
             resultados.append((
                 resultado["empresa"],
-                resultado.get("trimestre", "desconhecido"),
+                resultado.get("trimestre", "2T25"),
                 json.dumps(resultado.get("avaliacoes", {})),
-                resultado.get("nota_final", 0),
+                resultado.get("nota_final", 5),
                 datetime.utcnow().isoformat()
             ))
+
+            # Após processamento bem-sucedido, deletar o arquivo PDF
+            try:
+                blob_client.delete_blob()
+                logging.info(f"PDF deletado: {blob.name}")
+            except Exception as e:
+                logging.warning(f"Erro ao deletar {blob.name}: {e}")
 
         if resultados:
             df = spark.createDataFrame(resultados, ["empresa", "trimestre", "avaliacoes", "nota_final", "timestamp"])

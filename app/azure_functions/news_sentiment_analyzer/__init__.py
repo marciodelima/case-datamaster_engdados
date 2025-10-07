@@ -55,7 +55,9 @@ def main(mytimer: func.TimerRequest) -> None:
         credential = DefaultAzureCredential()
         blob_service = BlobServiceClient(account_url=os.environ["STORAGE_URL"], credential=credential)
         container = blob_service.get_container_client("dados")
-        blobs = container.list_blobs(name_starts_with="raw/")
+        namespace = os.environ["EVENTHUB_NAMESPACE"]
+        topic_name = os.environ["EVENTHUB_NAME"]
+        blobs = container.list_blobs(name_starts_with=f"raw/noticias/{namespace}/{topic_name}/")
 
         spark = SparkSession.builder.getOrCreate()
         client = get_openai_client()
@@ -65,7 +67,8 @@ def main(mytimer: func.TimerRequest) -> None:
             if not blob.name.endswith(".avro"):
                 continue
 
-            avro_bytes = container.get_blob_client(blob.name).download_blob().readall()
+            blob_client = container.get_blob_client(blob.name)
+            avro_bytes = blob_client.download_blob().readall()
             records = list(reader(BytesIO(avro_bytes)))
 
             for record in records:
@@ -75,6 +78,12 @@ def main(mytimer: func.TimerRequest) -> None:
 
                 for acao in resultado["acoes"]:
                     resultados.append((acao, resultado["resumo"], resultado["sentimento"], datetime.utcnow().isoformat()))
+
+            try:
+                blob_client.delete_blob()
+                logging.info(f"Arquivo deletado: {blob.name}")
+            except Exception as e:
+                logging.warning(f"Erro ao deletar {blob.name}: {e}")
 
         if resultados:
             df = spark.createDataFrame(resultados, ["acao", "resumo", "sentimento", "timestamp"])

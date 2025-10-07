@@ -125,6 +125,8 @@ resource "azurerm_function_app" "news_sentiment_analyzer" {
   }
 
   app_settings = {
+    EVENTHUB_NAME      = var.eventhub_namespace_name
+    EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
     BRONZE_PATH  = "abfss://bronze@${var.existing_storage_account_name}.dfs.core.windows.net"
