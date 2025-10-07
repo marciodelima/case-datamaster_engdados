@@ -6,8 +6,8 @@ resource "azurerm_app_service_plan" "func_plan" {
   reserved            = true
   
   sku {
-    tier = "Dynamic"
-    size = "Y1"
+    tier = "Standard"
+    size = "S1"
   }
 }
 
