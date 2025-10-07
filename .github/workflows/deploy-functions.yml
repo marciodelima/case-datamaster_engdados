@@ -66,6 +66,6 @@ jobs:
       - name: Deploy to Azure Function
         uses: azure/functions-action@v1
         with:
-          app-name: ${{ matrix.function_name }}
+          app-name: ${{ matrix.function_name | replace('_', '-') }}-func
           package: app/azure_functions/${{ matrix.function_name }}
 
