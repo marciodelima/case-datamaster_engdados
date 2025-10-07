@@ -18,4 +18,4 @@ pytest-cov
 unittest2
 mock
 python-dotenv
-
+fitz
