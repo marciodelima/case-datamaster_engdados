@@ -8,7 +8,7 @@ from azure.keyvault.secrets import SecretClient
 from datetime import datetime
 import azure.functions as func
 
-TABLES = ["clientes", "acoes", "carteiras"]
+TABLES = ["clientes", "acoes", "carteiras", "renda_financeira"]
 
 def get_pg_connection_string():
     try:

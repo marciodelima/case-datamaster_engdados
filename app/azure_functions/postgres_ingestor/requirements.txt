@@ -1,7 +1,21 @@
 azure-functions
-azure-storage-blob
 azure-identity
+azure-keyvault-secrets
+azure-storage-blob
+azure-eventhub
+beautifulsoup4
+feedparser
+openai
+requests
 psycopg2-binary
+openai
 pandas
-pyarrow
+fastavro
+python-yahoofinance
+pyspark
+pytest
+pytest-cov
+unittest2
+mock
+python-dotenv
 

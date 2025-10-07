@@ -1,0 +1,71 @@
+name: Deploy Azure Functions
+
+on:
+  push:
+    paths:
+      - app/azure_functions/**
+    branches:
+      - main
+
+jobs:
+  deploy-functions:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        function_name:
+          - finance_csv_ingestor
+          - news_producer
+          - news_sentiment_analyzer
+          - postgres_ingestor
+          - ri_collector
+          - ri_resumer
+
+    env:
+      PYTHON_VERSION: '3.10'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u ${{ secrets.AZURE_CLIENT_ID }} \
+            -p ${{ secrets.AZURE_CLIENT_SECRET }} \
+            --tenant ${{ secrets.AZURE_TENANT_ID }}
+
+      - name: Parse AZURE_CREDENTIALS JSON
+        run: |
+          echo '${{ secrets.AZURE_CREDENTIALS }}' > azure_credentials.json
+          echo "ARM_CLIENT_ID=$(jq -r .clientId azure_credentials.json)" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=$(jq -r .clientSecret azure_credentials.json)" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=$(jq -r .subscriptionId azure_credentials.json)" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=$(jq -r .tenantId azure_credentials.json)" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r app/azure_functions/${{ matrix.function_name }}/requirements.txt
+
+      - name: Format code
+        run: |
+          pip install black
+          black app/azure_functions/${{ matrix.function_name }}
+
+      - name: Run unit tests
+        run: |
+          pip install pytest
+          pytest app/azure_functions/${{ matrix.function_name }} --maxfail=1 --disable-warnings --exitfirst
+
+      - name: Deploy to Azure Function
+        uses: azure/functions-action@v1
+        with:
+          app-name: ${{ matrix.function_name }}
+          package: app/azure_functions/${{ matrix.function_name }}
+
