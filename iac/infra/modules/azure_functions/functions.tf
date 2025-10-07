@@ -26,6 +26,9 @@ resource "azurerm_function_app" "news_producer" {
   }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "python"
+    PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_RUN_FROM_PACKAGE = "1"
     EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     STORAGE_URL        = "https://${var.existing_storage_account_name}.blob.core.windows.net"
@@ -48,6 +51,9 @@ resource "azurerm_function_app" "ri_resumer" {
   }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "python"
+    PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_RUN_FROM_PACKAGE = "1"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
     DELTA_PATH   = "abfss://bronze@${var.existing_storage_account_name}.dfs.core.windows.net/resultado_ri"
@@ -69,6 +75,9 @@ resource "azurerm_function_app" "ri_collector" {
   }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "python"
+    PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_RUN_FROM_PACKAGE = "1"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
   }
@@ -89,9 +98,9 @@ resource "azurerm_function_app" "finance_csv_ingestor" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME = "python"
     STORAGE_URL              = "https://${azurerm_storage_account.finance_storage.name}.blob.core.windows.net"
     KEYVAULT_URI             = "https://${var.keyvault_name}.vault.azure.net"
+    FUNCTIONS_WORKER_RUNTIME = "python"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_RUN_FROM_PACKAGE = "1"
   }
@@ -112,6 +121,9 @@ resource "azurerm_function_app" "postgres_ingestor" {
   }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "python"
+    PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_RUN_FROM_PACKAGE = "1"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
   }
@@ -132,6 +144,9 @@ resource "azurerm_function_app" "news_sentiment_analyzer" {
   }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "python"
+    PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_RUN_FROM_PACKAGE = "1"
     EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
