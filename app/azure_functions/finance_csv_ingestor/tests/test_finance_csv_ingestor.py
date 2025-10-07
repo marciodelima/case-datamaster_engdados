@@ -1,6 +1,7 @@
 import pytest
 import sys
 import os
+import datetime
 from unittest.mock import patch, MagicMock
 
 # Ajusta o caminho para importar a função
