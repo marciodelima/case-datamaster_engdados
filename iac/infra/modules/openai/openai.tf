@@ -33,14 +33,22 @@ resource "azurerm_key_vault_secret" "openai_endpoint" {
   key_vault_id = data.azurerm_key_vault.openai_kv.id
 }
 
-data "azurerm_cognitive_account_keys" "openai_keys" {
-  name                = azurerm_cognitive_account.openai.name
-  resource_group_name = var.resource_group_name
-}
+resource "null_resource" "store_openai_key" {
+  depends_on = [azurerm_cognitive_account.openai]
 
-resource "azurerm_key_vault_secret" "openai_key" {
-  name         = "OpenAI-Key"
-  value        = data.azurerm_cognitive_account_keys.openai_keys.key1
-  key_vault_id = data.azurerm_key_vault.openai_kv.id
+  provisioner "local-exec" {
+    command = <<EOT
+      OPENAI_KEY=$(az cognitiveservices account keys list \
+        --resource-group ${var.resource_group_name} \
+        --name ${azurerm_cognitive_account.openai.name} \
+        --query key1 -o tsv)
+
+      az keyvault secret set \
+        --vault-name ${var.keyvault_name} \
+        --name OpenAI-Key \
+        --value "$OPENAI_KEY"
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
 }
 
