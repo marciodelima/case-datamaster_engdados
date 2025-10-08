@@ -24,7 +24,7 @@ def get_openai_client():
     return AzureOpenAI(
         api_key=secret_client.get_secret("OpenAI-Key").value,
         azure_endpoint=secret_client.get_secret("OpenAI-Endpoint").value,
-        api_version="2023-07-01-preview"
+        api_version="2024-07-18"
     )
 
 
@@ -48,7 +48,7 @@ def analyze_ri_report(empresa, texto, client):
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3
         )

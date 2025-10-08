@@ -21,7 +21,7 @@ def get_openai_client():
     return AzureOpenAI(
         api_key=secret_client.get_secret("OpenAI-Key").value,
         azure_endpoint=secret_client.get_secret("OpenAI-Endpoint").value,
-        api_version="2023-07-01-preview"
+        api_version="2024-07-18"
     )
 
 
@@ -40,7 +40,7 @@ def analyze_news(title, full_text, client):
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2
         )
@@ -55,9 +55,8 @@ def main(mytimer: func.TimerRequest) -> None:
         credential = DefaultAzureCredential()
         blob_service = BlobServiceClient(account_url=os.environ["STORAGE_URL"], credential=credential)
         container = blob_service.get_container_client("dados")
-        namespace = os.environ["EVENTHUB_NAMESPACE"]
-        topic_name = os.environ["EVENTHUB_NAME"]
-        blobs = container.list_blobs(name_starts_with=f"raw/noticias/{namespace}/{topic_name}/")
+        namespace = os.environ["EVENTHUB_NAME"]
+        blobs = container.list_blobs(name_starts_with=f"raw/noticias/{namespace}/")
 
         spark = SparkSession.builder.getOrCreate()
         client = get_openai_client()

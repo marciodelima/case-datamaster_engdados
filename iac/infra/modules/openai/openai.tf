@@ -33,3 +33,14 @@ resource "azurerm_key_vault_secret" "openai_endpoint" {
   key_vault_id = data.azurerm_key_vault.openai_kv.id
 }
 
+data "azurerm_cognitive_account_keys" "openai_keys" {
+  name                = azurerm_cognitive_account.openai.name
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_key_vault_secret" "openai_key" {
+  name         = "OpenAI-Key"
+  value        = data.azurerm_cognitive_account_keys.openai_keys.key1
+  key_vault_id = data.azurerm_key_vault.openai_kv.id
+}
+
