@@ -35,7 +35,7 @@ def main(mytimer: func.TimerRequest) -> None:
         # Download e upload dos PDFs
         for empresa, url in rows:
             try:
-                r = requests.get(url, timeout=30)
+                r = requests.get(url, timeout=10, verify=False)
                 if r.status_code == 200 and r.headers.get("Content-Type", "").lower().startswith("application/pdf"):
                     path = f"raw/ri/{empresa}/{empresa}-ri.pdf"
                     container.get_blob_client(path).upload_blob(r.content, overwrite=True)
