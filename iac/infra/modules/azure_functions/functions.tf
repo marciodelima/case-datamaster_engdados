@@ -1,9 +1,14 @@
-resource "azurerm_function_app_plan" "func_plan" {
+resource "azurerm_app_service_plan" "func_plan" {
   name                = "func-plan"
   location            = var.location
   resource_group_name = var.resource_group_name
-  os_type             = "Linux"
-  sku_name            = "FC1"
+  kind                = "FunctionApp"
+  reserved            = true
+
+  sku {
+    tier = "Premium"
+    size = "EP1"
+  }
 }
 
 resource "azurerm_application_insights" "finance_logs" {
