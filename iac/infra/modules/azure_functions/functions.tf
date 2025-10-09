@@ -13,9 +13,7 @@ resource "azurerm_app_service_plan" "func_plan" {
 
 data "azurerm_application_insights" "finance_logs" {
   name                = "finance-logs"
-  location            = var.location
   resource_group_name = var.resource_group_name
-  application_type    = "web"
 }
 
 resource "azurerm_function_app" "news_producer" {
