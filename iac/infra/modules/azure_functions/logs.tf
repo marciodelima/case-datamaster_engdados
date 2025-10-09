@@ -22,5 +22,9 @@ resource "azurerm_monitor_diagnostic_setting" "functions_diag" {
   enabled_metric {
     category = "AllMetrics"
   }
+  
+  lifecycle {
+    ignore_changes = [name]
+  }  
 }
 
