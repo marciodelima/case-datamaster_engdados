@@ -6,8 +6,8 @@ resource "azurerm_app_service_plan" "func_plan" {
   reserved            = true
   
   sku {
-    tier = "Standard"
-    size = "S1"
+    tier = "FlexConsumption"
+    size = "FC1"
   }
 }
 
@@ -56,7 +56,7 @@ resource "azurerm_function_app" "ri_resumer" {
     WEBSITE_RUN_FROM_PACKAGE = "1"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
-    DELTA_PATH   = "abfss://bronze@${var.existing_storage_account_name}.dfs.core.windows.net/resultado_ri"
+    DELTA_PATH   = "abfss://dados@${var.existing_storage_account_name}.dfs.core.windows.net/bronze/resultado_ri"
   }
 }
 
@@ -151,7 +151,7 @@ resource "azurerm_function_app" "news_sentiment_analyzer" {
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
-    BRONZE_PATH  = "abfss://bronze@${var.existing_storage_account_name}.dfs.core.windows.net"
+    BRONZE_PATH  = "abfss://dados@${var.existing_storage_account_name}.dfs.core.windows.net/bronze"
   }
 }
 

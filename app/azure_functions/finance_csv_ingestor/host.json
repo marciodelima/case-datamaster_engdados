@@ -4,7 +4,7 @@
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
-        "maxTelemetryItemsPerSecond" : 5
+        "maxTelemetryItemsPerSecond": 5
       }
     },
     "logLevel": {
@@ -27,7 +27,7 @@
     "timers": {
       "scheduleMonitor": {
         "enabled": true,
-        "interval": "00:01:00"
+        "interval": "00:05:00"
       }
     }
   }
