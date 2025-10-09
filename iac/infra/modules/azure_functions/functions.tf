@@ -36,8 +36,8 @@ resource "azurerm_function_app" "news_producer" {
     FUNCTIONS_WORKER_RUNTIME = "python"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_RUN_FROM_PACKAGE = "1"
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.finance_logs.instrumentation_key
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string    
+    APPINSIGHTS_INSTRUMENTATIONKEY = data.azurerm_application_insights.finance_logs.instrumentation_key
+    APPLICATIONINSIGHTS_CONNECTION_STRING = data.azurerm_application_insights.finance_logs.connection_string    
     EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     STORAGE_URL        = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
@@ -63,8 +63,8 @@ resource "azurerm_function_app" "ri_resumer" {
     FUNCTIONS_WORKER_RUNTIME = "python"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_RUN_FROM_PACKAGE = "1"
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.finance_logs.instrumentation_key
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string    
+    APPINSIGHTS_INSTRUMENTATIONKEY = data.azurerm_application_insights.finance_logs.instrumentation_key
+    APPLICATIONINSIGHTS_CONNECTION_STRING = data.azurerm_application_insights.finance_logs.connection_string    
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
     DELTA_PATH   = "abfss://dados@${var.existing_storage_account_name}.dfs.core.windows.net/bronze/resultado_ri"
@@ -89,8 +89,8 @@ resource "azurerm_function_app" "ri_collector" {
     FUNCTIONS_WORKER_RUNTIME = "python"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_RUN_FROM_PACKAGE = "1"
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.finance_logs.instrumentation_key
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string    
+    APPINSIGHTS_INSTRUMENTATIONKEY = data.azurerm_application_insights.finance_logs.instrumentation_key
+    APPLICATIONINSIGHTS_CONNECTION_STRING = data.azurerm_application_insights.finance_logs.connection_string    
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
   }
@@ -116,8 +116,8 @@ resource "azurerm_function_app" "finance_csv_ingestor" {
     FUNCTIONS_WORKER_RUNTIME = "python"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_RUN_FROM_PACKAGE = "1"
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.finance_logs.instrumentation_key
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string    
+    APPINSIGHTS_INSTRUMENTATIONKEY = data.azurerm_application_insights.finance_logs.instrumentation_key
+    APPLICATIONINSIGHTS_CONNECTION_STRING = data.azurerm_application_insights.finance_logs.connection_string    
   }
 }
 
@@ -139,8 +139,8 @@ resource "azurerm_function_app" "postgres_ingestor" {
     FUNCTIONS_WORKER_RUNTIME = "python"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_RUN_FROM_PACKAGE = "1"
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.finance_logs.instrumentation_key
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string    
+    APPINSIGHTS_INSTRUMENTATIONKEY = data.azurerm_application_insights.finance_logs.instrumentation_key
+    APPLICATIONINSIGHTS_CONNECTION_STRING = data.azurerm_application_insights.finance_logs.connection_string    
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
   }
@@ -164,8 +164,8 @@ resource "azurerm_function_app" "news_sentiment_analyzer" {
     FUNCTIONS_WORKER_RUNTIME = "python"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_RUN_FROM_PACKAGE = "1"
-    APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.finance_logs.instrumentation_key
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string    
+    APPINSIGHTS_INSTRUMENTATIONKEY = data.azurerm_application_insights.finance_logs.instrumentation_key
+    APPLICATIONINSIGHTS_CONNECTION_STRING = data.azurerm_application_insights.finance_logs.connection_string    
     EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
