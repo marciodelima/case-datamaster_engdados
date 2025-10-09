@@ -22,7 +22,7 @@ resource "azurerm_linux_function_app" "news_producer" {
   name                       = "news-producer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  app_service_plan_id        = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_app_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.news_storage.name
   storage_account_access_key = azurerm_storage_account.news_storage.primary_access_key
   
@@ -30,7 +30,7 @@ resource "azurerm_linux_function_app" "news_producer" {
     runtime_stack = "python"
     version       = "3.10"
   }
-  
+  site_config {}
   identity {
     type = "SystemAssigned"
   }
@@ -52,7 +52,7 @@ resource "azurerm_linux_function_app" "ri_resumer" {
   name                       = "ri-resumer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  app_service_plan_id        = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_app_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.ri_storage.name
   storage_account_access_key = azurerm_storage_account.ri_storage.primary_access_key
 
@@ -60,7 +60,7 @@ resource "azurerm_linux_function_app" "ri_resumer" {
     runtime_stack = "python"
     version       = "3.10"
   }
-  
+  site_config {}
   identity {
     type = "SystemAssigned"
   }
@@ -81,7 +81,7 @@ resource "azurerm_linux_function_app" "ri_collector" {
   name                       = "ri-collector-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  app_service_plan_id        = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_app_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.ri_collector_storage.name
   storage_account_access_key = azurerm_storage_account.ri_collector_storage.primary_access_key
 
@@ -89,7 +89,7 @@ resource "azurerm_linux_function_app" "ri_collector" {
     runtime_stack = "python"
     version       = "3.10"
   }
-  
+  site_config {}
   identity {
     type = "SystemAssigned"
   }
@@ -109,7 +109,7 @@ resource "azurerm_linux_function_app" "finance_csv_ingestor" {
   name                       = "finance-csv-ingestor-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  app_service_plan_id        = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_app_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.finance_storage.name
   storage_account_access_key = azurerm_storage_account.finance_storage.primary_access_key
 
@@ -117,7 +117,7 @@ resource "azurerm_linux_function_app" "finance_csv_ingestor" {
     runtime_stack = "python"
     version       = "3.10"
   }
-  
+  site_config {}
   identity {
     type = "SystemAssigned"
   }
@@ -137,7 +137,7 @@ resource "azurerm_linux_function_app" "postgres_ingestor" {
   name                       = "postgres-ingestor-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  app_service_plan_id        = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_app_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.postgres_storage.name
   storage_account_access_key = azurerm_storage_account.postgres_storage.primary_access_key
 
@@ -145,7 +145,7 @@ resource "azurerm_linux_function_app" "postgres_ingestor" {
     runtime_stack = "python"
     version       = "3.10"
   }
-  
+  site_config {}
   identity {
     type = "SystemAssigned"
   }
@@ -165,7 +165,7 @@ resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
   name                       = "news-sentiment-analyzer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  app_service_plan_id        = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_app_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.sentiment_storage.name
   storage_account_access_key = azurerm_storage_account.sentiment_storage.primary_access_key
 
@@ -173,7 +173,7 @@ resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
     runtime_stack = "python"
     version       = "3.10"
   }
-  
+  site_config {}
   identity {
     type = "SystemAssigned"
   }
