@@ -26,7 +26,7 @@ resource "azurerm_function_app_flex_consumption" "news_producer" {
   storage_access_key          = azurerm_storage_account.news_storage.primary_access_key
   runtime_name                = "python"
   runtime_version             = "3.10"
-  maximum_instance_count      = 10
+  maximum_instance_count      = 50
   instance_memory_in_mb       = 1024
   
   site_config {}
@@ -62,7 +62,7 @@ resource "azurerm_function_app_flex_consumption" "ri_resumer" {
   storage_access_key          = azurerm_storage_account.ri_storage.primary_access_key
   runtime_name                = "python"
   runtime_version             = "3.10"
-  maximum_instance_count      = 10
+  maximum_instance_count      = 50
   instance_memory_in_mb       = 1024
 
   site_config {}
@@ -97,7 +97,7 @@ resource "azurerm_function_app_flex_consumption" "ri_collector" {
   storage_access_key          = azurerm_storage_account.ri_collector_storage.primary_access_key
   runtime_name                = "python"
   runtime_version             = "3.10"
-  maximum_instance_count      = 10
+  maximum_instance_count      = 50
   instance_memory_in_mb       = 1024
 
   site_config {}
@@ -131,7 +131,7 @@ resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
   storage_access_key          = azurerm_storage_account.finance_storage.primary_access_key
   runtime_name                = "python"
   runtime_version             = "3.10"
-  maximum_instance_count      = 10
+  maximum_instance_count      = 50
   instance_memory_in_mb       = 1024
 
   site_config {}
@@ -165,7 +165,7 @@ resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
   storage_access_key          = azurerm_storage_account.postgres_storage.primary_access_key
   runtime_name                = "python"
   runtime_version             = "3.10"
-  maximum_instance_count      = 10
+  maximum_instance_count      = 50
   instance_memory_in_mb       = 1024
 
   site_config {}
@@ -199,7 +199,7 @@ resource "azurerm_function_app_flex_consumption" "news_sentiment_analyzer" {
   storage_access_key          = azurerm_storage_account.sentiment_storage.primary_access_key
   runtime_name                = "python"
   runtime_version             = "3.10"
-  maximum_instance_count      = 10
+  maximum_instance_count      = 50
   instance_memory_in_mb       = 1024
 
   site_config {}
