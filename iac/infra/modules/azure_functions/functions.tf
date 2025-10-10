@@ -27,6 +27,7 @@ resource "azurerm_linux_function_app" "news_producer" {
   storage_account_access_key = azurerm_storage_account.news_storage.primary_access_key
 
   site_config {
+    always_on = true
     application_stack {
       python_version = "3.10"
     }
@@ -59,6 +60,7 @@ resource "azurerm_linux_function_app" "ri_resumer" {
   storage_account_access_key = azurerm_storage_account.ri_storage.primary_access_key
 
   site_config {
+    always_on = true
     application_stack {
       python_version = "3.10"
     }
@@ -90,6 +92,7 @@ resource "azurerm_linux_function_app" "ri_collector" {
   storage_account_access_key = azurerm_storage_account.ri_collector_storage.primary_access_key
 
   site_config {
+    always_on = true
     application_stack {
       python_version = "3.10"
     }
@@ -120,6 +123,7 @@ resource "azurerm_linux_function_app" "finance_csv_ingestor" {
   storage_account_access_key = azurerm_storage_account.finance_storage.primary_access_key
 
   site_config {
+    always_on = true
     application_stack {
       python_version = "3.10"
     }
@@ -150,6 +154,7 @@ resource "azurerm_linux_function_app" "postgres_ingestor" {
   storage_account_access_key = azurerm_storage_account.postgres_storage.primary_access_key
 
   site_config {
+    always_on = true
     application_stack {
       python_version = "3.10"
     }
@@ -180,6 +185,7 @@ resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
   storage_account_access_key = azurerm_storage_account.sentiment_storage.primary_access_key
 
   site_config {
+    always_on = true
     application_stack {
       python_version = "3.10"
     }
