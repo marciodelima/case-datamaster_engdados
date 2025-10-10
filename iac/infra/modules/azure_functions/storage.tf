@@ -50,4 +50,39 @@ resource "azurerm_storage_account" "sentiment_storage" {
   account_replication_type = "LRS"
 }
 
+resource "azurerm_storage_container" "news_code" {
+  name                  = "function-code-news"
+  storage_account_name  = azurerm_storage_account.news_storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "ri_code" {
+  name                  = "function-code-ri"
+  storage_account_name  = azurerm_storage_account.ri_storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "ri_collector_code" {
+  name                  = "function-code-ri-collector"
+  storage_account_name  = azurerm_storage_account.ri_collector_storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "finance_code" {
+  name                  = "function-code-finance"
+  storage_account_name  = azurerm_storage_account.finance_storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "postgres_code" {
+  name                  = "function-code-postgres"
+  storage_account_name  = azurerm_storage_account.postgres_storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "sentiment_code" {
+  name                  = "function-code-sentiment"
+  storage_account_name  = azurerm_storage_account.sentiment_storage.name
+  container_access_type = "private"
+}
 

@@ -21,7 +21,7 @@ resource "azurerm_function_app_flex_consumption" "news_producer" {
   service_plan_id             = azurerm_service_plan.func_plan.id
  
   storage_container_type      = "blobContainer"
-  storage_container_endpoint  = "${azurerm_storage_account.news_storage.primary_blob_endpoint}${azurerm_storage_container.news_storage.name}"
+  storage_container_endpoint  = "${azurerm_storage_account.news_storage.primary_blob_endpoint}${azurerm_storage_container.news_code.name}"
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.news_storage.primary_access_key
   runtime_name                = "python"
@@ -57,7 +57,7 @@ resource "azurerm_function_app_flex_consumption" "ri_resumer" {
   service_plan_id            = azurerm_service_plan.func_plan.id
 
   storage_container_type      = "blobContainer"
-  storage_container_endpoint  = "${azurerm_storage_account.ri_storage.primary_blob_endpoint}${azurerm_storage_container.ri_storage.name}"
+  storage_container_endpoint  = "${azurerm_storage_account.ri_storage.primary_blob_endpoint}${azurerm_storage_container.ri_code.name}"
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.ri_storage.primary_access_key
   runtime_name                = "python"
@@ -92,7 +92,7 @@ resource "azurerm_function_app_flex_consumption" "ri_collector" {
   service_plan_id            = azurerm_service_plan.func_plan.id
 
   storage_container_type      = "blobContainer"
-  storage_container_endpoint  = "${azurerm_storage_account.ri_collector_storage.primary_blob_endpoint}${azurerm_storage_container.ri_collector_storage.name}"
+  storage_container_endpoint  = "${azurerm_storage_account.ri_collector_storage.primary_blob_endpoint}${azurerm_storage_container.ri_collector_code.name}"
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.ri_collector_storage.primary_access_key
   runtime_name                = "python"
@@ -126,7 +126,7 @@ resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
   service_plan_id            = azurerm_service_plan.func_plan.id
 
   storage_container_type      = "blobContainer"
-  storage_container_endpoint  = "${azurerm_storage_account.finance_storage.primary_blob_endpoint}${azurerm_storage_container.finance_storage.name}"
+  storage_container_endpoint  = "${azurerm_storage_account.finance_storage.primary_blob_endpoint}${azurerm_storage_container.finance_code.name}"
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.finance_storage.primary_access_key
   runtime_name                = "python"
@@ -160,7 +160,7 @@ resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
   service_plan_id            = azurerm_service_plan.func_plan.id
 
   storage_container_type      = "blobContainer"
-  storage_container_endpoint  = "${azurerm_storage_account.postgres_storage.primary_blob_endpoint}${azurerm_storage_container.postgres_storage.name}"
+  storage_container_endpoint  = "${azurerm_storage_account.postgres_storage.primary_blob_endpoint}${azurerm_storage_container.postgres_code.name}"
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.postgres_storage.primary_access_key
   runtime_name                = "python"
@@ -194,7 +194,7 @@ resource "azurerm_function_app_flex_consumption" "news_sentiment_analyzer" {
   service_plan_id            = azurerm_service_plan.func_plan.id
 
   storage_container_type      = "blobContainer"
-  storage_container_endpoint  = "${azurerm_storage_account.sentiment_storage.primary_blob_endpoint}${azurerm_storage_container.sentiment_storage.name}"
+  storage_container_endpoint  = "${azurerm_storage_account.sentiment_storage.primary_blob_endpoint}${azurerm_storage_container.sentiment_code.name}"
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.sentiment_storage.primary_access_key
   runtime_name                = "python"
