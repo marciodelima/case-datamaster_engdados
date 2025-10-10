@@ -2,7 +2,7 @@ resource "azurerm_service_plan" "func_plan" {
   name                = "func-plan"
   location            = var.location
   resource_group_name = var.resource_group_name
-  sku_name            = "FC1"
+  sku_name            = "EP1"
   os_type             = "Linux"
 }
 
