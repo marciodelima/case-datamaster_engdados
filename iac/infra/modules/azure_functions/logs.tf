@@ -1,11 +1,11 @@
 locals {
   function_apps = {
-    news_producer           = azurerm_function_app_flex_consumption.news_producer.id
-    ri_resumer              = azurerm_function_app_flex_consumption.ri_resumer.id
-    ri_collector            = azurerm_function_app_flex_consumption.ri_collector.id
-    finance_csv_ingestor    = azurerm_function_app_flex_consumption.finance_csv_ingestor.id
-    postgres_ingestor       = azurerm_function_app_flex_consumption.postgres_ingestor.id
-    news_sentiment_analyzer = azurerm_function_app_flex_consumption.news_sentiment_analyzer.id
+    news_producer           = azurerm_linux_function_app.news_producer.id
+    ri_resumer              = azurerm_linux_function_app.ri_resumer.id
+    ri_collector            = azurerm_linux_function_app.ri_collector.id
+    finance_csv_ingestor    = azurerm_linux_function_app.finance_csv_ingestor.id
+    postgres_ingestor       = azurerm_linux_function_app.postgres_ingestor.id
+    news_sentiment_analyzer = azurerm_linux_function_app.news_sentiment_analyzer.id
   }
 }
 
