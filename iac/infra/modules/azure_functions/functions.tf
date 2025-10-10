@@ -4,7 +4,6 @@ resource "azurerm_app_service_plan" "func_plan" {
   resource_group_name = var.resource_group_name
   kind                = "FunctionApp"
   reserved            = true
-  maximum_number_of_workers = 2
 
   sku {
     tier = "Standard"
