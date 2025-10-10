@@ -50,3 +50,4 @@ resource "azurerm_storage_account" "sentiment_storage" {
   account_replication_type = "LRS"
 }
 
+
