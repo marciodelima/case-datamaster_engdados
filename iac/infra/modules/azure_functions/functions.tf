@@ -14,6 +14,7 @@ resource "azurerm_application_insights" "finance_logs" {
 }
 
 resource "azurerm_function_app_flex_consumption" "news_producer" {
+  depends_on                  = [azurerm_storage_account.news_storage]
   name                        = "news-producer-func"
   location                    = var.location
   resource_group_name         = var.resource_group_name
@@ -49,6 +50,7 @@ resource "azurerm_function_app_flex_consumption" "news_producer" {
 }
 
 resource "azurerm_function_app_flex_consumption" "ri_resumer" {
+  depends_on                  = [azurerm_storage_account.ri_storage]
   name                       = "ri-resumer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
@@ -83,6 +85,7 @@ resource "azurerm_function_app_flex_consumption" "ri_resumer" {
 }
 
 resource "azurerm_function_app_flex_consumption" "ri_collector" {
+  depends_on                 = [azurerm_storage_account.ri_collector_storage]
   name                       = "ri-collector-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
@@ -116,6 +119,7 @@ resource "azurerm_function_app_flex_consumption" "ri_collector" {
 }
 
 resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
+  depends_on                 = [azurerm_storage_account.finance_storage]
   name                       = "finance-csv-ingestor-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
@@ -149,6 +153,7 @@ resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
 }
 
 resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
+  depends_on                 = [azurerm_storage_account.postgres_storage]
   name                       = "postgres-ingestor-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
@@ -182,6 +187,7 @@ resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
 }
 
 resource "azurerm_function_app_flex_consumption" "news_sentiment_analyzer" {
+  depends_on                 = [azurerm_storage_account.sentiment_storage]
   name                       = "news-sentiment-analyzer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
