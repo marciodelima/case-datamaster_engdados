@@ -4,6 +4,7 @@ resource "azurerm_app_service_plan" "func_plan" {
   resource_group_name = var.resource_group_name
   kind                = "FunctionApp"
   reserved            = true
+  maximum_number_of_workers = 2
 
   sku {
     tier = "Standard"
@@ -30,6 +31,7 @@ resource "azurerm_linux_function_app" "news_producer" {
     application_stack {
       python_version = "3.10"
     }
+    auto_heal_enabled = true
   }
 
   identity {
@@ -62,6 +64,7 @@ resource "azurerm_linux_function_app" "ri_resumer" {
     application_stack {
       python_version = "3.10"
     }
+    auto_heal_enabled = true
   }
 
   identity {
@@ -93,6 +96,7 @@ resource "azurerm_linux_function_app" "ri_collector" {
     application_stack {
       python_version = "3.10"
     }
+    auto_heal_enabled = true
   }
 
   identity {
@@ -123,6 +127,7 @@ resource "azurerm_linux_function_app" "finance_csv_ingestor" {
     application_stack {
       python_version = "3.10"
     }
+    auto_heal_enabled = true
   }
 
   identity {
@@ -153,6 +158,7 @@ resource "azurerm_linux_function_app" "postgres_ingestor" {
     application_stack {
       python_version = "3.10"
     }
+    auto_heal_enabled = true
   }
 
   identity {
@@ -183,6 +189,7 @@ resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
     application_stack {
       python_version = "3.10"
     }
+    auto_heal_enabled = true
   }
 
   identity {
