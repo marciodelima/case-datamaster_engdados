@@ -14,15 +14,20 @@ resource "azurerm_application_insights" "finance_logs" {
 }
 
 resource "azurerm_function_app_flex_consumption" "news_producer" {
-  name                       = "news-producer-func"
-  location                   = var.location
-  resource_group_name        = var.resource_group_name
-  service_plan_id            = azurerm_service_plan.func_plan.id
-  storage_account_name       = azurerm_storage_account.news_storage.name
-  storage_account_access_key = azurerm_storage_account.news_storage.primary_access_key
-
-  runtime_name    = "python"
-  runtime_version = "3.10"
+  name                        = "news-producer-func"
+  location                    = var.location
+  resource_group_name         = var.resource_group_name
+  service_plan_id             = azurerm_service_plan.func_plan.id
+ 
+  storage_container_type      = "blobContainer"
+  storage_container_endpoint  = "${azurerm_storage_account.news_storage.primary_blob_endpoint}${azurerm_storage_container.news_storage.name}"
+  storage_authentication_type = "StorageAccountConnectionString"
+  storage_access_key          = azurerm_storage_account.news_storage.primary_access_key
+  runtime_name                = "python"
+  runtime_version             = "3.10"
+  maximum_instance_count      = 10
+  instance_memory_in_mb       = 1024
+  
   site_config {}
 
   identity {
@@ -33,6 +38,7 @@ resource "azurerm_function_app_flex_consumption" "news_producer" {
     FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string
     EVENTHUB_NAME      = var.eventhub_namespace_name
@@ -47,11 +53,16 @@ resource "azurerm_function_app_flex_consumption" "ri_resumer" {
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
-  storage_account_name       = azurerm_storage_account.ri_storage.name
-  storage_account_access_key = azurerm_storage_account.ri_storage.primary_access_key
 
-  runtime_name    = "python"
-  runtime_version = "3.10"
+  storage_container_type      = "blobContainer"
+  storage_container_endpoint  = "${azurerm_storage_account.ri_storage.primary_blob_endpoint}${azurerm_storage_container.ri_storage.name}"
+  storage_authentication_type = "StorageAccountConnectionString"
+  storage_access_key          = azurerm_storage_account.ri_storage.primary_access_key
+  runtime_name                = "python"
+  runtime_version             = "3.10"
+  maximum_instance_count      = 10
+  instance_memory_in_mb       = 1024
+
   site_config {}
 
   identity {
@@ -62,6 +73,7 @@ resource "azurerm_function_app_flex_consumption" "ri_resumer" {
     FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
@@ -75,11 +87,16 @@ resource "azurerm_function_app_flex_consumption" "ri_collector" {
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
-  storage_account_name       = azurerm_storage_account.ri_collector_storage.name
-  storage_account_access_key = azurerm_storage_account.ri_collector_storage.primary_access_key
 
-  runtime_name    = "python"
-  runtime_version = "3.10"
+  storage_container_type      = "blobContainer"
+  storage_container_endpoint  = "${azurerm_storage_account.ri_collector_storage.primary_blob_endpoint}${azurerm_storage_container.ri_collector_storage.name}"
+  storage_authentication_type = "StorageAccountConnectionString"
+  storage_access_key          = azurerm_storage_account.ri_collector_storage.primary_access_key
+  runtime_name                = "python"
+  runtime_version             = "3.10"
+  maximum_instance_count      = 10
+  instance_memory_in_mb       = 1024
+
   site_config {}
 
   identity {
@@ -90,6 +107,7 @@ resource "azurerm_function_app_flex_consumption" "ri_collector" {
     FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
@@ -102,11 +120,16 @@ resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
-  storage_account_name       = azurerm_storage_account.finance_storage.name
-  storage_account_access_key = azurerm_storage_account.finance_storage.primary_access_key
 
-  runtime_name    = "python"
-  runtime_version = "3.10"
+  storage_container_type      = "blobContainer"
+  storage_container_endpoint  = "${azurerm_storage_account.finance_storage.primary_blob_endpoint}${azurerm_storage_container.finance_storage.name}"
+  storage_authentication_type = "StorageAccountConnectionString"
+  storage_access_key          = azurerm_storage_account.finance_storage.primary_access_key
+  runtime_name                = "python"
+  runtime_version             = "3.10"
+  maximum_instance_count      = 10
+  instance_memory_in_mb       = 1024
+
   site_config {}
 
   identity {
@@ -117,6 +140,7 @@ resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
     FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
@@ -129,11 +153,16 @@ resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
-  storage_account_name       = azurerm_storage_account.postgres_storage.name
-  storage_account_access_key = azurerm_storage_account.postgres_storage.primary_access_key
 
-  runtime_name    = "python"
-  runtime_version = "3.10"
+  storage_container_type      = "blobContainer"
+  storage_container_endpoint  = "${azurerm_storage_account.postgres_storage.primary_blob_endpoint}${azurerm_storage_container.postgres_storage.name}"
+  storage_authentication_type = "StorageAccountConnectionString"
+  storage_access_key          = azurerm_storage_account.postgres_storage.primary_access_key
+  runtime_name                = "python"
+  runtime_version             = "3.10"
+  maximum_instance_count      = 10
+  instance_memory_in_mb       = 1024
+
   site_config {}
 
   identity {
@@ -144,6 +173,7 @@ resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
     FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
@@ -156,11 +186,16 @@ resource "azurerm_function_app_flex_consumption" "news_sentiment_analyzer" {
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
-  storage_account_name       = azurerm_storage_account.sentiment_storage.name
-  storage_account_access_key = azurerm_storage_account.sentiment_storage.primary_access_key
 
-  runtime_name    = "python"
-  runtime_version = "3.10"
+  storage_container_type      = "blobContainer"
+  storage_container_endpoint  = "${azurerm_storage_account.sentiment_storage.primary_blob_endpoint}${azurerm_storage_container.sentiment_storage.name}"
+  storage_authentication_type = "StorageAccountConnectionString"
+  storage_access_key          = azurerm_storage_account.sentiment_storage.primary_access_key
+  runtime_name                = "python"
+  runtime_version             = "3.10"
+  maximum_instance_count      = 10
+  instance_memory_in_mb       = 1024
+
   site_config {}
 
   identity {
@@ -173,6 +208,7 @@ resource "azurerm_function_app_flex_consumption" "news_sentiment_analyzer" {
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs.connection_string
+    WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
