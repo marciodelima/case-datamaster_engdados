@@ -27,7 +27,7 @@ resource "azurerm_function_app_flex_consumption" "news_producer" {
   runtime_name                = "python"
   runtime_version             = "3.10"
   maximum_instance_count      = 50
-  instance_memory_in_mb       = 1024
+  instance_memory_in_mb       = 2048
   
   site_config {}
 
@@ -63,7 +63,7 @@ resource "azurerm_function_app_flex_consumption" "ri_resumer" {
   runtime_name                = "python"
   runtime_version             = "3.10"
   maximum_instance_count      = 50
-  instance_memory_in_mb       = 1024
+  instance_memory_in_mb       = 2048
 
   site_config {}
 
@@ -98,7 +98,7 @@ resource "azurerm_function_app_flex_consumption" "ri_collector" {
   runtime_name                = "python"
   runtime_version             = "3.10"
   maximum_instance_count      = 50
-  instance_memory_in_mb       = 1024
+  instance_memory_in_mb       = 2048
 
   site_config {}
 
@@ -132,7 +132,7 @@ resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
   runtime_name                = "python"
   runtime_version             = "3.10"
   maximum_instance_count      = 50
-  instance_memory_in_mb       = 1024
+  instance_memory_in_mb       = 2048
 
   site_config {}
 
@@ -166,7 +166,7 @@ resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
   runtime_name                = "python"
   runtime_version             = "3.10"
   maximum_instance_count      = 50
-  instance_memory_in_mb       = 1024
+  instance_memory_in_mb       = 2048
 
   site_config {}
 
@@ -200,7 +200,7 @@ resource "azurerm_function_app_flex_consumption" "news_sentiment_analyzer" {
   runtime_name                = "python"
   runtime_version             = "3.10"
   maximum_instance_count      = 50
-  instance_memory_in_mb       = 1024
+  instance_memory_in_mb       = 2048
 
   site_config {}
 
