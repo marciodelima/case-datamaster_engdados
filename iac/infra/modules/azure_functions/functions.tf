@@ -36,7 +36,6 @@ resource "azurerm_function_app_flex_consumption" "news_producer" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
@@ -72,7 +71,6 @@ resource "azurerm_function_app_flex_consumption" "ri_resumer" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
@@ -107,7 +105,6 @@ resource "azurerm_function_app_flex_consumption" "ri_collector" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
@@ -141,7 +138,6 @@ resource "azurerm_function_app_flex_consumption" "finance_csv_ingestor" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
@@ -175,7 +171,6 @@ resource "azurerm_function_app_flex_consumption" "postgres_ingestor" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
@@ -209,7 +204,6 @@ resource "azurerm_function_app_flex_consumption" "news_sentiment_analyzer" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME         = "python"
     WEBSITE_RUN_FROM_PACKAGE         = "1"
     PYTHON_ENABLE_WORKER_EXTENSIONS = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs.instrumentation_key
