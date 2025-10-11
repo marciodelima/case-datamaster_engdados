@@ -68,10 +68,12 @@ jobs:
           NORMALIZED_NAME=$(echo "${{ matrix.function_name }}" | sed 's/_/-/g')-func
           echo "NORMALIZED_NAME=$NORMALIZED_NAME" >> $GITHUB_ENV
 
-      - name: Package function
+      - name: Prepare and package function with dependencies
         run: |
-          cd app/azure_functions
-          zip -r ../../${{ matrix.function_name }}.zip ${{ matrix.function_name }}
+          cd app/azure_functions/${{ matrix.function_name }}
+          mkdir -p .python_packages/lib/site-packages
+          pip install -r requirements.txt -t .python_packages/lib/site-packages
+          zip -r ../../../${{ matrix.function_name }}.zip . -x "*.pyc" -x "__pycache__/*"
 
       - name: Deploy to Azure Function
         uses: azure/functions-action@v1

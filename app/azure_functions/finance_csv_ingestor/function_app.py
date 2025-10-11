@@ -86,6 +86,7 @@ def main(mytimer: func.TimerRequest) -> None:
     #
     #except Exception as e:
     #    logging.error(f"Erro na ingestão financeira: {e}")
+    
     logging.info("Final da execução da função finance_csv_ingestor")
 
 
