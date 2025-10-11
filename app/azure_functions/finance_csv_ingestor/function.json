@@ -1,5 +1,6 @@
 {
   "scriptFile": "function_app.py",
+  "entryPoint": "main",
   "bindings": [
     {
       "name": "mytimer",
