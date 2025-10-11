@@ -66,6 +66,10 @@ jobs:
           NORMALIZED_NAME=$(echo "${{ matrix.function_name }}" | sed 's/_/-/g')-func
           echo "NORMALIZED_NAME=$NORMALIZED_NAME" >> $GITHUB_ENV
 
+      - name: Install Azure Functions Core Tools
+        run: |
+          npm install -g azure-functions-core-tools@4 --unsafe-perm true
+
       - name: Deploy with Azure Functions Core Tools
         run: |
           cd app/azure_functions/${{ matrix.function_name }}
