@@ -8,6 +8,7 @@ resource "azurerm_app_service_plan" "func_plan" {
   sku {
     tier = "Standard"
     size = "S2"
+    capacity = 6
   }
 }
 
