@@ -7,7 +7,8 @@ from unittest.mock import patch, MagicMock
 # Ajusta o caminho para importar a função
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-import finance_csv_ingestor as func
+# Importa o módulo correto
+from finance_csv_ingestor import function_app
 
 @pytest.fixture
 def mock_env(monkeypatch):
@@ -15,11 +16,11 @@ def mock_env(monkeypatch):
     monkeypatch.setenv("STORAGE_URL", "https://fake.blob.core.windows.net")
 
 def test_main_function(mock_env):
-    with patch("finance_csv_ingestor.DefaultAzureCredential") as mock_cred, \
-         patch("finance_csv_ingestor.BlobServiceClient") as mock_blob, \
-         patch("finance_csv_ingestor.requests.get") as mock_requests, \
-         patch("finance_csv_ingestor.psycopg2.connect") as mock_pg, \
-         patch("finance_csv_ingestor.yf.Ticker") as mock_yf:
+    with patch("finance_csv_ingestor.function_app.DefaultAzureCredential") as mock_cred, \
+         patch("finance_csv_ingestor.function_app.BlobServiceClient") as mock_blob, \
+         patch("finance_csv_ingestor.function_app.requests.get") as mock_requests, \
+         patch("finance_csv_ingestor.function_app.psycopg2.connect") as mock_pg, \
+         patch("finance_csv_ingestor.function_app.yf.Ticker") as mock_yf:
 
         # Simula credencial
         mock_cred.return_value = MagicMock()
@@ -40,9 +41,9 @@ def test_main_function(mock_env):
 
         # Simula yfinance
         mock_stock = MagicMock()
-        mock_stock.history.return_value = func.pd.DataFrame({"Date": [datetime.now()], "Close": [28.5]})
+        mock_stock.history.return_value = function_app.pd.DataFrame({"Date": [datetime.now()], "Close": [28.5]})
         mock_yf.return_value = mock_stock
 
         # Executa função principal
-        func.main(None)
+        function_app.main(None)
 
