@@ -1,14 +1,18 @@
 resource "azurerm_postgresql_flexible_server" "ri_db" {
-  name                   = "finance-db-postgres-2025"
-  resource_group_name    = var.resource_group_name
-  location               = var.location
-  administrator_login    = "adminuser"
-  administrator_password = var.db_password
-  version                = "13"
-  storage_mb             = 32768
-  sku_name               = "GP_Standard_D2s_v3"
-  zone                   = "1"
+  name                          = "finance-db-postgres-2025"
+  resource_group_name           = var.resource_group_name
+  location                      = var.location
+  administrator_login           = "adminuser"
+  administrator_password        = var.db_password
+  version                       = "13"
+  storage_mb                    = 32768
+  sku_name                      = "GP_Standard_D2s_v3"
+  zone                          = "1"
+  public_network_access         = "Enabled"
 
+  network {
+    public_network_access = "Enabled"
+  }
   authentication {
     active_directory_auth_enabled = true
   }
