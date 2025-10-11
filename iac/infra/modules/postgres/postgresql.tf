@@ -96,10 +96,9 @@ resource "azurerm_key_vault_secret" "postgres_conn_string" {
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_services" {
   name                = "AllowAzureServices"
-  server_name         = azurerm_postgresql_flexible_server.ri_db.name
-  resource_group_name = azurerm_resource_group.main.name
+  server_id           = azurerm_postgresql_flexible_server.ri_db.id
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  depends_on = [azurerm_postgresql_flexible_server.ri_db]
+  depends_on          = [azurerm_postgresql_flexible_server.ri_db]
 }
 
