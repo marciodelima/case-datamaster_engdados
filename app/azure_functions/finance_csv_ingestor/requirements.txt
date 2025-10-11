@@ -13,7 +13,6 @@ pandas==1.5.3
 fastavro==1.7.4
 yfinance==0.2.33
 python-dotenv==1.0.0
-pyspark
 pytest==8.2.1
 pytest-cov==4.1.0
 unittest2==1.1.0
