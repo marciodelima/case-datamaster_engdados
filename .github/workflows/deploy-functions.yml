@@ -53,6 +53,10 @@ jobs:
         run: |
           black app/azure_functions/${{ matrix.function_name }}
 
+      - name: Install function dependencies
+        run: |
+          pip install -r app/azure_functions/${{ matrix.function_name }}/requirements.txt
+
       - name: Run unit tests
         run: |
           pytest app/azure_functions/${{ matrix.function_name }} --maxfail=1 --disable-warnings --exitfirst
