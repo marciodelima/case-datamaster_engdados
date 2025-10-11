@@ -19,3 +19,4 @@ unittest2==1.1.0
 mock==5.1.0
 black==24.4.0
 
+

@@ -66,10 +66,9 @@ jobs:
           NORMALIZED_NAME=$(echo "${{ matrix.function_name }}" | sed 's/_/-/g')-func
           echo "NORMALIZED_NAME=$NORMALIZED_NAME" >> $GITHUB_ENV
 
-      - name: Deploy to Azure Function (with remote build)
-        uses: azure/functions-action@v1
-        with:
-          app-name: ${{ env.NORMALIZED_NAME }}
-          package: app/azure_functions/${{ matrix.function_name }}
-          scm-do-build-during-deployment: true
+      - name: Deploy with Azure Functions Core Tools
+        run: |
+          cd app/azure_functions/${{ matrix.function_name }}
+          func azure functionapp publish ${{ env.NORMALIZED_NAME }} --python
+
 
