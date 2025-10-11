@@ -9,11 +9,11 @@ variable "function_names" {
   type = list(string)
   default = [
     "news-producer-func",
-    "ri-resumer-func",
-    "ri-collector-func",
-    "finance-csv-ingestor-func",
-    "postgres-ingestor-func",
-    "news-sentiment-analyzer-func"
+    #"ri-resumer-func",
+    #"ri-collector-func",
+    "finance-csv-ingestor-func"
+    #"postgres-ingestor-func",
+    #"news-sentiment-analyzer-func"
   ]
 }
 
