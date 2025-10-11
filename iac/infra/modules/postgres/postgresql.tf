@@ -64,10 +64,6 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "github_actions_ip" 
 resource "null_resource" "init_sql" {
   depends_on = [azurerm_postgresql_flexible_server.ri_db]
 
-  lifecycle {
-    ignore_changes = [name]
-  }  
-
   provisioner "local-exec" {
     command = <<EOT
       sleep 60
