@@ -16,10 +16,6 @@ jobs:
         function_name:
           - finance_csv_ingestor
           - news_producer
-          #- news_sentiment_analyzer
-          #- postgres_ingestor
-          #- ri_collector
-          #- ri_resumer
 
     env:
       PYTHON_VERSION: '3.10'
@@ -48,37 +44,28 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Install dependencies
+      - name: Install dev dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r app/azure_functions/${{ matrix.function_name }}/requirements.txt
+          pip install black pytest
 
       - name: Format code
         run: |
-          pip install black
           black app/azure_functions/${{ matrix.function_name }}
 
       - name: Run unit tests
         run: |
-          pip install pytest
           pytest app/azure_functions/${{ matrix.function_name }} --maxfail=1 --disable-warnings --exitfirst
 
-      - name: Correcao da function name
+      - name: Normalize function name
         run: |
           NORMALIZED_NAME=$(echo "${{ matrix.function_name }}" | sed 's/_/-/g')-func
           echo "NORMALIZED_NAME=$NORMALIZED_NAME" >> $GITHUB_ENV
 
-      - name: Prepare and package function with dependencies
-        run: |
-          cd app/azure_functions/${{ matrix.function_name }}
-          mkdir -p .python_packages/lib/site-packages
-          pip install -r requirements.txt -t .python_packages/lib/site-packages
-          zip -r ../../../${{ matrix.function_name }}.zip . -x "*.pyc" -x "__pycache__/*"
-
-      - name: Deploy to Azure Function
+      - name: Deploy to Azure Function (with remote build)
         uses: azure/functions-action@v1
         with:
           app-name: ${{ env.NORMALIZED_NAME }}
-          package: ./${{ matrix.function_name }}.zip
-
+          package: app/azure_functions/${{ matrix.function_name }}
+          scm-do-build-during-deployment: true
 
