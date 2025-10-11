@@ -79,3 +79,4 @@ def main(mytimer: func.TimerRequest) -> None:
     except Exception as e:
         logging.error(f"Erro na ingestão financeira: {e}")
 
+

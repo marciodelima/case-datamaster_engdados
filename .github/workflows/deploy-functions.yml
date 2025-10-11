@@ -68,10 +68,15 @@ jobs:
           NORMALIZED_NAME=$(echo "${{ matrix.function_name }}" | sed 's/_/-/g')-func
           echo "NORMALIZED_NAME=$NORMALIZED_NAME" >> $GITHUB_ENV
 
+      - name: Package function
+        run: |
+          cd app/azure_functions
+          zip -r ../../${{ matrix.function_name }}.zip ${{ matrix.function_name }}
+
       - name: Deploy to Azure Function
         uses: azure/functions-action@v1
         with:
           app-name: ${{ env.NORMALIZED_NAME }}
-          package: app/azure_functions/${{ matrix.function_name }}
+          package: ./${{ matrix.function_name }}.zip
 
 
