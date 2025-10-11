@@ -8,11 +8,8 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   storage_mb                    = 32768
   sku_name                      = "GP_Standard_D2s_v3"
   zone                          = "1"
-  public_network_access         = "Enabled"
+  public_network_access_enabled = true
 
-  network {
-    public_network_access = "Enabled"
-  }
   authentication {
     active_directory_auth_enabled = true
   }
@@ -95,5 +92,14 @@ resource "azurerm_key_vault_secret" "postgres_conn_string" {
   key_vault_id = data.azurerm_key_vault.main.id
 
   value = "Host=${azurerm_postgresql_flexible_server.ri_db.fqdn};Port=5432;Database=${azurerm_postgresql_flexible_server_database.ri_db_main.name};User Id=${azurerm_postgresql_flexible_server.ri_db.administrator_login}@${azurerm_postgresql_flexible_server.ri_db.name};Password=${var.db_password};Ssl Mode=Require"
+}
+
+resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_services" {
+  name                = "AllowAzureServices"
+  server_name         = azurerm_postgresql_flexible_server.ri_db.name
+  resource_group_name = azurerm_resource_group.main.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
+  depends_on = [azurerm_postgresql_flexible_server.ri_db]
 }
 

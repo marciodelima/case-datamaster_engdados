@@ -45,7 +45,7 @@ resource "azurerm_role_assignment" "finance_keyvault_reader" {
 
 resource "azurerm_key_vault_access_policy" "news_producer_secrets_access" {
   key_vault_id = data.azurerm_key_vault.kv.id
-  tenant_id    = var.tenant_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_linux_function_app.news_producer.identity[0].principal_id
 
   secret_permissions = [
@@ -54,9 +54,11 @@ resource "azurerm_key_vault_access_policy" "news_producer_secrets_access" {
   ]
 }
 
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_key_vault_access_policy" "finance_csv_ingestor_secrets_access" {
   key_vault_id = data.azurerm_key_vault.kv.id
-  tenant_id    = var.tenant_id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_linux_function_app.finance_csv_ingestor.identity[0].principal_id
 
   secret_permissions = [
