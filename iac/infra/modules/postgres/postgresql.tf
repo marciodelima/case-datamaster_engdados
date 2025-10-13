@@ -106,7 +106,6 @@ resource "null_resource" "enable_auto_pause" {
       az postgres flexible-server update \
         --name ${azurerm_postgresql_flexible_server.ri_db.name} \
         --resource-group ${azurerm_postgresql_flexible_server.ri_db.resource_group_name} \
-        --compute-tier Burstable \
         --auto-stop-enabled true \
         --auto-stop-delay 60 \
         --storage-auto-grow Enabled
