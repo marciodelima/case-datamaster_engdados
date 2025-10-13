@@ -6,7 +6,7 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   administrator_password        = var.db_password
   version                       = "13"
   storage_mb                    = 32768
-  sku_name                      = "B1ms"
+  sku_name                      = "Standard_B1ms"
   zone                          = "1"
   public_network_access_enabled = true
   
@@ -108,7 +108,8 @@ resource "null_resource" "enable_auto_pause" {
         --resource-group ${azurerm_postgresql_flexible_server.ri_db.resource_group_name} \
         --compute-tier Burstable \
         --auto-stop-enabled true \
-        --auto-stop-delay 60
+        --auto-stop-delay 60 \
+        --storage-auto-grow Enabled
     EOT
   }
 }
