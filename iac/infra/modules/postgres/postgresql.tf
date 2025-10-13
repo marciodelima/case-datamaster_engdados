@@ -6,9 +6,7 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   administrator_password        = var.db_password
   version                       = "13"
   storage_mb                    = 32768
-  #sku_name                      = "Standard_B1ms"
-  tier                          = "Burstable"
-  vcores                        = 1  
+  sku_name                      = "B_Standard_B1ms"
   zone                          = "1"
   public_network_access_enabled = true
   
