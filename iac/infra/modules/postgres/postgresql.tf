@@ -6,10 +6,12 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   administrator_password        = var.db_password
   version                       = "13"
   storage_mb                    = 32768
-  sku_name                      = "GP_Standard_D2s_v3"
+  sku_name                      = "B1ms"
   zone                          = "1"
   public_network_access_enabled = true
-
+  auto_stop_enabled             = true
+  auto_stop_delay_in_minutes    = 60
+  
   authentication {
     active_directory_auth_enabled = true
   }
