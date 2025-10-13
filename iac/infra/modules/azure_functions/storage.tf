@@ -20,13 +20,13 @@ resource "azurerm_storage_account" "finance_storage" {
 
 resource "azurerm_storage_container" "news_code" {
   name                  = "function-code-news"
-  storage_account_name  = azurerm_storage_account.news_storage.name
+  storage_account_id    = azurerm_storage_account.news_storage.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "finance_code" {
   name                  = "function-code-finance"
-  storage_account_name  = azurerm_storage_account.finance_storage.name
+  storage_account_id    = azurerm_storage_account.finance_storage.id
   container_access_type = "private"
 }
 

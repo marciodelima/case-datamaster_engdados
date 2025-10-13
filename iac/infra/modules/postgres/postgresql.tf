@@ -9,7 +9,8 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   sku_name                      = "B_Standard_B1ms"
   zone                          = "1"
   public_network_access_enabled = true
-  
+  auto_grow_enabled             = true
+
   authentication {
     active_directory_auth_enabled = true
   }
@@ -98,18 +99,10 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_service
   depends_on          = [azurerm_postgresql_flexible_server.ri_db]
 }
 
-resource "null_resource" "enable_auto_pause" {
-  depends_on = [azurerm_postgresql_flexible_server.ri_db]
-
-  provisioner "local-exec" {
-    command = <<EOT
-      az postgres flexible-server update \
-        --name ${azurerm_postgresql_flexible_server.ri_db.name} \
-        --resource-group ${azurerm_postgresql_flexible_server.ri_db.resource_group_name} \
-        --auto-stop-enabled true \
-        --auto-stop-delay 60 \
-        --storage-auto-grow Enabled
-    EOT
-  }
+resource "azurerm_postgresql_flexible_server_configuration" "auto_pause" {
+  name      = "auto_pause"
+  server_id = azurerm_postgresql_flexible_server.ri_db.id
+  value     = "60"
+  depends_on          = [azurerm_postgresql_flexible_server.ri_db]
 }
 
