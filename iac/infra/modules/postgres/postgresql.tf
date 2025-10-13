@@ -9,8 +9,6 @@ resource "azurerm_postgresql_flexible_server" "ri_db" {
   sku_name                      = "B1ms"
   zone                          = "1"
   public_network_access_enabled = true
-  auto_stop_enabled             = true
-  auto_stop_delay_in_minutes    = 60
   
   authentication {
     active_directory_auth_enabled = true
@@ -98,5 +96,20 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_service
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
   depends_on          = [azurerm_postgresql_flexible_server.ri_db]
+}
+
+resource "null_resource" "enable_auto_pause" {
+  depends_on = [azurerm_postgresql_flexible_server.ri_db]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      az postgres flexible-server update \
+        --name ${azurerm_postgresql_flexible_server.ri_db.name} \
+        --resource-group ${azurerm_postgresql_flexible_server.ri_db.resource_group_name} \
+        --compute-tier Burstable \
+        --auto-stop-enabled true \
+        --auto-stop-delay 60
+    EOT
+  }
 }
 
