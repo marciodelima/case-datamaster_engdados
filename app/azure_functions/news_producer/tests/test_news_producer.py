@@ -1,61 +1,52 @@
-import pytest
 import sys
 import os
+import pytest
 from unittest.mock import patch, MagicMock
 
-# Ajusta o caminho para importar a função
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-import news_producer as func
+from news_producer.function_app import main
 
-@pytest.fixture
-def mock_env(monkeypatch):
-    monkeypatch.setenv("KEYVAULT_URI", "https://fake.vault.azure.net")
-    monkeypatch.setenv("EVENTHUB_NAMESPACE", "fake-namespace.servicebus.windows.net")
-    monkeypatch.setenv("EVENTHUB_NAME", "noticias")
+@patch("azure_functions.news_producer.function_app.DefaultAzureCredential")
+@patch("azure_functions.news_producer.function_app.get_openai_client")
+@patch("azure_functions.news_producer.function_app.EventHubProducerClient")
+@patch("azure_functions.news_producer.function_app.fetch_moneytimes")
+@patch("azure_functions.news_producer.function_app.fetch_infomoney_rss")
+@patch("azure_functions.news_producer.function_app.fetch_valor_investe")
+@patch("azure_functions.news_producer.function_app.fetch_dados_mercado")
+@patch("azure_functions.news_producer.function_app.fetch_full_text")
+@patch("azure_functions.news_producer.function_app.summarize_text")
+def test_news_producer_function(
+    mock_summarize_text,
+    mock_fetch_full_text,
+    mock_fetch_dados_mercado,
+    mock_fetch_valor_investe,
+    mock_fetch_infomoney_rss,
+    mock_fetch_moneytimes,
+    mock_eventhub_client,
+    mock_openai_client,
+    mock_credential
+):
+    # Simula fontes de notícias
+    mock_fetch_moneytimes.return_value = [{"origem": "MoneyTimes", "titulo": "Notícia MT", "url": "http://mt"}]
+    mock_fetch_infomoney_rss.return_value = [{"origem": "InfoMoney", "titulo": "Notícia IM", "url": "http://im"}]
+    mock_fetch_valor_investe.return_value = [{"origem": "Valor Investe", "titulo": "Notícia VI", "url": "http://vi"}]
+    mock_fetch_dados_mercado.return_value = [{"origem": "Dados de Mercado", "titulo": "Notícia DM", "url": "http://dm"}]
 
-def test_main_function(mock_env):
-    with patch("news_producer.DefaultAzureCredential") as mock_cred, \
-         patch("news_producer.SecretClient") as mock_secret, \
-         patch("news_producer.AzureOpenAI") as mock_llm, \
-         patch("news_producer.EventHubProducerClient") as mock_eventhub, \
-         patch("news_producer.requests.get") as mock_requests, \
-         patch("news_producer.feedparser.parse") as mock_feed:
+    # Simula texto completo e resumo
+    mock_fetch_full_text.return_value = "Texto completo da notícia"
+    mock_summarize_text.return_value = "Resumo da notícia"
 
-        mock_cred.return_value = MagicMock()
+    # Simula Event Hub
+    mock_batch = MagicMock()
+    mock_eventhub = MagicMock()
+    mock_eventhub.create_batch.return_value = mock_batch
+    mock_eventhub_client.return_value = mock_eventhub
 
-        # Simula Key Vault
-        mock_secret_instance = MagicMock()
-        mock_secret.return_value = mock_secret_instance
-        mock_secret_instance.get_secret.side_effect = lambda k: MagicMock(value=f"fake-{k}")
+    # Executa a função
+    main(MagicMock())
 
-        # Simula OpenAI
-        mock_llm_instance = MagicMock()
-        mock_llm.return_value = mock_llm_instance
-        mock_llm_instance.chat.completions.create.return_value.choices = [
-            MagicMock(message=MagicMock(content="Resumo gerado pela IA"))
-        ]
-
-        # Simula Event Hub
-        mock_batch = MagicMock()
-        mock_eventhub_instance = MagicMock()
-        mock_eventhub_instance.create_batch.return_value = mock_batch
-        mock_eventhub.return_value = mock_eventhub_instance
-
-        # Simula HTML das fontes
-        mock_requests.return_value.text = """
-        <html>
-            <article><h2>Notícia A</h2><a href="https://site.com/a">link</a></article>
-            <div class="feed-post-body"><a href="https://site.com/b">Notícia B</a></div>
-            <div class="card-body"><h5>Notícia C</h5><a href="https://site.com/c">link</a></div>
-            <p>Texto completo da notícia com mais de 40 caracteres.</p>
-        </html>
-        """
-
-        # Simula RSS
-        mock_feed.return_value.entries = [
-            MagicMock(title="Notícia RSS", link="https://site.com/rss")
-        ]
-
-        func.main(None)
+    # Verifica se pelo menos um evento foi adicionado
+    assert mock_batch.add.call_count > 0
+    assert mock_eventhub.send_batch.called
 
