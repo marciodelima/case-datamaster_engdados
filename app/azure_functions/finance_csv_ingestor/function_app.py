@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import datetime
 from azure.storage.blob import BlobServiceClient
 from azure.identity import DefaultAzureCredential
+from azure.keyvault.secrets import SecretClient
 import azure.functions as func
 import psycopg2
 import yfinance as yf
@@ -24,7 +25,6 @@ def get_pg_tickers():
     try:
         credential = DefaultAzureCredential()
         kv_url = os.environ["KEYVAULT_URL"]
-        from azure.keyvault.secrets import SecretClient
         client = SecretClient(vault_url=kv_url, credential=credential)
 
         conn_str = client.get_secret("Postgres-Conn").value
