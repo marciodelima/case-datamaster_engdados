@@ -99,10 +99,3 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_service
   depends_on          = [azurerm_postgresql_flexible_server.ri_db]
 }
 
-resource "azurerm_postgresql_flexible_server_configuration" "auto_pause" {
-  name      = "auto_pause"
-  server_id = azurerm_postgresql_flexible_server.ri_db.id
-  value     = "60"
-  depends_on          = [azurerm_postgresql_flexible_server.ri_db]
-}
-
