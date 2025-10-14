@@ -30,3 +30,8 @@ output "azure_credentials_json" {
 output "rsg_name" {
   value = var.resource_group_name
 }
+
+output "iac_name_storage" {
+  value = var.iac_terraform_storage
+}
+

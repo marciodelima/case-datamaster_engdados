@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "tfstate" {
-  name                     = "tfstatedatamastersta3"
+  name                     = var.iac_terraform_storage
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"

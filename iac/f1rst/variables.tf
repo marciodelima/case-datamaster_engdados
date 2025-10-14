@@ -4,6 +4,7 @@ variable "spn_name" { default = "github-deploy-spn" }
 variable "keyvault_name" { default = "kv-secret-datamastermdl3" }
 variable "keyvault_rg" { default = "rsg-datamaster" }
 variable "name_databricks" { default = "finance-databricks" }
+variable "iac_terraform_storage" { default = "tfstatedatamastersta3" }
 
 variable "databricks_resource" {
   default = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d"

@@ -2,6 +2,10 @@ locals {
   function_apps = {
     news_producer           = azurerm_linux_function_app.news_producer.id
     finance_csv_ingestor    = azurerm_linux_function_app.finance_csv_ingestor.id
+    ri_resumer              = azurerm_linux_function_app.ri_resumer.id
+    ri_collector            = azurerm_linux_function_app.ri_collector.id
+    postgres_ingestor       = azurerm_linux_function_app.postgres_ingestor.id
+    news_sentiment_analyzer = azurerm_linux_function_app.news_sentiment_analyzer.id
   }
 }
 

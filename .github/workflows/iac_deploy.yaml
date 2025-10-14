@@ -1,4 +1,4 @@
-name: Terraform CI-CD
+name: Terraform IAC Deploy
 
 on:
   push:
@@ -61,8 +61,8 @@ jobs:
     - name: Terraform Init com backend remoto
       run: |
         terraform init -upgrade \
-                      -backend-config="resource_group_name=rsg-datamaster" \
-                      -backend-config="storage_account_name=tfstatedatamastersta3" \
+                      -backend-config="resource_group_name=${{ secrets.RSG }}" \
+                      -backend-config="storage_account_name=${{ secrets.IAC_NAME_STORAGE }}" \
                       -backend-config="container_name=tfstate" \
                       -backend-config="key=terraform.tfstate"
 
