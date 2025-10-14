@@ -70,6 +70,13 @@ jobs:
         run: |
           npm install -g azure-functions-core-tools@4 --unsafe-perm true
 
+      - name: Clean Azure Functions Code
+        run: |
+          az functionapp deployment source config-zip \
+            --name ${{ env.NORMALIZED_NAME }} \
+            --resource-group rsg-datamaster \
+            --src /dev/null
+
       - name: Deploy with Azure Functions Core Tools
         run: |
           cd app/azure_functions/${{ matrix.function_name }}
