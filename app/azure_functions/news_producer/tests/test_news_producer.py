@@ -41,6 +41,7 @@ def test_news_producer_function(
     # Simula texto completo e resumo
     mock_fetch_full_text.return_value = "Texto completo da notícia"
     mock_summarize_text.return_value = "Resumo da notícia"
+    mock_event_data.side_effect = lambda x: x
 
     # Simula Event Hub
     mock_batch = MagicMock()
@@ -48,11 +49,11 @@ def test_news_producer_function(
     mock_eventhub.create_batch.return_value = mock_batch
     mock_eventhub.send_batch = MagicMock()
     mock_eventhub_client.return_value = mock_eventhub
-    mock_event_data.side_effect = lambda x: x
 
     # Executa a função
     main(MagicMock())
 
+    assert mock_batch.add.call_count == 4
     mock_eventhub.send_batch.assert_called_once()
     mock_logging.info.assert_any_call("Iniciando execução da função news_producer")
 
