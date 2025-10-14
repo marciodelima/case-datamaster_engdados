@@ -1,7 +1,7 @@
 variable "location" { default = "brazilsouth" }
 variable "resource_group_name" { default = "rsg-datamaster" }
 variable "spn_name" { default = "github-deploy-spn" }
-variable "keyvault_name" { default = "kv-secret-datamastermdl2" }
+variable "keyvault_name" { default = "kv-secret-datamastermdl3" }
 variable "keyvault_rg" { default = "rsg-datamaster" }
 variable "name_databricks" { default = "finance-databricks" }
 
@@ -9,7 +9,7 @@ variable "databricks_resource" {
   default = "2ff814a6-3304-4ab8-85cb-cd0e6f879c1d"
 }
 
-variable "admin_email" { default = "marcio.lima.f1rst.2025@gmail.com" }
+variable "admin_email" { default = "marcio.lima.f1rst.2025.10@gmail.com" }
 
 variable "tags" {
   description = "Tags padrão"

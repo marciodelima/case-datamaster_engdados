@@ -27,3 +27,6 @@ output "azure_credentials_json" {
   sensitive = true
 }
 
+output "rsg_name" {
+  value = var.resource_group_name
+}

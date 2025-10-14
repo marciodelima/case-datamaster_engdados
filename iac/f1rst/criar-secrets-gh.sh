@@ -22,9 +22,10 @@ AZURE_CLIENT_SECRET=$(terraform output -raw azure_client_secret)
 AZURE_TENANT_ID=$(terraform output -raw azure_tenant_id)
 AZURE_CREDENTIALS=$(terraform output -raw azure_credentials_json)
 MANAGED_IDENTITY_NAME=$(terraform output -raw azure_integration_identity)
+RSG_NAME=$(terraform output -raw rsg_name)
 
 echo "Criando secrets no GitHub..."
-gh secret set AKS_RG           --body "rsg-datamaster" --repo $REPO
+gh secret set RSG --body "$RSG_NAME" --repo $REPO
 gh secret set MANAGED_IDENTITY_NAME --body "$MANAGED_IDENTITY_NAME" --repo $REPO
 
 gh secret set AZURE_CLIENT_ID     --body "$AZURE_CLIENT_ID"     --repo $REPO

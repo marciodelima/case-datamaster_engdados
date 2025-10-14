@@ -75,7 +75,7 @@ jobs:
           echo "Obtendo credenciais de publicação..."
           az functionapp deployment list-publishing-profiles \
             --name ${{ env.NORMALIZED_NAME }} \
-            --resource-group rsg-datamaster \
+            --resource-group ${{ secrets.RSG }} \
             --output tsv > profile.txt
 
           PUBLISH_URL=$(grep -m1 'https://' profile.txt | cut -f2)
@@ -83,7 +83,7 @@ jobs:
           PASS=$(grep -m1 'https://' profile.txt | cut -f3)
 
           echo "Limpando arquivos antigos da Function App..."
-          curl -s -X DELETE "$PUBLISH_URL/api/vfs/site/wwwroot/" \
+          curl -skv -X DELETE "$PUBLISH_URL/api/vfs/site/wwwroot/" \
             -H "If-Match: *" \
             -u "$USER:$PASS"
 

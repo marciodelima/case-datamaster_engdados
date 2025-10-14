@@ -3,6 +3,7 @@ resource "azurerm_databricks_workspace" "dbx" {
   resource_group_name = var.resource_group_name
   location            = var.location
   sku                 = "premium"
+  depends_on          = [azurerm_resource_group.rsg_datamaster]
 }
 
 data "azurerm_databricks_access_connector" "unity_catalog" {
