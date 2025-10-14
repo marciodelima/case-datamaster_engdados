@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from finance_csv_ingestor.function_app import download_and_upload, get_pg_tickers, fetch_yahoo_data
+from ..function_app import download_and_upload, get_pg_tickers, fetch_yahoo_data
 
 # Teste para download_and_upload
 @patch("finance_csv_ingestor.function_app.requests.get")
