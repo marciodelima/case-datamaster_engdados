@@ -22,11 +22,11 @@ resource "azurerm_role_assignment" "eventhub_storage_writer" {
   principal_id         = azurerm_eventhub_namespace.streaming_ns.identity[0].principal_id
 }
 
-#resource "azurerm_eventhub" "streaming_hub" {
-#  name              = "noticias_investimentos"
-#  namespace_id      = azurerm_eventhub_namespace.streaming_ns.id
-#  partition_count   = 1
-#  message_retention = 1
+resource "azurerm_eventhub" "streaming_hub" {
+  name              = "noticias_investimentos"
+  namespace_id      = azurerm_eventhub_namespace.streaming_ns.id
+  partition_count   = 1
+  message_retention = 1
 
 #  capture_description {
 #    enabled             = true
@@ -41,5 +41,5 @@ resource "azurerm_role_assignment" "eventhub_storage_writer" {
 #      archive_name_format = "raw/noticias/{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}"
 #    }
 #  }
-#}
+}
 
