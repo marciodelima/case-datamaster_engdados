@@ -2,11 +2,11 @@ import sys
 import os
 import pytest
 from unittest.mock import patch, MagicMock
-import azure.functions
 
+# Garante que o pacote raiz seja reconhecido
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from news_producer.function_app import main
+from azure_functions.news_producer.function_app import main
 
 @patch("azure_functions.news_producer.function_app.DefaultAzureCredential")
 @patch("azure_functions.news_producer.function_app.get_openai_client")
@@ -17,7 +17,9 @@ from news_producer.function_app import main
 @patch("azure_functions.news_producer.function_app.fetch_dados_mercado")
 @patch("azure_functions.news_producer.function_app.fetch_full_text")
 @patch("azure_functions.news_producer.function_app.summarize_text")
+@patch("azure_functions.news_producer.function_app.logging")
 def test_news_producer_function(
+    mock_logging,
     mock_summarize_text,
     mock_fetch_full_text,
     mock_fetch_dados_mercado,
@@ -42,12 +44,14 @@ def test_news_producer_function(
     mock_batch = MagicMock()
     mock_eventhub = MagicMock()
     mock_eventhub.create_batch.return_value = mock_batch
+    mock_eventhub.send_batch = MagicMock()
     mock_eventhub_client.return_value = mock_eventhub
 
     # Executa a função
     main(MagicMock())
 
     # Verifica se pelo menos um evento foi adicionado
-    assert mock_batch.add.call_count > 0
-    assert mock_eventhub.send_batch.called
+    assert mock_batch.add.call_count == 4  # 4 fontes simuladas
+    mock_eventhub.send_batch.assert_called_once()
+    mock_logging.info.assert_any_call("Iniciando execução da função news_producer")
 
