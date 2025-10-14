@@ -20,7 +20,6 @@ from news_producer.function_app import main
 @patch("news_producer.function_app.logging")
 @patch("news_producer.function_app.EventData")
 def test_news_producer_function(
-    mock_event_data,
     mock_logging,
     mock_summarize_text,
     mock_fetch_full_text,
@@ -28,32 +27,32 @@ def test_news_producer_function(
     mock_fetch_valor_investe,
     mock_fetch_infomoney_rss,
     mock_fetch_moneytimes,
-    mock_eventhub_client,
+    mock_credential,
     mock_openai_client,
-    mock_credential
+    mock_eventhub_client,
+    mock_event_data
 ):
-    # Simula fontes de notícias
+    # Simula fontes
     mock_fetch_moneytimes.return_value = [{"origem": "MoneyTimes", "titulo": "Notícia MT", "url": "http://mt"}]
     mock_fetch_infomoney_rss.return_value = [{"origem": "InfoMoney", "titulo": "Notícia IM", "url": "http://im"}]
     mock_fetch_valor_investe.return_value = [{"origem": "Valor Investe", "titulo": "Notícia VI", "url": "http://vi"}]
     mock_fetch_dados_mercado.return_value = [{"origem": "Dados de Mercado", "titulo": "Notícia DM", "url": "http://dm"}]
 
-    # Simula texto completo e resumo
+    # Simula texto e resumo
     mock_fetch_full_text.return_value = "Texto completo da notícia"
     mock_summarize_text.return_value = "Resumo da notícia"
     mock_event_data.side_effect = lambda x: x
 
-    # Simula Event Hub
-    mock_batch = MagicMock()
-    mock_eventhub = MagicMock()
-    mock_eventhub.create_batch.return_value = mock_batch
-    mock_eventhub.send_batch = MagicMock()
-    mock_eventhub_client.return_value = mock_eventhub
+    # Captura a instância real do producer
+    producer_instance = MagicMock()
+    batch_instance = MagicMock()
+    producer_instance.create_batch.return_value = batch_instance
+    mock_eventhub_client.return_value = producer_instance
 
     # Executa a função
     main(MagicMock())
 
-    assert mock_batch.add.call_count == 4
-    mock_eventhub.send_batch.assert_called_once()
+    # Verifica se os eventos foram adicionados
+    assert batch_instance.add.call_count == 4
+    producer_instance.send_batch.assert_called_once()
     mock_logging.info.assert_any_call("Iniciando execução da função news_producer")
-
