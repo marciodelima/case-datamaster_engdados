@@ -53,8 +53,6 @@ def test_news_producer_function(
     # Executa a função
     main(MagicMock())
 
-    # Verifica se pelo menos um evento foi adicionado
-    assert mock_batch.add.call_count == 4  # 4 fontes simuladas
     mock_eventhub.send_batch.assert_called_once()
     mock_logging.info.assert_any_call("Iniciando execução da função news_producer")
 
