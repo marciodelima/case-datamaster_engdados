@@ -18,7 +18,9 @@ from news_producer.function_app import main
 @patch("news_producer.function_app.fetch_full_text")
 @patch("news_producer.function_app.summarize_text")
 @patch("news_producer.function_app.logging")
+@patch("news_producer.function_app.EventData")
 def test_news_producer_function(
+    mock_event_data,
     mock_logging,
     mock_summarize_text,
     mock_fetch_full_text,
@@ -46,6 +48,7 @@ def test_news_producer_function(
     mock_eventhub.create_batch.return_value = mock_batch
     mock_eventhub.send_batch = MagicMock()
     mock_eventhub_client.return_value = mock_eventhub
+    mock_event_data.side_effect = lambda x: x
 
     # Executa a função
     main(MagicMock())
