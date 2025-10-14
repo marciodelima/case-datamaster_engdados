@@ -6,18 +6,18 @@ from unittest.mock import patch, MagicMock
 # Garante que o pacote raiz seja reconhecido
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from azure_functions.news_producer.function_app import main
+from news_producer.function_app import main
 
-@patch("azure_functions.news_producer.function_app.DefaultAzureCredential")
-@patch("azure_functions.news_producer.function_app.get_openai_client")
-@patch("azure_functions.news_producer.function_app.EventHubProducerClient")
-@patch("azure_functions.news_producer.function_app.fetch_moneytimes")
-@patch("azure_functions.news_producer.function_app.fetch_infomoney_rss")
-@patch("azure_functions.news_producer.function_app.fetch_valor_investe")
-@patch("azure_functions.news_producer.function_app.fetch_dados_mercado")
-@patch("azure_functions.news_producer.function_app.fetch_full_text")
-@patch("azure_functions.news_producer.function_app.summarize_text")
-@patch("azure_functions.news_producer.function_app.logging")
+@patch("news_producer.function_app.DefaultAzureCredential")
+@patch("news_producer.function_app.get_openai_client")
+@patch("news_producer.function_app.EventHubProducerClient")
+@patch("news_producer.function_app.fetch_moneytimes")
+@patch("news_producer.function_app.fetch_infomoney_rss")
+@patch("news_producer.function_app.fetch_valor_investe")
+@patch("news_producer.function_app.fetch_dados_mercado")
+@patch("news_producer.function_app.fetch_full_text")
+@patch("news_producer.function_app.summarize_text")
+@patch("news_producer.function_app.logging")
 def test_news_producer_function(
     mock_logging,
     mock_summarize_text,
