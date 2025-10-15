@@ -50,7 +50,7 @@ resource "azurerm_application_insights" "finance_logs_sentiment" {
 }
 
 resource "azurerm_linux_function_app" "news_producer" {
-  name                       = "news-producer-func"
+  name                       = "news-producer-func1"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
@@ -81,7 +81,7 @@ resource "azurerm_linux_function_app" "news_producer" {
 }
 
 resource "azurerm_linux_function_app" "finance_csv_ingestor" {
-  name                       = "finance-csv-ingestor-func"
+  name                       = "finance-csv-ingestor-func1"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
@@ -112,7 +112,7 @@ resource "azurerm_linux_function_app" "finance_csv_ingestor" {
 }
 
 resource "azurerm_linux_function_app" "ri_resumer" {
-  name                       = "ri-resumer-func"
+  name                       = "ri-resumer-func1"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
@@ -144,7 +144,7 @@ resource "azurerm_linux_function_app" "ri_resumer" {
 }
 
 resource "azurerm_linux_function_app" "ri_collector" {
-  name                       = "ri-collector-func"
+  name                       = "ri-collector-func1"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
@@ -176,7 +176,7 @@ resource "azurerm_linux_function_app" "ri_collector" {
 }
 
 resource "azurerm_linux_function_app" "postgres_ingestor" {
-  name                       = "postgres-ingestor-func"
+  name                       = "postgres-ingestor-func1"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
@@ -208,7 +208,7 @@ resource "azurerm_linux_function_app" "postgres_ingestor" {
 }
 
 resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
-  name                       = "news-sentiment-analyzer-func"
+  name                       = "news-sentiment-analyzer-func1"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.func_plan.id
