@@ -16,6 +16,10 @@ jobs:
         function_name:
           - finance_csv_ingestor
           - news_producer
+          - news_sentiment_analyzer
+          - postgres_ingestor
+          - ri_collector
+          - ri_resumer
 
     env:
       PYTHON_VERSION: '3.10'

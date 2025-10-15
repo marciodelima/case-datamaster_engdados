@@ -64,25 +64,25 @@ resource "azurerm_storage_container" "finance_code" {
 
 resource "azurerm_storage_container" "ri_code" {
   name                  = "function-code-ri"
-  storage_account_name  = azurerm_storage_account.ri_storage.name
+  storage_account_id  = azurerm_storage_account.ri_storage.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "ri_collector_code" {
   name                  = "function-code-ri-collector"
-  storage_account_name  = azurerm_storage_account.ri_collector_storage.name
+  storage_account_id  = azurerm_storage_account.ri_collector_storage.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "postgres_code" {
   name                  = "function-code-postgres"
-  storage_account_name  = azurerm_storage_account.postgres_storage.name
+  storage_account_id  = azurerm_storage_account.postgres_storage.id
   container_access_type = "private"
 }
 
 resource "azurerm_storage_container" "sentiment_code" {
   name                  = "function-code-sentiment"
-  storage_account_name  = azurerm_storage_account.sentiment_storage.name
+  storage_account_id  = azurerm_storage_account.sentiment_storage.id
   container_access_type = "private"
 }
 

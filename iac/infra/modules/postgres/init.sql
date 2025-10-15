@@ -1,3 +1,11 @@
+-- Remoção segura das tabelas em ordem reversa de dependência
+DROP TABLE IF EXISTS carteiras CASCADE;
+DROP TABLE IF EXISTS renda_financeira CASCADE;
+DROP TABLE IF EXISTS relatorios_ri CASCADE;
+DROP TABLE IF EXISTS noticias CASCADE;
+DROP TABLE IF EXISTS acoes CASCADE;
+DROP TABLE IF EXISTS clientes CASCADE;
+
 -- Tabela de Clientes (CPF como chave primária)
 CREATE TABLE clientes (
   cpf TEXT PRIMARY KEY,

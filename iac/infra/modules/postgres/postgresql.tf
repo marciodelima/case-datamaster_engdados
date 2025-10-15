@@ -63,7 +63,7 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "github_actions_ip" 
 }
 
 resource "null_resource" "init_sql" {
-  depends_on = [azurerm_postgresql_flexible_server.ri_db]
+  depends_on = [azurerm_postgresql_flexible_server.ri_db, azurerm_postgresql_flexible_server_database.ri_db_main]
 
   provisioner "local-exec" {
     command = <<EOT
@@ -89,6 +89,8 @@ resource "azurerm_key_vault_secret" "postgres_conn_string" {
   key_vault_id = data.azurerm_key_vault.main.id
 
   value = "Host=${azurerm_postgresql_flexible_server.ri_db.fqdn};Port=5432;Database=${azurerm_postgresql_flexible_server_database.ri_db_main.name};User Id=${azurerm_postgresql_flexible_server.ri_db.administrator_login}@${azurerm_postgresql_flexible_server.ri_db.name};Password=${var.db_password};Ssl Mode=Require"
+
+  depends_on = [azurerm_postgresql_flexible_server.ri_db, azurerm_postgresql_flexible_server_database.ri_db_main]
 }
 
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure_services" {
