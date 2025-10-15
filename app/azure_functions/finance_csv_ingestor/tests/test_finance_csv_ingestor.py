@@ -54,7 +54,7 @@ def test_get_pg_tickers(mock_secret_client_class, mock_credential_class, mock_co
     mock_conn.cursor.return_value = mock_cursor
     mock_connect.return_value = mock_conn
 
-    with patch.dict("os.environ", {"KEYVAULT_URL": "https://fake-vault.vault.azure.net"}):
+    with patch.dict("os.environ", {"KEYVAULT_URI": "https://fake-vault.vault.azure.net"}):
         tickers = get_pg_tickers()
 
     assert tickers == ["PETR4.SA", "VALE3.SA"]
