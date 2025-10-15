@@ -1,4 +1,4 @@
-name: Terraform IAC Deploy
+name: Deploy Terraform IAC
 
 on:
   push:
