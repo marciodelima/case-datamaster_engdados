@@ -5,7 +5,6 @@ resource "azurerm_service_plan" "func_plan" {
   os_type             = "Linux"
   sku_name            = "S1"
   worker_count        = 1
-  reserved            = true
 }
 
 resource "azurerm_application_insights" "finance_logs_news" {
