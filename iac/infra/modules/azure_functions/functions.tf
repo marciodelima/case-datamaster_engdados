@@ -1,15 +1,11 @@
-resource "azurerm_app_service_plan" "func_plan" {
+resource "azurerm_service_plan" "func_plan" {
   name                = "func-plan"
   location            = var.location
   resource_group_name = var.resource_group_name
-  kind                = "FunctionApp"
+  os_type             = "Linux"
+  sku_name            = "S1"
+  worker_count        = 1
   reserved            = true
-
-  sku {
-    tier = "Standard"
-    size = "S1"
-    capacity = 1
-  }
 }
 
 resource "azurerm_application_insights" "finance_logs_news" {
@@ -58,7 +54,7 @@ resource "azurerm_linux_function_app" "news_producer" {
   name                       = "news-producer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  service_plan_id            = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.news_storage.name
   storage_account_access_key = azurerm_storage_account.news_storage.primary_access_key
 
@@ -89,7 +85,7 @@ resource "azurerm_linux_function_app" "finance_csv_ingestor" {
   name                       = "finance-csv-ingestor-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  service_plan_id            = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.finance_storage.name
   storage_account_access_key = azurerm_storage_account.finance_storage.primary_access_key
 
@@ -120,7 +116,7 @@ resource "azurerm_linux_function_app" "ri_resumer" {
   name                       = "ri-resumer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  service_plan_id            = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.ri_storage.name
   storage_account_access_key = azurerm_storage_account.ri_storage.primary_access_key
 
@@ -152,7 +148,7 @@ resource "azurerm_linux_function_app" "ri_collector" {
   name                       = "ri-collector-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  service_plan_id            = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.ri_collector_storage.name
   storage_account_access_key = azurerm_storage_account.ri_collector_storage.primary_access_key
 
@@ -184,7 +180,7 @@ resource "azurerm_linux_function_app" "postgres_ingestor" {
   name                       = "postgres-ingestor-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  service_plan_id            = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.postgres_storage.name
   storage_account_access_key = azurerm_storage_account.postgres_storage.primary_access_key
 
@@ -216,7 +212,7 @@ resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
   name                       = "news-sentiment-analyzer-func"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  service_plan_id            = azurerm_app_service_plan.func_plan.id
+  service_plan_id            = azurerm_service_plan.func_plan.id
   storage_account_name       = azurerm_storage_account.sentiment_storage.name
   storage_account_access_key = azurerm_storage_account.sentiment_storage.primary_access_key
 
