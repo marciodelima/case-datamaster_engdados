@@ -24,7 +24,7 @@ def download_and_upload(url, path, container):
 def get_pg_tickers():
     try:
         credential = DefaultAzureCredential()
-        kv_url = os.environ["KEYVAULT_URL"]
+        kv_url = os.environ["KEYVAULT_URI"]
         client = SecretClient(vault_url=kv_url, credential=credential)
 
         conn_str = client.get_secret("Postgres-Conn").value

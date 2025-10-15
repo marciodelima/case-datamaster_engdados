@@ -82,12 +82,12 @@ jobs:
             --resource-group ${{ secrets.RSG }} \
             --output tsv > profile.txt
 
-          PUBLISH_URL=$(grep -m1 'https://' profile.txt | cut -f2)
-          USER=$(grep -m1 'https://' profile.txt | cut -f4)
-          PASS=$(grep -m1 'https://' profile.txt | cut -f3)
+          SCM_URL=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f2)
+          USER=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f4)
+          PASS=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f3)
 
           echo "Limpando arquivos antigos da Function App..."
-          curl -skv -X DELETE "$PUBLISH_URL/api/vfs/site/wwwroot/" \
+          curl -skv -X DELETE "$SCM_URL/api/vfs/site/wwwroot/" \
             -H "If-Match: *" \
             -u "$USER:$PASS"
 

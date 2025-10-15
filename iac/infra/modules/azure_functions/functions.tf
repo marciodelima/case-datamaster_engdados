@@ -4,7 +4,7 @@ resource "azurerm_service_plan" "func_plan" {
   resource_group_name = var.resource_group_name
   os_type             = "Linux"
   sku_name            = "S1"
-  worker_count        = 1
+  worker_count        = 2
 }
 
 resource "azurerm_application_insights" "finance_logs_news" {
@@ -77,6 +77,7 @@ resource "azurerm_linux_function_app" "news_producer" {
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs_news.connection_string
     EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
+    KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
   }
 }
 
@@ -107,7 +108,7 @@ resource "azurerm_linux_function_app" "finance_csv_ingestor" {
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs_csv.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs_csv.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
-    STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
+    STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
   }
 }
 
@@ -138,8 +139,8 @@ resource "azurerm_linux_function_app" "ri_resumer" {
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs_ri.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs_ri.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
-    STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
-    DELTA_PATH   = "abfss://dados@${var.existing_storage_account_name}.dfs.core.windows.net/bronze/resultado_ri"
+    STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
+    DELTA_PATH   = "abfss://dados@${var.existing_storage_account_name}.blob.core.windows.net/bronze/resultado_ri"
   }
 }
 
@@ -170,8 +171,8 @@ resource "azurerm_linux_function_app" "ri_collector" {
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs_ri_collector.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs_ri_collector.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
-    STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
-    DELTA_PATH  = "abfss://dados@${var.existing_storage_account_name}.dfs.core.windows.net/raw/ri"
+    STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
+    DELTA_PATH  = "abfss://dados@${var.existing_storage_account_name}.blob.core.windows.net/raw/ri"
   }
 }
 
@@ -202,8 +203,8 @@ resource "azurerm_linux_function_app" "postgres_ingestor" {
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs_postgres.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs_postgres.connection_string
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
-    STORAGE_URL  = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
-    DELTA_PATH  = "abfss://dados@${var.existing_storage_account_name}.dfs.core.windows.net/bronze"
+    STORAGE_URL  = "https://${var.existing_storage_account_name}.blob.core.windows.net"
+    DELTA_PATH  = "abfss://dados@${var.existing_storage_account_name}.blob.core.windows.net/bronze"
   }
 }
 
@@ -236,8 +237,8 @@ resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
     EVENTHUB_NAME      = var.eventhub_namespace_name
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
-    STORAGE_URL = "https://${var.existing_storage_account_name}.dfs.core.windows.net"
-    DELTA_PATH  = "abfss://dados@${var.existing_storage_account_name}.dfs.core.windows.net/bronze"
+    STORAGE_URL = "https://${var.existing_storage_account_name}.blob.core.windows.net"
+    DELTA_PATH  = "abfss://dados@${var.existing_storage_account_name}.blob.core.windows.net/bronze"
   }
 }
 
