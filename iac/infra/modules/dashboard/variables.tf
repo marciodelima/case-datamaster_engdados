@@ -8,12 +8,12 @@ variable "postgres_id" {}
 variable "function_names" {
   type = list(string)
   default = [
-    "news-producer-func",
-    #"ri-resumer-func",
-    #"ri-collector-func",
-    "finance-csv-ingestor-func"
-    #"postgres-ingestor-func",
-    #"news-sentiment-analyzer-func"
+    "news-producer-func1",
+    "ri-resumer-func1",
+    "ri-collector-func1",
+    "finance-csv-ingestor-func1",
+    "postgres-ingestor-func1",
+    "news-sentiment-analyzer-func1"
   ]
 }
 
