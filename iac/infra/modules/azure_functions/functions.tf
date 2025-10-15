@@ -3,8 +3,8 @@ resource "azurerm_service_plan" "func_plan" {
   location            = var.location
   resource_group_name = var.resource_group_name
   os_type             = "Linux"
-  sku_name            = "Y1"
-  #worker_count        = 1
+  sku_name            = "S1"
+  worker_count        = 1
 }
 
 resource "azurerm_application_insights" "finance_logs_news" {
