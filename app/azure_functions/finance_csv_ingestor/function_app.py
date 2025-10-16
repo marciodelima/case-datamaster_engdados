@@ -21,13 +21,30 @@ def download_and_upload(url, path, container):
     except Exception as e:
         logging.error(f"Erro ao processar {url}: {e}")
 
+def get_postgres_connection_string(secret_name="Postgres-Conn") -> str:
+    credential = DefaultAzureCredential()
+    kv_url = os.environ["KEYVAULT_URI"]
+    client = SecretClient(vault_url=kv_url, credential=credential)
+
+    raw_dsn = client.get_secret(secret_name).value
+    dsn_parts = {
+        "Host": "host",
+        "Port": "port",
+        "Database": "dbname",
+        "User Id": "user",
+        "Password": "password",
+        "Ssl Mode": "sslmode"
+    }
+
+    for old, new in dsn_parts.items():
+        raw_dsn = raw_dsn.replace(f"{old}=", f"{new}=")
+
+    conn_str = raw_dsn.replace(";", " ")
+    return conn_str
+
 def get_pg_tickers():
     try:
-        credential = DefaultAzureCredential()
-        kv_url = os.environ["KEYVAULT_URI"]
-        client = SecretClient(vault_url=kv_url, credential=credential)
-
-        conn_str = client.get_secret("Postgres-Conn").value
+        conn_str = get_postgres_connection_string()
         conn = psycopg2.connect(conn_str)
         cur = conn.cursor()
         cur.execute("SELECT ticker FROM acoes")
