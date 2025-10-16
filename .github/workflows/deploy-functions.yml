@@ -94,6 +94,7 @@ jobs:
               --prefer-binary -r app/azure_functions/$FUNC/requirements.txt
             
             echo "Publicando com --no-build"
+            cd app/azure_functions/$FUNC
             func azure functionapp publish $NORMALIZED_NAME --python --no-build
             cd -
 
