@@ -11,6 +11,7 @@ import psycopg2
 import yfinance as yf
 from urllib.parse import unquote
 
+requests.Session.verify = False
 def download_and_upload(url, path, container):
     try:
         r = requests.get(url, verify=False)

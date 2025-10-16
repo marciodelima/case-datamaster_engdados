@@ -19,5 +19,6 @@ unittest2==1.1.0
 mock==5.1.0
 black==24.4.0
 cryptography==3.4.8
+httpx==0.24.0
 
 
