@@ -16,9 +16,12 @@ def get_openai_client():
     vault_url = os.environ["KEYVAULT_URI"]
     secret_client = SecretClient(vault_url=vault_url, credential=credential)
 
+    api_key = secret_client.get_secret("OpenAI-Key").value
+    endpoint = secret_client.get_secret("OpenAI-Endpoint").value
+
     return AzureOpenAI(
-        api_key=secret_client.get_secret("OpenAI-Key").value,
-        azure_endpoint=secret_client.get_secret("OpenAI-Endpoint").value,
+        api_key=api_key,
+        azure_endpoint=endpoint,
         api_version="2023-07-01-preview"
     )
 
