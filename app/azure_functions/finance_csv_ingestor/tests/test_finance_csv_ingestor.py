@@ -61,7 +61,7 @@ def test_get_postgres_connection_string(mock_secret_client_class, mock_credentia
     assert "dbname=db" in conn_str
     assert "user=user" in conn_str
     assert "password=pass" in conn_str
-    assert "sslmode=Require" in conn_str
+    assert "sslmode=require" in conn_str
 
 # Teste para get_pg_tickers
 @patch("finance_csv_ingestor.function_app.psycopg2.connect")
