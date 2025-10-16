@@ -91,7 +91,7 @@ jobs:
 
             echo "Deploying with Azure Functions Core Tools..."
             cd app/azure_functions/$FUNC
-            func azure functionapp publish $NORMALIZED_NAME --python --no-build
+            func azure functionapp publish $NORMALIZED_NAME --python
             cd -
 
             echo "Iniciando a Function App..."
