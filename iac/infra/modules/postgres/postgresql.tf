@@ -88,7 +88,7 @@ resource "azurerm_key_vault_secret" "postgres_conn_string" {
   name         = "Postgres-Conn"
   key_vault_id = data.azurerm_key_vault.main.id
 
-  value = "Host=${azurerm_postgresql_flexible_server.ri_db.fqdn};Port=5432;Database=${azurerm_postgresql_flexible_server_database.ri_db_main.name};User Id=${azurerm_postgresql_flexible_server.ri_db.administrator_login}@${azurerm_postgresql_flexible_server.ri_db.name};Password=${var.db_password};Ssl Mode=Require"
+  value = "Host=${azurerm_postgresql_flexible_server.ri_db.fqdn};Port=5432;Database=${azurerm_postgresql_flexible_server_database.ri_db_main.name};User Id=${azurerm_postgresql_flexible_server.ri_db.administrator_login};Password=${var.db_password};Ssl Mode=Require"
 
   depends_on = [azurerm_postgresql_flexible_server.ri_db, azurerm_postgresql_flexible_server_database.ri_db_main]
 }
