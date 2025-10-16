@@ -11,18 +11,15 @@ jobs:
   deploy-functions:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        function_name:
-          - finance_csv_ingestor
-          - news_producer
-          #- news_sentiment_analyzer
-          #- postgres_ingestor
-          #- ri_collector
-          #- ri_resumer
-
     env:
       PYTHON_VERSION: '3.10'
+      FUNCTION_LIST: |
+        finance_csv_ingestor
+        news_producer
+        # news_sentiment_analyzer
+        # postgres_ingestor
+        # ri_collector
+        # ri_resumer
 
     steps:
       - name: Checkout code
@@ -53,47 +50,45 @@ jobs:
           python -m pip install --upgrade pip
           pip install black pytest
 
-      - name: Format code
-        run: |
-          black app/azure_functions/${{ matrix.function_name }}
-
-      - name: Install function dependencies
-        run: |
-          pip install -r app/azure_functions/${{ matrix.function_name }}/requirements.txt
-
-      - name: Run unit tests
-        run: |
-          pytest app/azure_functions/${{ matrix.function_name }} --maxfail=1 --disable-warnings --exitfirst
-
-      - name: Normalize function name
-        run: |
-          NORMALIZED_NAME=$(echo "${{ matrix.function_name }}" | sed 's/_/-/g')-func1
-          echo "NORMALIZED_NAME=$NORMALIZED_NAME" >> $GITHUB_ENV
-
       - name: Install Azure Functions Core Tools
         run: |
           npm install -g azure-functions-core-tools@4 --unsafe-perm true
 
-      - name: Clean Azure Functions Code
+      - name: Deploy Functions Sequentially
         run: |
-          echo "Obtendo credenciais de publicação..."
-          az functionapp deployment list-publishing-profiles \
-            --name ${{ env.NORMALIZED_NAME }} \
-            --resource-group ${{ secrets.RSG }} \
-            --output tsv > profile.txt
+          for FUNC in $FUNCTION_LIST; do
+            echo "Deploying function: $FUNC"
 
-          SCM_URL=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f2)
-          USER=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f4)
-          PASS=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f3)
+            echo "Format code"
+            black app/azure_functions/$FUNC
 
-          echo "Limpando arquivos antigos da Function App..."
-          curl -skv -X DELETE "$SCM_URL/api/vfs/site/wwwroot/" \
-            -H "If-Match: *" \
-            -u "$USER:$PASS"
+            echo "Install dependencies"
+            pip install -r app/azure_functions/$FUNC/requirements.txt
 
-      - name: Deploy with Azure Functions Core Tools
-        run: |
-          cd app/azure_functions/${{ matrix.function_name }}
-          func azure functionapp publish ${{ env.NORMALIZED_NAME }} --python
+            echo "Run unit tests"
+            pytest app/azure_functions/$FUNC --maxfail=1 --disable-warnings --exitfirst
 
+            NORMALIZED_NAME=$(echo "$FUNC" | sed 's/_/-/g')-func1
+            echo "Normalized name: $NORMALIZED_NAME"
+
+            echo "Obtendo credenciais de publicação..."
+            az functionapp deployment list-publishing-profiles \
+              --name $NORMALIZED_NAME \
+              --resource-group ${{ secrets.RSG }} \
+              --output tsv > profile.txt
+
+            SCM_URL=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f10)
+            USER=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f11)
+            PASS=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f12)
+
+            echo "Limpando arquivos antigos da Function App..."
+            curl -sk -X DELETE "https://$SCM_URL/api/vfs/site/wwwroot/" \
+              -H "If-Match: *" \
+              -u "$USER:$PASS"
+
+            echo "Deploying with Azure Functions Core Tools..."
+            cd app/azure_functions/$FUNC
+            func azure functionapp publish $NORMALIZED_NAME --python
+            cd -
+          done
 
