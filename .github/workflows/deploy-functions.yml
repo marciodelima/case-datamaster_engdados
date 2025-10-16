@@ -16,10 +16,6 @@ jobs:
       FUNCTION_LIST: |
         finance_csv_ingestor
         news_producer
-        # news_sentiment_analyzer
-        # postgres_ingestor
-        # ri_collector
-        # ri_resumer
 
     steps:
       - name: Checkout code
@@ -84,10 +80,10 @@ jobs:
             echo "Parando a Function App..."
             az functionapp stop --name $NORMALIZED_NAME --resource-group ${{ secrets.RSG }} || true
 
-            echo "Limpando arquivos antigos da Function App..."
-            curl -sk -X DELETE "https://$SCM_URL/api/vfs/site/wwwroot/" \
-              -H "If-Match: *" \
-              -u "$USER:$PASS" || true
+            #echo "Limpando arquivos antigos da Function App..."
+            #curl -sk -X DELETE "https://$SCM_URL/api/vfs/site/wwwroot/" \
+            #  -H "If-Match: *" \
+            #  -u "$USER:$PASS" || true
 
             echo "Deploying with Azure Functions Core Tools..."
             cd app/azure_functions/$FUNC
