@@ -39,7 +39,7 @@ def get_postgres_connection_string(secret_name="Postgres-Conn") -> str:
     for old, new in dsn_parts.items():
         raw_dsn = raw_dsn.replace(f"{old}=", f"{new}=")
 
-    conn_str = raw_dsn.replace(";", " ")
+    conn_str = raw_dsn.replace(";", " ").replace("Require", "require")
     return conn_str
 
 def get_pg_tickers():

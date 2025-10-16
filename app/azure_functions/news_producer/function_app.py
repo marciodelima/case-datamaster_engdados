@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
-from openai import AzureOpenAI
+import openai
 import feedparser
 import azure.functions as func
 
@@ -19,16 +19,18 @@ def get_openai_client():
     api_key = secret_client.get_secret("OpenAI-Key").value
     endpoint = secret_client.get_secret("OpenAI-Endpoint").value
 
-    return AzureOpenAI(
-        api_key=api_key,
-        azure_endpoint=endpoint,
-        api_version="2023-07-01-preview"
-    )
+    # Configura cliente OpenAI com endpoint da Azure
+    openai.api_key = api_key
+    openai.api_base = endpoint
+    openai.api_type = "azure"
+    openai.api_version = "2023-07-01-preview"
+
+    return openai
 
 def summarize_text(text, client):
     prompt = f"Resuma em uma frase simples e objetiva a seguinte notícia:\n\n{text}"
     try:
-        response = client.chat.completions.create(
+        response = client.ChatCompletion.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3
