@@ -23,7 +23,7 @@ resource "azurerm_role_assignment" "eventhub_storage_writer" {
 }
 
 resource "azurerm_eventhub" "streaming_hub" {
-  name              = "noticias_investimentos"
+  name              = var.nome_topic
   namespace_id      = azurerm_eventhub_namespace.streaming_ns.id
   partition_count   = 1
   message_retention = 1

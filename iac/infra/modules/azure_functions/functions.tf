@@ -75,7 +75,7 @@ resource "azurerm_linux_function_app" "news_producer" {
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs_news.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs_news.connection_string
-    EVENTHUB_NAME      = var.eventhub_namespace_name
+    EVENTHUB_NAME      = var.eventhub_topic
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
   }

@@ -9,6 +9,7 @@ from azure.keyvault.secrets import SecretClient
 import azure.functions as func
 import psycopg2
 import yfinance as yf
+from urllib.parse import unquote
 
 def download_and_upload(url, path, container):
     try:
@@ -27,6 +28,7 @@ def get_postgres_connection_string(secret_name="Postgres-Conn") -> str:
     client = SecretClient(vault_url=kv_url, credential=credential)
 
     raw_dsn = client.get_secret(secret_name).value
+    raw_dsn = unquote(raw_dsn)
     dsn_parts = {
         "Host": "host",
         "Port": "port",
@@ -39,7 +41,8 @@ def get_postgres_connection_string(secret_name="Postgres-Conn") -> str:
     for old, new in dsn_parts.items():
         raw_dsn = raw_dsn.replace(f"{old}=", f"{new}=")
 
-    conn_str = raw_dsn.replace(";", " ").replace("Require", "require")
+    raw_dsn = raw_dsn.replace("sslmode=Require", "sslmode=require")
+    conn_str = raw_dsn.replace(";", " ")
     return conn_str
 
 def get_pg_tickers():

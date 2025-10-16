@@ -8,3 +8,8 @@ output "eventhub_namespace_name" {
   value       = azurerm_eventhub_namespace.streaming_ns.name
 }
 
+output "eventhub_topic_name" {
+  description = "Nome do Topico do Event Hub"
+  value = azurerm_eventhub.streaming_hub.name
+}
+

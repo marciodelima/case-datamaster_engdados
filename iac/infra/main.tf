@@ -65,6 +65,7 @@ module "function" {
   existing_storage_account_name      = module.storage.storage_name
   keyvault_name                      = var.keyvault_name
   eventhub_namespace_name            = module.event_hubs.eventhub_namespace_name
+  eventhub_topic                     = module.event_hubs.eventhub_topic_name
   azurerm_log_analytics_workspace_id = azurerm_log_analytics_workspace.logs.id
   depends_on                         = [module.storage, module.event_hubs, azurerm_log_analytics_workspace.logs]
 }
