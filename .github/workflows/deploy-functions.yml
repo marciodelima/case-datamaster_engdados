@@ -41,6 +41,14 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dev dependencies
         run: |
           python -m pip install --upgrade pip
@@ -59,7 +67,7 @@ jobs:
             black app/azure_functions/$FUNC
 
             echo "Install dependencies"
-            pip install -r app/azure_functions/$FUNC/requirements.txt
+            pip install --prefer-binary -r app/azure_functions/$FUNC/requirements.txt
 
             echo "Run unit tests"
             pytest app/azure_functions/$FUNC --maxfail=1 --disable-warnings --exitfirst
@@ -80,18 +88,17 @@ jobs:
             echo "Parando a Function App..."
             az functionapp stop --name $NORMALIZED_NAME --resource-group ${{ secrets.RSG }} || true
 
-            #echo "Limpando arquivos antigos da Function App..."
-            #curl -sk -X DELETE "https://$SCM_URL/api/vfs/site/wwwroot/" \
-            #  -H "If-Match: *" \
-            #  -u "$USER:$PASS" || true
-
-            echo "Deploying with Azure Functions Core Tools..."
+            echo "Gerando pacote Python local (.python_packages)"
             cd app/azure_functions/$FUNC
-            func azure functionapp publish $NORMALIZED_NAME --python
+            func azure functionapp pack --build-native-deps --python
+            echo "Publicando com --no-build"
+            func azure functionapp publish $NORMALIZED_NAME --python --no-build
             cd -
 
             echo "Iniciando a Function App..."
             az functionapp start --name $NORMALIZED_NAME --resource-group ${{ secrets.RSG }} || true
+
+            echo "Aguardando 30 segundos antes do próximo deploy..."
             sleep 30
           done
 
