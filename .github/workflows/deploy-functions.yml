@@ -75,16 +75,6 @@ jobs:
             NORMALIZED_NAME=$(echo "$FUNC" | sed 's/_/-/g')-func1
             echo "Normalized name: $NORMALIZED_NAME"
 
-            #echo "Obtendo credenciais de publicação..."
-            #az functionapp deployment list-publishing-profiles \
-            #  --name $NORMALIZED_NAME \
-            #  --resource-group ${{ secrets.RSG }} \
-            #  --output tsv > profile.txt
-
-            #SCM_URL=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f10)
-            #USER=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f11)
-            #PASS=$(grep -m1 'scm.azurewebsites.net' profile.txt | cut -f12)
-
             echo "Parando a Function App..."
             az functionapp stop --name $NORMALIZED_NAME --resource-group ${{ secrets.RSG }} || true
 

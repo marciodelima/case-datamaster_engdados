@@ -11,7 +11,15 @@ import psycopg2
 import yfinance as yf
 from urllib.parse import unquote
 
+class UnsafeSession(requests.Session):
+    def request(self, *args, **kwargs):
+        kwargs["verify"] = False
+        return super().request(*args, **kwargs)
+
+yf.shared._requests = UnsafeSession()
+yf.shared._requests.headers.update({"User-Agent": "Mozilla/5.0"})
 requests.Session.verify = False
+
 def download_and_upload(url, path, container):
     try:
         r = requests.get(url, verify=False)
@@ -64,7 +72,7 @@ def fetch_yahoo_data(ticker, container):
     try:
         stock = yf.Ticker(ticker)
         df = stock.history(period="1y", interval="1d")
-        if df.empty:
+        if df.empty or df.isna().all().all():
             logging.warning(f"Sem dados para {ticker}")
             return
         df.reset_index(inplace=True)
