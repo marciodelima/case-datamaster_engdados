@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+import pandas as pd
 from unittest.mock import patch, MagicMock
 
 # Adiciona o diretório raiz ao path
@@ -13,7 +14,6 @@ from finance_csv_ingestor.function_app import (
     get_postgres_connection_string
 )
 
-# Teste para download_and_upload com sucesso
 @patch("finance_csv_ingestor.function_app.requests.get")
 def test_download_and_upload_success(mock_get):
     mock_response = MagicMock()
@@ -29,7 +29,6 @@ def test_download_and_upload_success(mock_get):
 
     mock_blob_client.upload_blob.assert_called_once_with(b"csv data", overwrite=True)
 
-# Teste para download_and_upload com falha
 @patch("finance_csv_ingestor.function_app.requests.get")
 def test_download_and_upload_failure(mock_get):
     mock_response = MagicMock()
@@ -41,7 +40,6 @@ def test_download_and_upload_failure(mock_get):
 
     mock_container.get_blob_client().upload_blob.assert_not_called()
 
-# Teste para get_postgres_connection_string
 @patch("finance_csv_ingestor.function_app.DefaultAzureCredential")
 @patch("finance_csv_ingestor.function_app.SecretClient")
 def test_get_postgres_connection_string(mock_secret_client_class, mock_credential_class):
@@ -63,7 +61,6 @@ def test_get_postgres_connection_string(mock_secret_client_class, mock_credentia
     assert "password=pass" in conn_str
     assert "sslmode=require" in conn_str
 
-# Teste para get_pg_tickers
 @patch("finance_csv_ingestor.function_app.psycopg2.connect")
 @patch("finance_csv_ingestor.function_app.DefaultAzureCredential")
 @patch("finance_csv_ingestor.function_app.SecretClient")
@@ -85,13 +82,14 @@ def test_get_pg_tickers(mock_secret_client_class, mock_credential_class, mock_co
 
     assert tickers == ["PETR4.SA", "VALE3.SA"]
 
-# Teste para fetch_yahoo_data
 @patch("finance_csv_ingestor.function_app.yf.Ticker")
 def test_fetch_yahoo_data(mock_ticker_class):
-    mock_df = MagicMock()
-    mock_df.empty = False
-    mock_df.to_csv.return_value = "date,open,close\n2023-01-01,10,12"
-    mock_df.reset_index = MagicMock()
+    mock_df = pd.DataFrame({
+        "Open": [10.0],
+        "Close": [12.0],
+        "Volume": [1000]
+    }, index=[pd.Timestamp("2023-01-01")])
+    mock_df.index.name = "Date"
 
     mock_ticker = MagicMock()
     mock_ticker.history.return_value = mock_df
