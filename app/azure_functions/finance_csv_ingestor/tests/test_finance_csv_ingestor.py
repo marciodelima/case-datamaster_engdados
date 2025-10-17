@@ -40,7 +40,7 @@ def test_fetch_brapi_data_success(mock_secret_client_class, mock_requests_get):
     mock_container.get_blob_client.return_value = mock_blob_client
 
     # Executa a função
-    fetch_brapi_data("PETR4.SA", mock_container, mock_secret_client)
+    fetch_brapi_data("PETR4", mock_container, mock_secret_client)
 
     # Verifica se upload_blob foi chamado
     mock_blob_client.upload_blob.assert_called_once()
@@ -81,7 +81,7 @@ def test_fetch_brapi_data_empty_data(mock_secret_client_class, mock_requests_get
     mock_requests_get.return_value = mock_response
 
     mock_container = MagicMock()
-    fetch_brapi_data("VALE3.SA", mock_container, mock_secret_client)
+    fetch_brapi_data("VALE3", mock_container, mock_secret_client)
 
     mock_container.get_blob_client().upload_blob.assert_not_called()
 

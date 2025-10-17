@@ -53,7 +53,7 @@ def get_pg_tickers(secret_client):
         conn = psycopg2.connect(conn_str)
         cur = conn.cursor()
         cur.execute("SELECT ticker FROM acoes")
-        tickers = [row[0] + ".SA" for row in cur.fetchall()]
+        tickers = [row[0] for row in cur.fetchall()]
         cur.close()
         conn.close()
         return tickers
@@ -67,7 +67,7 @@ def fetch_brapi_data(ticker, container, secret_client):
         url = f"https://brapi.dev/api/quote/{ticker}?interval=1d&range=1y"
         headers = {"Authorization": f"Bearer {api_key}"}
 
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10, verify=False)
         if response.status_code != 200:
             logging.warning(f"Falha ao buscar {ticker}: {response.status_code}")
             return
