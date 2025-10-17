@@ -89,7 +89,7 @@ def fetch_dados_mercado():
 
 def fetch_full_text(url):
     try:
-        html = requests.get(url, timeout=10).text
+        html = requests.get(url, timeout=10, verify=False).text
         soup = BeautifulSoup(html, "html.parser")
         paragraphs = soup.select("p")
         return "\n".join(p.text.strip() for p in paragraphs if len(p.text.strip()) > 40)
@@ -127,11 +127,11 @@ def main(mytimernews: func.TimerRequest) -> None:
             if not texto:
                 continue
 
-            resumo = summarize_text(texto, client)
+            #resumo = summarize_text(texto, client)
 
             news = {
                 "origem": item["origem"],
-                "titulo": resumo,
+                "titulo": texto[:100] + "...",
                 "conteudo": texto,
                 "url": item["url"],
                 "acao_relacionada": None

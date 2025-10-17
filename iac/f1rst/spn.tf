@@ -102,3 +102,10 @@ resource "azurerm_role_assignment" "policy_owner" {
   ]
 }
 
+resource "azurerm_key_vault_secret" "brapi-dev-apikey" {
+  name         = "brapi-dev-apikey"
+  key_vault_id = azurerm_key_vault.kv.id
+  value        = var.brapi-dev-apikey
+  depends_on   = [azurerm_key_vault.kv]
+}
+

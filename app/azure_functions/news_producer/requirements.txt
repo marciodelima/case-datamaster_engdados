@@ -11,7 +11,7 @@ psycopg2-binary==2.9.6
 numpy==1.23.5
 pandas==1.5.3
 fastavro==1.7.4
-yfinance==0.2.33
+brapi
 python-dotenv==1.0.0
 pytest==8.2.1
 pytest-cov==4.1.0
