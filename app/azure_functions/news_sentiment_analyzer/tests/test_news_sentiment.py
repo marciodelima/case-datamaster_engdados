@@ -12,7 +12,7 @@ from news_sentiment_analyzer.function_app import main
 @patch("news_sentiment_analyzer.function_app.BlobServiceClient")
 @patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
 @patch("news_sentiment_analyzer.function_app.SecretClient")
-def test_news_sentiment_analyzer_success(
+def test_streaming_sentiment_analysis_success(
     mock_secret_client_class,
     mock_default_cred,
     mock_blob_service_class,
@@ -65,6 +65,8 @@ def test_news_sentiment_analyzer_success(
     # Executa a função
     main(events)
 
-    # Verifica se o upload foi chamado para cada ação
-    assert mock_blob_client.upload_blob.call_count >= 2
+    # Verifica se os uploads foram feitos para PETR4 e VALE3
+    assert mock_blob_client.upload_blob.call_count == 2
+    calls = [call.args[0] for call in mock_blob_client.upload_blob.call_args_list]
+    assert all(isinstance(data, bytes) for data in calls)
 
