@@ -18,7 +18,8 @@ def test_streaming_sentiment_analysis_success(
     mock_blob_service_class,
     mock_openai_class
 ):
-    # Simula eventos do Event Hub
+    os.environ["DELTA_PATH"] = "bronze"
+
     class FakeEvent:
         def __init__(self, body):
             self.body = body
@@ -30,7 +31,6 @@ def test_streaming_sentiment_analysis_success(
         FakeEvent(json.dumps({"titulo": "Vale cai", "conteudo": "Queda no minério"}))
     ]
 
-    # Simula retorno do SecretClient
     mock_secret_client = MagicMock()
     mock_secret_client.get_secret.side_effect = [
         MagicMock(value="fake-openai-key"),
@@ -38,7 +38,6 @@ def test_streaming_sentiment_analysis_success(
     ]
     mock_secret_client_class.return_value = mock_secret_client
 
-    # Simula resposta do OpenAI para cada evento
     mock_openai = MagicMock()
     mock_openai.chat.completions.create.side_effect = [
         MagicMock(message=MagicMock(content=json.dumps({
@@ -54,7 +53,6 @@ def test_streaming_sentiment_analysis_success(
     ]
     mock_openai_class.return_value = mock_openai
 
-    # Simula Blob Storage com mocks distintos por ação
     blob_clients = {}
 
     def get_blob_client_side_effect(path):
@@ -67,10 +65,8 @@ def test_streaming_sentiment_analysis_success(
     mock_blob_service.get_container_client.return_value = mock_container
     mock_blob_service_class.return_value = mock_blob_service
 
-    # Executa a função
     main(events)
 
-    # Verifica se upload_blob foi chamado para cada ação
     assert any("PETR4" in path and blob_clients[path].upload_blob.called for path in blob_clients)
     assert any("VALE3" in path and blob_clients[path].upload_blob.called for path in blob_clients)
 
