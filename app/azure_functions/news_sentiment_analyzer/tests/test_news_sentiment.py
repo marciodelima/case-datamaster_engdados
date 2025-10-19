@@ -38,13 +38,18 @@ def test_news_sentiment_analyzer_success(
     ]
     mock_secret_client_class.return_value = mock_secret_client
 
-    # Simula resposta do OpenAI
+    # Simula resposta do OpenAI para cada evento
     mock_openai = MagicMock()
-    mock_openai.chat.completions.create.return_value.choices = [
+    mock_openai.chat.completions.create.side_effect = [
         MagicMock(message=MagicMock(content=json.dumps({
             "acoes": ["PETR4"],
             "sentimento": "positivo",
             "resumo": "Petrobras em alta"
+        }))),
+        MagicMock(message=MagicMock(content=json.dumps({
+            "acoes": ["VALE3"],
+            "sentimento": "negativo",
+            "resumo": "Vale em queda"
         })))
     ]
     mock_openai_class.return_value = mock_openai
@@ -60,7 +65,6 @@ def test_news_sentiment_analyzer_success(
     # Executa a função
     main(events)
 
-    # Verifica se o upload foi chamado
-    assert mock_blob_client.upload_blob.called
-    assert mock_blob_client.upload_blob.call_count >= 1
+    # Verifica se o upload foi chamado para cada ação
+    assert mock_blob_client.upload_blob.call_count >= 2
 
