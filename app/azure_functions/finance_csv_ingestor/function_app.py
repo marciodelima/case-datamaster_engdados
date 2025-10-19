@@ -64,7 +64,7 @@ def get_pg_tickers(secret_client):
 def fetch_brapi_data(ticker, container, secret_client):
     try:
         api_key = secret_client.get_secret("brapi-dev-apikey").value
-        url = f"https://brapi.dev/api/quote/{ticker}?interval=1d&range=1y"
+        url = f"https://brapi.dev/api/quote/{ticker}?interval=1d&range=1mo"
         headers = {"Authorization": f"Bearer {api_key}"}
 
         response = requests.get(url, headers=headers, timeout=10, verify=False)
@@ -79,7 +79,6 @@ def fetch_brapi_data(ticker, container, secret_client):
             return
 
         df = pd.DataFrame(candles)
-        df["date"] = pd.to_datetime(df["date"])
         df = df[["date", "open", "close", "high", "low", "volume"]]
         csv_bytes = df.to_csv(index=False).encode("utf-8")
 
@@ -92,7 +91,7 @@ def fetch_brapi_data(ticker, container, secret_client):
 app = func.FunctionApp()
 
 @app.function_name(name="finance_csv_ingestor")
-@app.schedule(schedule="0 */5 * * * *", arg_name="mytimer", run_on_startup=True, use_monitor=True)
+@app.schedule(schedule="0 0 8 * * 1-5", arg_name="mytimer", run_on_startup=True, use_monitor=True)
 def main(mytimer: func.TimerRequest) -> None:
     logging.info("Iniciando execução da função finance_csv_ingestor")
 

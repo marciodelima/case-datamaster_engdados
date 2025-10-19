@@ -100,7 +100,7 @@ def fetch_full_text(url):
 app = func.FunctionApp()
 
 @app.function_name(name="news_producer")
-@app.schedule(schedule="0 */10 * * * *", arg_name="mytimernews", run_on_startup=True, use_monitor=True)
+@app.schedule(schedule="0 */15 8-19 * * 1-5", arg_name="mytimernews", run_on_startup=True, use_monitor=True)
 def main(mytimernews: func.TimerRequest) -> None:
     logging.info("Iniciando execução da função news_producer")
     try:
@@ -126,8 +126,6 @@ def main(mytimernews: func.TimerRequest) -> None:
             texto = fetch_full_text(item["url"])
             if not texto:
                 continue
-
-            #resumo = summarize_text(texto, client)
 
             news = {
                 "origem": item["origem"],

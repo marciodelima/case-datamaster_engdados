@@ -1,54 +1,68 @@
-import pytest
-import sys
 import os
+import sys
+import json
+import pandas as pd
 from unittest.mock import patch, MagicMock
-from io import BytesIO
 
 # Ajusta o caminho para importar a função
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-import news_sentiment_analyzer as func
+from ri_resumer import main
 
-@pytest.fixture
-def mock_env(monkeypatch):
-    monkeypatch.setenv("STORAGE_URL", "https://fake.blob.core.windows.net")
-    monkeypatch.setenv("EVENTHUB_NAMESPACE", "hub")
-    monkeypatch.setenv("EVENTHUB_NAME", "noticias")
-    monkeypatch.setenv("KEYVAULT_URI", "https://fake.vault.azure.net")
-    monkeypatch.setenv("BRONZE_PATH", "/tmp/bronze")
+@patch("ri_resumer.fitz.open")
+@patch("ri_resumer.AzureOpenAI")
+@patch("ri_resumer.BlobServiceClient")
+@patch("ri_resumer.DefaultAzureCredential")
+@patch("ri_resumer.SecretClient")
+def test_ri_resumer_success(
+    mock_secret_client_class,
+    mock_default_cred,
+    mock_blob_service_class,
+    mock_openai_class,
+    mock_fitz_open
+):
+    # Simula PDF com texto extraído
+    mock_doc = MagicMock()
+    mock_doc.__iter__.return_value = [MagicMock(get_text=lambda: "Texto do relatório")]
+    mock_fitz_open.return_value = mock_doc
 
-def test_news_sentiment(mock_env):
-    with patch("news_sentiment_analyzer.DefaultAzureCredential") as mock_cred, \
-         patch("news_sentiment_analyzer.BlobServiceClient") as mock_blob, \
-         patch("news_sentiment_analyzer.get_openai_client") as mock_llm, \
-         patch("news_sentiment_analyzer.reader") as mock_reader, \
-         patch("news_sentiment_analyzer.SparkSession") as mock_spark:
+    # Simula retorno do SecretClient
+    mock_secret_client = MagicMock()
+    mock_secret_client.get_secret.side_effect = [
+        MagicMock(value="fake-openai-key"),
+        MagicMock(value="https://fake-endpoint.openai.azure.com")
+    ]
+    mock_secret_client_class.return_value = mock_secret_client
 
-        mock_cred.return_value = MagicMock()
+    # Simula resposta do OpenAI
+    mock_openai = MagicMock()
+    mock_openai.chat.completions.create.return_value.choices = [
+        MagicMock(message=MagicMock(content=json.dumps({
+            "empresa": "PETR4",
+            "trimestre": "2T25",
+            "avaliacoes": {"financeiro": "bom"},
+            "nota_final": 8.5
+        })))
+    ]
+    mock_openai_class.return_value = mock_openai
 
-        mock_blob_instance = MagicMock()
-        mock_blob.return_value = mock_blob_instance
-        mock_container = MagicMock()
-        mock_blob_instance.get_container_client.return_value = mock_container
+    # Simula Blob Storage
+    mock_blob_client = MagicMock()
+    mock_blob_client.download_blob.return_value.readall.return_value = b"%PDF-1.4 fake content"
+    mock_container = MagicMock()
+    mock_container.list_blobs.return_value = [
+        MagicMock(name="raw/ri/PETR4/PETR4-ri.pdf")
+    ]
+    mock_container.get_blob_client.return_value = mock_blob_client
+    mock_blob_service = MagicMock()
+    mock_blob_service.get_container_client.return_value = mock_container
+    mock_blob_service_class.return_value = mock_blob_service
 
-        mock_blob_list = [MagicMock(name="blob.avro")]
-        mock_blob_list[0].name = "raw/noticias/hub/noticias/blob.avro"
-        mock_container.list_blobs.return_value = mock_blob_list
+    # Executa a função
+    main(None)
 
-        mock_blob_client = MagicMock()
-        mock_blob_client.download_blob.return_value.readall.return_value = b"fake_avro_bytes"
-        mock_container.get_blob_client.return_value = mock_blob_client
-
-        mock_reader.return_value = iter([{"titulo": "Petrobras", "conteudo": "Dividendos"}])
-
-        mock_llm.return_value.chat.completions.create.return_value.choices = [
-            MagicMock(message=MagicMock(content='{"acoes": ["PETR4"], "sentimento": "positivo", "resumo": "Petrobras distribui dividendos"}'))
-        ]
-
-        mock_df = MagicMock()
-        mock_spark.builder.getOrCreate.return_value.createDataFrame.return_value = mock_df
-        mock_df.select.return_value.rdd.flatMap.return_value.collect.return_value = ["PETR4"]
-        mock_df.filter.return_value.write.mode.return_value.parquet.return_value = None
-
-        func.main(None)
+    # Verifica se o PDF foi lido, movido e deletado
+    assert mock_blob_client.download_blob.called
+    assert mock_blob_client.upload_blob.call_count >= 2 
+    assert mock_blob_client.delete_blob.called
 

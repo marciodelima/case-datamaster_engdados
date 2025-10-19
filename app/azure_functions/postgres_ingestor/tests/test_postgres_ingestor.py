@@ -1,48 +1,44 @@
 import pytest
-import sys
-import os
+import pandas as pd
 from unittest.mock import patch, MagicMock
-from datetime import datetime
+from postgres_ingestor import main
 
-# Ajusta o caminho para importar a função
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+@patch("postgres_ingestor.psycopg2.connect")
+@patch("postgres_ingestor.BlobServiceClient")
+@patch("postgres_ingestor.DefaultAzureCredential")
+@patch("postgres_ingestor.get_secret_client")
+def test_postgres_ingestor_success(
+    mock_get_secret_client,
+    mock_default_cred,
+    mock_blob_service,
+    mock_connect
+):
+    # Simula retorno do SecretClient
+    mock_secret_client = MagicMock()
+    mock_secret_client.get_secret.return_value.value = (
+        "Host=host;Port=5432;Database=db;User Id=user;Password=pass;Ssl Mode=Require"
+    )
+    mock_get_secret_client.return_value = mock_secret_client
 
-import postgres_ingestor as func
+    # Simula conexão PostgreSQL
+    mock_conn = MagicMock()
+    mock_connect.return_value = mock_conn
 
-@pytest.fixture
-def mock_env(monkeypatch):
-    monkeypatch.setenv("KEYVAULT_URL", "https://fake.vault.azure.net")
-    monkeypatch.setenv("STORAGE_URL", "https://fake.blob.core.windows.net")
-
-def test_main_function(mock_env):
-    with patch("postgres_ingestor.DefaultAzureCredential") as mock_cred, \
-         patch("postgres_ingestor.SecretClient") as mock_secret, \
-         patch("postgres_ingestor.psycopg2.connect") as mock_pg, \
-         patch("postgres_ingestor.BlobServiceClient") as mock_blob, \
-         patch("postgres_ingestor.pd.read_sql") as mock_read_sql:
-
-        mock_cred.return_value = MagicMock()
-
-        # Simula Key Vault
-        mock_secret_instance = MagicMock()
-        mock_secret.return_value = mock_secret_instance
-        mock_secret_instance.get_secret.return_value.value = "postgres://user:pass@localhost/db"
-
-        # Simula PostgreSQL
-        mock_conn = MagicMock()
-        mock_pg.return_value = mock_conn
-
-        # Simula pandas.read_sql
-        mock_df = MagicMock()
-        mock_df.to_parquet.return_value = b"parquet-bytes"
-        mock_read_sql.return_value = mock_df
-
+    # Simula leitura de tabelas
+    sample_df = pd.DataFrame({"id": [1], "nome": ["teste"]})
+    with patch("postgres_ingestor.pd.read_sql", return_value=sample_df) as mock_read_sql:
         # Simula Blob Storage
-        mock_blob_instance = MagicMock()
-        mock_blob.return_value = mock_blob_instance
+        mock_blob_client = MagicMock()
         mock_container = MagicMock()
-        mock_blob_instance.get_container_client.return_value = mock_container
-        mock_container.get_blob_client.return_value.upload_blob.return_value = None
+        mock_container.get_blob_client.return_value = mock_blob_client
+        mock_blob_service.return_value.get_container_client.return_value = mock_container
 
-        func.main(None)
+        # Executa a função
+        main(None)
+
+        # Verifica se cada tabela foi lida e exportada
+        assert mock_read_sql.call_count == 4
+        assert mock_blob_client.upload_blob.call_count == 4
+        for call in mock_read_sql.call_args_list:
+            assert "SELECT * FROM" in call.args[0]
 

@@ -1,33 +1,28 @@
 {
   "version": "2.0",
+}
+
+{
+  "version": "2.0",
+  "extensions": {
+    "eventHub": {
+      "batchCheckpointFrequency": 1,
+      "eventProcessorOptions": {
+        "maxBatchSize": 10,
+        "prefetchCount": 20,
+        "maxWaitTime": "00:00:05"
+      }
+    }
+  },
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[3.*, 4.0.0)"
+  },
   "logging": {
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
         "maxTelemetryItemsPerSecond": 5
-      }
-    },
-    "logLevel": {
-      "default": "Information",
-      "Function": "Information"
-    }
-  },
-  "functionTimeout": "00:05:00",
-  "retry": {
-    "strategy": "fixedDelay",
-    "maxRetryCount": 3,
-    "delayInterval": "00:00:10"
-  },
-  "extensions": {
-    "http": {
-      "routePrefix": "api",
-      "maxOutstandingRequests": 100,
-      "maxConcurrentRequests": 50
-    },
-    "timers": {
-      "scheduleMonitor": {
-        "enabled": true,
-        "interval": "00:05:00"
       }
     }
   }

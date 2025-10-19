@@ -234,8 +234,9 @@ resource "azurerm_linux_function_app" "news_sentiment_analyzer" {
     WEBSITE_HEALTHCHECK_MAXPINGFAILURES = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY   = azurerm_application_insights.finance_logs_sentiment.instrumentation_key
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.finance_logs_sentiment.connection_string
-    EVENTHUB_NAME      = var.eventhub_namespace_name
+    EVENTHUB_NAME      = var.eventhub_topic
     EVENTHUB_NAMESPACE = "${var.eventhub_namespace_name}.servicebus.windows.net"
+    EVENTHUB_CONNECTION = "Endpoint=sb://${var.eventhub_namespace_name}.servicebus.windows.net/;Authentication=Managed Identity"
     KEYVAULT_URI = "https://${var.keyvault_name}.vault.azure.net"
     STORAGE_URL = "https://${var.existing_storage_account_name}.blob.core.windows.net"
     DELTA_PATH  = "abfss://dados@${var.existing_storage_account_name}.blob.core.windows.net/bronze"
