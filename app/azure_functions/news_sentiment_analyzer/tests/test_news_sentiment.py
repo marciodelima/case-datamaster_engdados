@@ -53,14 +53,12 @@ def test_streaming_sentiment_analysis_success(
     ]
     mock_openai_class.return_value = mock_openai
 
-    # Captura os caminhos e mocks
-    blob_clients = {}
-    called_paths = []
+    # Lista para rastrear todos os mocks retornados por get_blob_client
+    blob_client_mocks = []
 
     def get_blob_client_side_effect(path):
         mock_blob = MagicMock()
-        blob_clients[path] = mock_blob
-        called_paths.append(path)
+        blob_client_mocks.append((path, mock_blob))
         return mock_blob
 
     mock_container = MagicMock()
@@ -71,11 +69,11 @@ def test_streaming_sentiment_analysis_success(
 
     main(events)
 
-    # Verifica se upload_blob foi chamado em algum dos mocks
-    upload_calls = [mock.upload_blob.called for mock in blob_clients.values()]
-    assert any(upload_calls), "Nenhum upload_blob foi chamado"
+    # Verifica se pelo menos um dos mocks teve upload_blob chamado
+    assert any(mock.upload_blob.called for _, mock in blob_client_mocks), "Nenhum upload_blob foi chamado"
 
     # Verifica se os caminhos incluem PETR4 e VALE3
-    assert any("PETR4" in path for path in called_paths), "PETR4 não encontrado nos caminhos"
-    assert any("VALE3" in path for path in called_paths), "VALE3 não encontrado nos caminhos"
+    paths = [path for path, _ in blob_client_mocks]
+    assert any("PETR4" in path for path in paths), "PETR4 não encontrado nos caminhos"
+    assert any("VALE3" in path for path in paths), "VALE3 não encontrado nos caminhos"
 
