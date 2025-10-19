@@ -43,23 +43,24 @@ def test_streaming_sentiment_analysis_flow(
     ]
     mock_secret_client_class.return_value = mock_secret_client
 
-    # ✅ Cria mock do cliente OpenAI com método create configurado
+    # Cria mock do cliente OpenAI com estrutura completa
     mock_create = MagicMock()
     mock_create.side_effect = [
-        MagicMock(message=MagicMock(content=json.dumps({
+        MagicMock(choices=[MagicMock(message=MagicMock(content=json.dumps({
             "acoes": ["PETR4"],
             "sentimento": "positivo",
             "resumo": "Alta da Petrobras"
-        }))),
-        MagicMock(message=MagicMock(content=json.dumps({
+        })))]),
+        MagicMock(choices=[MagicMock(message=MagicMock(content=json.dumps({
             "acoes": ["VALE3"],
             "sentimento": "negativo",
             "resumo": "Queda da Vale"
-        })))
+        })))]),
     ]
 
-    mock_client = MagicMock()
-    mock_client.chat.completions.create = mock_create
+    mock_completions = MagicMock(create=mock_create)
+    mock_chat = MagicMock(completions=mock_completions)
+    mock_client = MagicMock(chat=mock_chat)
     mock_get_openai_client.return_value = mock_client
 
     # Simula BlobServiceClient sem verificar chamadas
@@ -71,5 +72,5 @@ def test_streaming_sentiment_analysis_flow(
     main(events)
 
     # Verifica se o modelo foi chamado duas vezes
-    assert mock_create.call_count == 2
+    assert mock_create.call_count == 2, "O modelo não foi chamado duas vezes como esperado"
 
