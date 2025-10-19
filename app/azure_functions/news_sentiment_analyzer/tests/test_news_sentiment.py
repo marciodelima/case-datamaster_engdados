@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 from news_sentiment_analyzer.function_app import main
 
-@patch("news_sentiment_analyzer.function_app.AzureOpenAI")
+@patch("news_sentiment_analyzer.function_app.get_openai_client")
 @patch("news_sentiment_analyzer.function_app.BlobServiceClient")
 @patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
 @patch("news_sentiment_analyzer.function_app.SecretClient")
@@ -16,7 +16,7 @@ def test_streaming_sentiment_analysis_flow(
     mock_secret_client_class,
     mock_default_cred,
     mock_blob_service_class,
-    mock_openai_class
+    mock_get_openai_client
 ):
     # Define variáveis de ambiente mínimas
     os.environ["DELTA_PATH"] = "bronze"
@@ -43,9 +43,9 @@ def test_streaming_sentiment_analysis_flow(
     ]
     mock_secret_client_class.return_value = mock_secret_client
 
-    # Simula resposta do OpenAI
-    mock_openai = MagicMock()
-    mock_openai.chat.completions.create.side_effect = [
+    # ✅ Cria mock do cliente OpenAI com método create configurado
+    mock_create = MagicMock()
+    mock_create.side_effect = [
         MagicMock(message=MagicMock(content=json.dumps({
             "acoes": ["PETR4"],
             "sentimento": "positivo",
@@ -57,7 +57,10 @@ def test_streaming_sentiment_analysis_flow(
             "resumo": "Queda da Vale"
         })))
     ]
-    mock_openai_class.return_value = mock_openai
+
+    mock_client = MagicMock()
+    mock_client.chat.completions.create = mock_create
+    mock_get_openai_client.return_value = mock_client
 
     # Simula BlobServiceClient sem verificar chamadas
     mock_blob_service = MagicMock()
@@ -67,6 +70,6 @@ def test_streaming_sentiment_analysis_flow(
     # Executa a função
     main(events)
 
-    # Verifica se o fluxo foi executado sem erro e o modelo foi chamado
-    assert mock_openai.chat.completions.create.call_count == 2
+    # Verifica se o modelo foi chamado duas vezes
+    assert mock_create.call_count == 2
 
