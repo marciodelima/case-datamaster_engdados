@@ -4,27 +4,31 @@ import json
 import pandas as pd
 from unittest.mock import patch, MagicMock
 
-# Ajusta o caminho para importar a função
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from ri_resumer import main
+from news_sentiment_analyzer import main
 
-@patch("ri_resumer.fitz.open")
-@patch("ri_resumer.AzureOpenAI")
-@patch("ri_resumer.BlobServiceClient")
-@patch("ri_resumer.DefaultAzureCredential")
-@patch("ri_resumer.SecretClient")
-def test_ri_resumer_success(
+@patch("news_sentiment_analyzer.AzureOpenAI")
+@patch("news_sentiment_analyzer.BlobServiceClient")
+@patch("news_sentiment_analyzer.DefaultAzureCredential")
+@patch("news_sentiment_analyzer.SecretClient")
+def test_news_sentiment_analyzer_success(
     mock_secret_client_class,
     mock_default_cred,
     mock_blob_service_class,
-    mock_openai_class,
-    mock_fitz_open
+    mock_openai_class
 ):
-    # Simula PDF com texto extraído
-    mock_doc = MagicMock()
-    mock_doc.__iter__.return_value = [MagicMock(get_text=lambda: "Texto do relatório")]
-    mock_fitz_open.return_value = mock_doc
+    # Simula eventos do Event Hub
+    class FakeEvent:
+        def __init__(self, body):
+            self.body = body
+        def get_body(self):
+            return self.body.encode("utf-8")
+
+    events = [
+        FakeEvent(json.dumps({"titulo": "Petrobras sobe", "conteudo": "Alta no petróleo"})),
+        FakeEvent(json.dumps({"titulo": "Vale cai", "conteudo": "Queda no minério"}))
+    ]
 
     # Simula retorno do SecretClient
     mock_secret_client = MagicMock()
@@ -38,31 +42,25 @@ def test_ri_resumer_success(
     mock_openai = MagicMock()
     mock_openai.chat.completions.create.return_value.choices = [
         MagicMock(message=MagicMock(content=json.dumps({
-            "empresa": "PETR4",
-            "trimestre": "2T25",
-            "avaliacoes": {"financeiro": "bom"},
-            "nota_final": 8.5
+            "acoes": ["PETR4"],
+            "sentimento": "positivo",
+            "resumo": "Petrobras em alta"
         })))
     ]
     mock_openai_class.return_value = mock_openai
 
     # Simula Blob Storage
     mock_blob_client = MagicMock()
-    mock_blob_client.download_blob.return_value.readall.return_value = b"%PDF-1.4 fake content"
     mock_container = MagicMock()
-    mock_container.list_blobs.return_value = [
-        MagicMock(name="raw/ri/PETR4/PETR4-ri.pdf")
-    ]
     mock_container.get_blob_client.return_value = mock_blob_client
     mock_blob_service = MagicMock()
     mock_blob_service.get_container_client.return_value = mock_container
     mock_blob_service_class.return_value = mock_blob_service
 
     # Executa a função
-    main(None)
+    main(events)
 
-    # Verifica se o PDF foi lido, movido e deletado
-    assert mock_blob_client.download_blob.called
-    assert mock_blob_client.upload_blob.call_count >= 2 
-    assert mock_blob_client.delete_blob.called
+    # Verifica se o upload foi chamado
+    assert mock_blob_client.upload_blob.called
+    assert mock_blob_client.upload_blob.call_count == 1
 
