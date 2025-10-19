@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from news_sentiment_analyzer import main
+from news_sentiment_analyzer.function_app import main
 
 @patch("news_sentiment_analyzer.AzureOpenAI")
 @patch("news_sentiment_analyzer.BlobServiceClient")
