@@ -20,7 +20,7 @@ jobs:
         postgres_ingestor
         ri_collector
         ri_resumer
-	
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
