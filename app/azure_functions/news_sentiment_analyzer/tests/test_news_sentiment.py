@@ -18,12 +18,10 @@ def test_streaming_sentiment_analysis_flow(
     mock_blob_service_class,
     mock_get_openai_client
 ):
-    # Define variáveis de ambiente mínimas
     os.environ["DELTA_PATH"] = "bronze"
     os.environ["STORAGE_URL"] = "https://fake.blob.core.windows.net"
     os.environ["KEYVAULT_URI"] = "https://fake.vault.azure.net"
 
-    # Simula eventos do Event Hub
     class FakeEvent:
         def __init__(self, body):
             self.body = body
@@ -35,15 +33,13 @@ def test_streaming_sentiment_analysis_flow(
         FakeEvent(json.dumps({"titulo": "Vale cai", "conteudo": "Queda no minério"}))
     ]
 
-    # Simula retorno do SecretClient
     mock_secret_client = MagicMock()
     mock_secret_client.get_secret.side_effect = [
-        MagicMock(value="fake-key"),
+        MagicMock(value="fake-openai-key"),
         MagicMock(value="https://fake-endpoint.openai.azure.com")
     ]
     mock_secret_client_class.return_value = mock_secret_client
 
-    # Cria mock do cliente OpenAI com estrutura completa
     mock_create = MagicMock()
     mock_create.side_effect = [
         MagicMock(choices=[MagicMock(message=MagicMock(content=json.dumps({
@@ -58,19 +54,22 @@ def test_streaming_sentiment_analysis_flow(
         })))]),
     ]
 
-    mock_completions = MagicMock(create=mock_create)
-    mock_chat = MagicMock(completions=mock_completions)
-    mock_client = MagicMock(chat=mock_chat)
+    mock_completions = MagicMock()
+    mock_completions.create = mock_create
+
+    mock_chat = MagicMock()
+    mock_chat.completions = mock_completions
+
+    mock_client = MagicMock()
+    mock_client.chat = mock_chat
+
     mock_get_openai_client.return_value = mock_client
 
-    # Simula BlobServiceClient sem verificar chamadas
     mock_blob_service = MagicMock()
     mock_blob_service.get_container_client.return_value = MagicMock()
     mock_blob_service_class.return_value = mock_blob_service
 
-    # Executa a função
     main(events)
 
-    # Verifica se o modelo foi chamado duas vezes
-    assert mock_create.call_count == 2, "O modelo não foi chamado duas vezes como esperado"
+    assert mock_create.call_count == 2
 
