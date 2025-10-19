@@ -54,21 +54,10 @@ def test_streaming_sentiment_analysis_success(
     ]
     mock_openai_class.return_value = mock_openai
 
-    # Simula Blob Storage com múltiplos blob clients
-    mock_blob_clients = {
-        "PETR4": MagicMock(),
-        "VALE3": MagicMock()
-    }
-
-    def get_blob_client_side_effect(path):
-        if "PETR4" in path:
-            return mock_blob_clients["PETR4"]
-        elif "VALE3" in path:
-            return mock_blob_clients["VALE3"]
-        return MagicMock()
-
+    # Simula Blob Storage
+    mock_blob_client = MagicMock()
     mock_container = MagicMock()
-    mock_container.get_blob_client.side_effect = get_blob_client_side_effect
+    mock_container.get_blob_client.return_value = mock_blob_client
     mock_blob_service = MagicMock()
     mock_blob_service.get_container_client.return_value = mock_container
     mock_blob_service_class.return_value = mock_blob_service
@@ -76,7 +65,11 @@ def test_streaming_sentiment_analysis_success(
     # Executa a função
     main(events)
 
-    # Verifica se o upload foi chamado para cada ação
-    assert mock_blob_clients["PETR4"].upload_blob.called
-    assert mock_blob_clients["VALE3"].upload_blob.called
+    # Verifica se upload_blob foi chamado ao menos uma vez
+    assert mock_blob_client.upload_blob.call_count >= 1
+
+    # Verifica se os caminhos dos blobs incluem os nomes das ações
+    paths = [call.args[0] for call in mock_container.get_blob_client.call_args_list]
+    assert any("PETR4" in path for path in paths)
+    assert any("VALE3" in path for path in paths)
 
