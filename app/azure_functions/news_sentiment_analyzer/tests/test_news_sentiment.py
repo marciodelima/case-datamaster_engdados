@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 from news_sentiment_analyzer.function_app import main
 
-@patch("news_sentiment_analyzer.function_app.get_openai_client")
+@patch("news_sentiment_analyzer.function_app.analyze_news")
 @patch("news_sentiment_analyzer.function_app.BlobServiceClient")
 @patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
 @patch("news_sentiment_analyzer.function_app.SecretClient")
@@ -16,7 +16,7 @@ def test_streaming_sentiment_analysis_flow(
     mock_secret_client_class,
     mock_default_cred,
     mock_blob_service_class,
-    mock_get_openai_client
+    mock_analyze_news
 ):
     os.environ["DELTA_PATH"] = "bronze"
     os.environ["STORAGE_URL"] = "https://fake.blob.core.windows.net"
@@ -40,30 +40,10 @@ def test_streaming_sentiment_analysis_flow(
     ]
     mock_secret_client_class.return_value = mock_secret_client
 
-    mock_create = MagicMock()
-    mock_create.side_effect = [
-        MagicMock(choices=[MagicMock(message=MagicMock(content=json.dumps({
-            "acoes": ["PETR4"],
-            "sentimento": "positivo",
-            "resumo": "Alta da Petrobras"
-        })))]),
-        MagicMock(choices=[MagicMock(message=MagicMock(content=json.dumps({
-            "acoes": ["VALE3"],
-            "sentimento": "negativo",
-            "resumo": "Queda da Vale"
-        })))]),
+    mock_analyze_news.side_effect = [
+        {"acoes": ["PETR4"], "sentimento": "positivo", "resumo": "Alta da Petrobras"},
+        {"acoes": ["VALE3"], "sentimento": "negativo", "resumo": "Queda da Vale"}
     ]
-
-    mock_completions = MagicMock()
-    mock_completions.create = mock_create
-
-    mock_chat = MagicMock()
-    mock_chat.completions = mock_completions
-
-    mock_client = MagicMock()
-    mock_client.chat = mock_chat
-
-    mock_get_openai_client.return_value = mock_client
 
     mock_blob_service = MagicMock()
     mock_blob_service.get_container_client.return_value = MagicMock()
@@ -71,5 +51,5 @@ def test_streaming_sentiment_analysis_flow(
 
     main(events)
 
-    assert mock_create.call_count == 2
+    assert mock_analyze_news.call_count == 2
 
