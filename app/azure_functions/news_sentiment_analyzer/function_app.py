@@ -63,7 +63,7 @@ app = func.FunctionApp()
     connection="%EVENTHUB_CONNECTION%",
     cardinality="many"
 )
-def main(events: List[func.EventHubEvent]) -> None:
+def main(events) -> None:
     logging.info(f"Iniciando processamento de {len(events)} eventos")
 
     try:
