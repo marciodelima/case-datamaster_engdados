@@ -1,26 +1,4 @@
 {
-  "version": "2.0",
-  "extensions": {
-    "eventHub": {
-      "batchCheckpointFrequency": 1,
-      "eventProcessorOptions": {
-        "maxBatchSize": 10,
-        "prefetchCount": 20,
-        "maxWaitTime": "00:00:05"
-      }
-    }
-  },
-  "extensionBundle": {
-    "id": "Microsoft.Azure.Functions.ExtensionBundle",
-    "version": "[3.*, 4.0.0)"
-  },
-  "logging": {
-    "applicationInsights": {
-      "samplingSettings": {
-        "isEnabled": true,
-        "maxTelemetryItemsPerSecond": 5
-      }
-    }
-  }
+  "version": "2.0"
 }
 

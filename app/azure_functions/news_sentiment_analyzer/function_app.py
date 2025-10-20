@@ -13,6 +13,7 @@ from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobServiceClient
 from openai import AzureOpenAI
+from typing import List
 import azure.functions as func
 
 def get_openai_client():
@@ -62,7 +63,7 @@ app = func.FunctionApp()
     connection="%EVENTHUB_CONNECTION%",
     cardinality="many"
 )
-def main(events: list[func.EventHubEvent]) -> None:
+def main(events: List[func.EventHubEvent]) -> None:
     logging.info(f"Iniciando processamento de {len(events)} eventos")
 
     try:

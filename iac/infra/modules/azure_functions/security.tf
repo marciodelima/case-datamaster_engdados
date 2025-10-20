@@ -75,6 +75,12 @@ resource "azurerm_role_assignment" "sentiment_keyvault_access" {
   principal_id         = azurerm_linux_function_app.news_sentiment_analyzer.identity[0].principal_id
 }
 
+resource "azurerm_role_assignment" "news_eventhub_listen" {
+  scope                = data.azurerm_eventhub_namespace.existing_ns.id
+  role_definition_name = "Azure Event Hubs Data Receiver"
+  principal_id         = azurerm_linux_function_app.news_sentiment_analyzer.identity[0].principal_id
+}
+
 resource "azurerm_role_assignment" "ri_collector_keyvault_reader" {
   scope                = data.azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets User"
