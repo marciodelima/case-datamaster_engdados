@@ -12,17 +12,17 @@ from postgres_ingestor.function_app import main
     "KEYVAULT_URI": "https://fake-vault.vault.azure.net/",
     "STORAGE_URL": "https://fake.blob.core.windows.net/"
 })
+@patch("postgres_ingestor.function_app.pd.read_sql")
+@patch("postgres_ingestor.function_app.get_secret_client")
 @patch("postgres_ingestor.function_app.psycopg2.connect")
 @patch("postgres_ingestor.function_app.BlobServiceClient")
 @patch("postgres_ingestor.function_app.DefaultAzureCredential")
-@patch("postgres_ingestor.function_app.get_secret_client")
-@patch("postgres_ingestor.function_app.pd.read_sql")
 def test_postgres_ingestor_success(
-    mock_read_sql,
-    mock_get_secret_client,
-    mock_default_cred,
+    mock_credential,
     mock_blob_service,
-    mock_connect
+    mock_connect,
+    mock_get_secret_client,
+    mock_read_sql
 ):
     # Simula retorno do SecretClient
     mock_secret_client = MagicMock()
@@ -45,7 +45,7 @@ def test_postgres_ingestor_success(
     mock_container.get_blob_client.return_value = mock_blob_client
     mock_blob_service.return_value.get_container_client.return_value = mock_container
 
-    # Executa a função com um mock de TimerRequest
+    # Executa a função com mock de TimerRequest
     mock_timer = MagicMock()
     main(mock_timer)
 
