@@ -15,6 +15,9 @@ from azure.storage.blob import BlobServiceClient
 from openai import AzureOpenAI
 from typing import List
 import azure.functions as func
+import azurefunctions.extensions.bindings.eventhub as eh
+
+app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 def get_openai_client():
     credential = DefaultAzureCredential()
@@ -54,16 +57,13 @@ def analyze_news(title, full_text, client):
         logging.error(f"Erro ao interpretar resposta do LLM: {e}")
         return {"acoes": ["NA"], "sentimento": "neutro", "resumo": "Sem resumo"}
 
-app = func.FunctionApp()
-
-@app.function_name(name="streaming_sentiment_analysis")
 @app.event_hub_message_trigger(
     arg_name="events",
     event_hub_name="%EVENTHUB_NAME%",
     connection="%EVENTHUB_CONNECTION%",
     cardinality="many"
 )
-def main(events) -> None:
+def eventhub_trigger(events: List[eh.EventData]):
     logging.info(f"Iniciando processamento de {len(events)} eventos")
 
     try:

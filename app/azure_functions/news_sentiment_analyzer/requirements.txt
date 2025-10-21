@@ -1,8 +1,9 @@
-azure-functions==1.14.0
 azure-identity==1.14.0
 azure-keyvault-secrets==4.7.0
 azure-storage-blob==12.16.0
 azure-eventhub==5.11.1
+azure-functions==1.14.0
+azurefunctions-extensions-bindings-eventhub
 beautifulsoup4==4.12.2
 feedparser==6.0.10
 openai==1.10.0
@@ -20,5 +21,6 @@ mock==5.1.0
 black==24.4.0
 cryptography==3.4.8
 httpx==0.24.0
-pyarrow
+pyarrow==12.0.1
+
 
