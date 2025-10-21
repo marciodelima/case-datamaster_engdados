@@ -9,9 +9,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 from postgres_ingestor.function_app import main
 
 @patch.dict(os.environ, {
-    "POSTGRES_SECRET": "fake-secret",
-    "STORAGE_URL": "https://fake.blob.core.windows.net/",
-    "DELTA_PATH": "bronze"
+    "KEYVAULT_URI": "https://fake-vault.vault.azure.net/",
+    "STORAGE_URL": "https://fake.blob.core.windows.net/"
 })
 @patch("postgres_ingestor.function_app.psycopg2.connect")
 @patch("postgres_ingestor.function_app.BlobServiceClient")
@@ -35,8 +34,6 @@ def test_postgres_ingestor_success(
     # Simula conexão PostgreSQL
     mock_conn = MagicMock()
     mock_connect.return_value = mock_conn
-    mock_cursor = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
 
     # Simula leitura de tabelas
     sample_df = pd.DataFrame({"id": [1], "nome": ["teste"]})
@@ -48,8 +45,9 @@ def test_postgres_ingestor_success(
     mock_container.get_blob_client.return_value = mock_blob_client
     mock_blob_service.return_value.get_container_client.return_value = mock_container
 
-    # Executa a função
-    main(None)
+    # Executa a função com um mock de TimerRequest
+    mock_timer = MagicMock()
+    main(mock_timer)
 
     # Verifica se cada tabela foi lida e exportada
     assert mock_read_sql.call_count == 4
