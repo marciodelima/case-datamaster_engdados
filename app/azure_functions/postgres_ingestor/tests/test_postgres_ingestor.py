@@ -1,3 +1,5 @@
+import os
+import sys
 import pytest
 import pandas as pd
 from unittest.mock import patch, MagicMock
