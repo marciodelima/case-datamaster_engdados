@@ -1,12 +1,15 @@
 import pytest
 import pandas as pd
 from unittest.mock import patch, MagicMock
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
 from postgres_ingestor import main
 
-@patch("postgres_ingestor.psycopg2.connect")
-@patch("postgres_ingestor.BlobServiceClient")
-@patch("postgres_ingestor.DefaultAzureCredential")
-@patch("postgres_ingestor.get_secret_client")
+@patch("postgres_ingestor.function_app.psycopg2.connect")
+@patch("postgres_ingestor.function_app.BlobServiceClient")
+@patch("postgres_ingestor.function_app.DefaultAzureCredential")
+@patch("postgres_ingestor.function_app.get_secret_client")
 def test_postgres_ingestor_success(
     mock_get_secret_client,
     mock_default_cred,
