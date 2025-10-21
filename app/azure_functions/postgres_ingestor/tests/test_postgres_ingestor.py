@@ -31,7 +31,7 @@ def test_postgres_ingestor_success(
 
     # Simula leitura de tabelas
     sample_df = pd.DataFrame({"id": [1], "nome": ["teste"]})
-    with patch("postgres_ingestor.pd.read_sql", return_value=sample_df) as mock_read_sql:
+    with patch("postgres_ingestor.function_app.pd.read_sql", return_value=sample_df) as mock_read_sql:
         # Simula Blob Storage
         mock_blob_client = MagicMock()
         mock_container = MagicMock()
