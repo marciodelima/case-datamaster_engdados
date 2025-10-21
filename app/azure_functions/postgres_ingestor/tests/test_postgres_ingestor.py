@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from postgres_ingestor import main
+from postgres_ingestor.function_app import main
 
 @patch("postgres_ingestor.function_app.psycopg2.connect")
 @patch("postgres_ingestor.function_app.BlobServiceClient")
