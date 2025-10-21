@@ -13,12 +13,12 @@ jobs:
 #        finance_csv_ingestor
 #        news_producer
 #        news_sentiment_analyzer
+#        postgres_ingestor
 
 
     env:
       PYTHON_VERSION: '3.10'
       FUNCTION_LIST: |
-        postgres_ingestor
         ri_collector
         ri_resumer
 

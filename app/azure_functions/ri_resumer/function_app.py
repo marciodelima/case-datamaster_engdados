@@ -71,11 +71,11 @@ app = func.FunctionApp()
 @app.function_name(name="ri_resumer")
 @app.schedule(
     schedule="0 30 21 * * 1-5",  # Executa às 21:30 de segunda a sexta
-    arg_name="mytimer",
-    run_on_startup=False,
+    arg_name="mytimerresumer",
+    run_on_startup=True,
     use_monitor=True
 )
-def main(mytimer: func.TimerRequest) -> None:
+def main(mytimerresumer: func.TimerRequest) -> None:
     logging.info("Iniciando execução da função ri_resumer")
 
     try:

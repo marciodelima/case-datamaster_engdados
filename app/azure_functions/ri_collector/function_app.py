@@ -70,8 +70,8 @@ def main(mytimerricollector: func.TimerRequest) -> None:
 
     for empresa, url in rows:
         try:
-            r = requests.get(url, timeout=10, verify=False)
-            if r.status_code == 200 and r.headers.get("Content-Type", "").lower().startswith("application/pdf"):
+            r = requests.get(url, verify=False)
+            if r.status_code == 200:
                 path = f"raw/ri/{empresa}/{empresa}-ri.pdf"
                 container.get_blob_client(path).upload_blob(r.content, overwrite=True)
                 logging.info(f"PDF salvo: {path}")
