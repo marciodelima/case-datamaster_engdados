@@ -1,7 +1,7 @@
 import os
 import sys
-from unittest.mock import patch, MagicMock
 import pandas as pd
+from unittest.mock import patch, MagicMock
 
 # Garante que o módulo postgres_ingestor pode ser importado corretamente
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
@@ -12,15 +12,17 @@ from postgres_ingestor.function_app import main, get_postgres_connection_string
     "KEYVAULT_URI": "https://fake-vault.vault.azure.net/",
     "STORAGE_URL": "https://fake.blob.core.windows.net/"
 })
+@patch("postgres_ingestor.function_app.pd.read_sql")
+@patch("postgres_ingestor.function_app.get_secret_client")
 @patch("postgres_ingestor.function_app.psycopg2.connect")
 @patch("postgres_ingestor.function_app.BlobServiceClient")
 @patch("postgres_ingestor.function_app.DefaultAzureCredential")
-@patch("postgres_ingestor.function_app.get_secret_client")
 def test_postgres_ingestor_flow(
-    mock_get_secret_client,
     mock_credential,
     mock_blob_service,
-    mock_connect
+    mock_connect,
+    mock_get_secret_client,
+    mock_read_sql
 ):
     # Simula retorno do SecretClient
     mock_secret_client = MagicMock()
@@ -33,6 +35,10 @@ def test_postgres_ingestor_flow(
     mock_conn = MagicMock()
     mock_connect.return_value = mock_conn
 
+    # Simula leitura de tabelas
+    sample_df = pd.DataFrame({"id": [1], "nome": ["teste"]})
+    mock_read_sql.return_value = sample_df
+
     # Simula Blob Storage
     mock_blob_client = MagicMock()
     mock_container = MagicMock()
@@ -43,18 +49,18 @@ def test_postgres_ingestor_flow(
     mock_timer = MagicMock()
     main(mock_timer)
 
-    # Verifica se pelo menos uma chamada foi feita ao upload_blob
-    assert mock_blob_client.upload_blob.call_count >= 1
+    # Verifica se o loop de tabelas foi executado e houve tentativa de upload
+    assert mock_read_sql.call_count == 4
+    assert mock_blob_client.upload_blob.call_count == 4
+    for call in mock_read_sql.call_args_list:
+        assert "SELECT * FROM" in call.args[0]
 
 def test_get_postgres_connection_string_formatting():
-    # Simula SecretClient e valor bruto
     mock_secret_client = MagicMock()
     mock_secret_client.get_secret.return_value.value = (
         "Host=host;Port=5432;Database=db;User Id=user;Password=pass;Ssl Mode=Require"
     )
     conn_str = get_postgres_connection_string(mock_secret_client)
-
-    # Verifica se os campos foram convertidos corretamente
     assert "host=" in conn_str
     assert "port=" in conn_str
     assert "dbname=" in conn_str
