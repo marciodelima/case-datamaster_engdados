@@ -97,9 +97,15 @@ jobs:
             pip install --target app/azure_functions/$FUNC/.python_packages/lib/site-packages \
               --prefer-binary -r app/azure_functions/$FUNC/requirements.txt
             
-            echo "Publicando com --no-build"
+            echo "Publicando com --no-build (com até 3 tentativas)"
             cd app/azure_functions/$FUNC
-            func azure functionapp publish $NORMALIZED_NAME --python --no-build
+            
+            for i in 1 2 3; do
+              echo "Tentativa $i de deploy para $NORMALIZED_NAME..."
+              func azure functionapp publish $NORMALIZED_NAME --python --no-build && break
+              echo "Deploy falhou na tentativa $i. Aguardando 15 segundos..."
+              sleep 15
+            done
             cd -
 
             echo "Iniciando a Function App..."

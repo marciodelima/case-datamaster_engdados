@@ -72,3 +72,4 @@ def main(mytimerpostgre: func.TimerRequest) -> None:
 
     logging.info("Final da execução da função postgres_ingestor")
 
+
