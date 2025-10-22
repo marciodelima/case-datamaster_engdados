@@ -79,16 +79,16 @@ INSERT INTO clientes (cpf, nome, renda, email, data_nascimento, perfil_risco) VA
 
 -- Dados de Ações
 INSERT INTO acoes (ticker, empresa, setor, link_relatorio) VALUES
-('TAEE11', 'Taesa', 'Energia', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/TAESA-2T25.pdf'),
-('BBAS3', 'Banco do Brasil', 'Financeiro', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/BBAS3-2T25.pdf'),
-('ITSA4', 'Itaúsa', 'Financeiro', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/ITSA4-2T25.pdf'),
-('EGIE3', 'Engie Brasil', 'Energia', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/EGIE3-2T25.pdf'),
-('CPLE6', 'Copel', 'Energia', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/CPLE6-2T25.pdf'),
-('PETR4', 'Petrobras', 'Petróleo', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/PETR4-2T25.pdf'),
-('VALE3', 'Vale', 'Mineração', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/VALE3-2T25.pdf'),
-('BBSE3', 'BB Seguridade', 'Seguros', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/BBSE3-2T25.pdf'),
-('ALUP11', 'Alupar', 'Energia', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/ALUP11-2T25.pdf'),
-('GRND3', 'Grendene', 'Consumo', 'https://github.com/marciodelima/case-datamaster_engdados/blob/main/app/data/GRND3-2T25.pdf');
+('TAEE11', 'Taesa', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/TAESA-2T25.pdf'),
+('BBAS3', 'Banco do Brasil', 'Financeiro', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/BBAS3-2T25.pdf'),
+('ITSA4', 'Itaúsa', 'Financeiro', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/ITSA4-2T25.pdf'),
+('EGIE3', 'Engie Brasil', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/EGIE3-2T25.pdf'),
+('CPLE6', 'Copel', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/CPLE6-2T25.pdf'),
+('PETR4', 'Petrobras', 'Petróleo', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/PETR4-2T25.pdf'),
+('VALE3', 'Vale', 'Mineração', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/VALE3-2T25.pdf'),
+('BBSE3', 'BB Seguridade', 'Seguros', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/BBSE3-2T25.pdf'),
+('ALUP11', 'Alupar', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/ALUP11-2T25.pdf'),
+('GRND3', 'Grendene', 'Consumo', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/blob/main/app/data/GRND3-2T25.pdf');
 
 -- Dados de Notícias
 INSERT INTO noticias (titulo, conteudo, data_publicacao, hora_publicacao) VALUES
