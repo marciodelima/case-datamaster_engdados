@@ -70,13 +70,17 @@ def main(mytimerricollector: func.TimerRequest) -> None:
 
     for empresa, url in rows:
         try:
-            r = requests.get(url, verify=False)
-            if r.status_code == 200:
+            r = requests.get(url, stream=True, verify=False)
+            if r.status_code == 200 and 'application/pdf' in r.headers.get('Content-Type', ''):
+                pdf_bytes = r.content
+                if not pdf_bytes or len(pdf_bytes) < 100:
+                    raise ValueError("PDF parece estar vazio ou corrompido.")
+
                 path = f"raw/ri/{empresa}/{empresa}-ri.pdf"
-                container.get_blob_client(path).upload_blob(r.content, overwrite=True)
-                logging.info(f"PDF salvo: {path}")
+                container.get_blob_client(path).upload_blob(pdf_bytes, overwrite=True)
+                logging.info(f"PDF salvo com sucesso: {path}")
             else:
-                logging.warning(f"Falha ao baixar PDF de {empresa}: {url}")
+                logging.warning(f"Resposta inválida ou não é um PDF: status={r.status_code}, content-type={r.headers.get('Content-Type')}")
         except Exception as e:
             logging.error(f"Erro ao processar {empresa}: {e}")
 
