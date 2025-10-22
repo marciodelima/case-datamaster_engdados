@@ -77,6 +77,9 @@ resource "null_resource" "init_sql" {
         --set ON_ERROR_STOP=off
     EOT
   }
+  triggers = {
+    always_run = timestamp()
+  }
 }
 
 data "azurerm_key_vault" "main" {
