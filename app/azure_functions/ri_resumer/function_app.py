@@ -4,7 +4,7 @@ import fitz
 import json
 from datetime import datetime
 from io import BytesIO
-
+import time
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -14,6 +14,9 @@ from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobServiceClient
 from openai import AzureOpenAI
 import azure.functions as func
+import requests
+
+requests.Session.verify = False
 
 def extract_text(pdf_bytes):
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
@@ -30,10 +33,10 @@ def get_openai_client():
     return AzureOpenAI(
         api_key=api_key,
         azure_endpoint=endpoint,
-        api_version="2023-07-01-preview"
+        api_version="2024-12-01-preview"
     )
 
-def analyze_ri_report(empresa, texto, client):
+def analyze_ri_report(empresa, texto, client, max_attempts=5):
     prompt = f"""
     Você é um analista financeiro especializado em ações brasileiras com foco em dividendos. Avalie o relatório de RI da empresa {empresa} com base nos seguintes critérios:
 
@@ -50,21 +53,32 @@ def analyze_ri_report(empresa, texto, client):
 
     Responda em português no formato JSON com os campos: "empresa", "trimestre", "avaliacoes", "nota_final"
     """
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3
-        )
-        return json.loads(response.choices[0].message.content)
-    except Exception as e:
-        logging.error(f"Erro ao interpretar resposta do LLM: {e}")
-        return {
-            "empresa": empresa,
-            "trimestre": "desconhecido",
-            "avaliacoes": "regular",
-            "nota_final": 0
-        }
+
+    for attempt in range(1, max_attempts + 1):
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=4096,
+                top_p=1.0
+            )
+            return json.loads(response.choices[0].message.content)
+        except Exception as e:
+            if "429" in str(e) or "Too Many Requests" in str(e):
+                wait = min(2 ** attempt, 30)
+                logging.warning(f"Tentativa {attempt}: limite de requisições atingido. Aguardando {wait}s...")
+                time.sleep(wait)
+            else:
+                logging.error(f"Erro ao interpretar resposta do LLM: {e}")
+                break
+
+    return {
+        "empresa": empresa,
+        "trimestre": "desconhecido",
+        "avaliacoes": "regular",
+        "nota_final": 0
+    }
 
 app = func.FunctionApp()
 
