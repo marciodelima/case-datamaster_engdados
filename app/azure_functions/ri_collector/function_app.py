@@ -71,7 +71,7 @@ def main(mytimerricollector: func.TimerRequest) -> None:
     for empresa, url in rows:
         try:
             r = requests.get(url, stream=True, verify=False)
-            if r.status_code == 200 and 'application/pdf' in r.headers.get('Content-Type', ''):
+            if r.status_code == 200 and 'application/octet-stream' in r.headers.get('Content-Type', ''):
                 pdf_bytes = r.content
                 if not pdf_bytes or len(pdf_bytes) < 100:
                     raise ValueError("PDF parece estar vazio ou corrompido.")
