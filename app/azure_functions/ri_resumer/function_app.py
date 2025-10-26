@@ -15,12 +15,13 @@ from azure.storage.blob import BlobServiceClient
 from openai import AzureOpenAI
 import azure.functions as func
 import requests
+import re
 
 requests.Session.verify = False
 
 def extract_text(pdf_bytes):
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    return "\n".join([page.get_text() for page in doc])
+    return " ".join([page.get_text() for page in doc])
 
 def get_openai_client():
     credential = DefaultAzureCredential()
@@ -46,12 +47,12 @@ def analyze_ri_report(empresa, texto, client, max_attempts=5):
     4. Atividade e projeções: novos projetos, estratégias e previsões futuras.
     5. Governança e riscos: estrutura de governança e principais riscos.
 
-    Para cada item, classifique como "bom", "regular" ou "ruim" e justifique brevemente. Ao final, atribua uma nota de desempenho geral de 0 a 10.
+    Para cada item, classifique como "bom", "regular" ou "ruim". Ao final, atribua uma nota de desempenho geral de 0 a 10 para a empresa como um todo e uma classificação geral.  
 
     Texto do relatório:
     {texto}
 
-    Responda em português no formato JSON com os campos: "empresa", "trimestre", "avaliacoes", "nota_final"
+    Responda em português no formato JSON com os campos: "empresa", "trimestre", "avaliacoes", "classificacao_geral", "nota_final"
     """
 
     for attempt in range(1, max_attempts + 1):
@@ -60,10 +61,15 @@ def analyze_ri_report(empresa, texto, client, max_attempts=5):
                 model="gpt-4o-mini",
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
-                max_tokens=4096,
+                max_tokens=1024,
                 top_p=1.0
             )
-            return json.loads(response.choices[0].message.content)
+            raw_content = response.choices[0].message.content.strip()
+            if raw_content.startswith("```json"):
+                raw_content = re.sub(r"^```json\s*", "", raw_content)
+                raw_content = re.sub(r"\s*```$", "", raw_content)            
+            
+            return json.loads(raw_content)
         except Exception as e:
             if "429" in str(e) or "Too Many Requests" in str(e):
                 wait = min(2 ** attempt, 30)
@@ -77,6 +83,7 @@ def analyze_ri_report(empresa, texto, client, max_attempts=5):
         "empresa": empresa,
         "trimestre": "desconhecido",
         "avaliacoes": "regular",
+        "classificacao_geral": "regular",
         "nota_final": 0
     }
 
@@ -107,11 +114,11 @@ def main(mytimerresumer: func.TimerRequest) -> None:
             empresa = blob.name.split("/")[2]
             pdf_bytes = blob_client.download_blob().readall()
             texto = extract_text(pdf_bytes)
-            resultado = analyze_ri_report(empresa, texto, client)
+            resultado = analyze_ri_report(empresa, texto[:3000], client)
 
             trimestre = resultado.get("trimestre", "desconhecido")
             parquet_data = pd.DataFrame([{
-                "empresa": resultado["empresa"],
+                "empresa": empresa,
                 "trimestre": trimestre,
                 "avaliacoes": json.dumps(resultado.get("avaliacoes", {})),
                 "nota_final": resultado.get("nota_final", 0),
