@@ -84,7 +84,7 @@ def main(mytimerricollector: func.TimerRequest) -> None:
                 path = f"raw/ri/{empresa}/{empresa}-ri.pdf"
                 container.get_blob_client(path).upload_blob(pdf_bytes, overwrite=True)
                 logging.info(f"PDF salvo com sucesso: {path}")
-                time.sleep(5)
+                time.sleep(35)
             else:
                 logging.warning(f"Resposta inválida ou não é um PDF: status={r.status_code}, content-type={r.headers.get('Content-Type')}")
         except Exception as e:

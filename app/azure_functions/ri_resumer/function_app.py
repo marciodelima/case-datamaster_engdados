@@ -114,7 +114,7 @@ def main(mytimerresumer: func.TimerRequest) -> None:
             empresa = blob.name.split("/")[2]
             pdf_bytes = blob_client.download_blob().readall()
             texto = extract_text(pdf_bytes)
-            resultado = analyze_ri_report(empresa, texto[:3000], client)
+            resultado = analyze_ri_report(empresa, texto[:2000], client)
 
             trimestre = resultado.get("trimestre", "desconhecido")
             parquet_data = pd.DataFrame([{
@@ -139,6 +139,7 @@ def main(mytimerresumer: func.TimerRequest) -> None:
             container.get_blob_client(deleted_path).upload_blob(pdf_bytes, overwrite=True)
             blob_client.delete_blob()
             logging.info(f"PDF movido para: {deleted_path}")
+            time.sleep(10)
 
     except Exception as e:
         logging.error(f"Erro na função ri_resumer: {e}")
