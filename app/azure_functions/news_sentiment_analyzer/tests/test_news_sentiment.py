@@ -30,7 +30,7 @@ def test_analyze_news_fallback_on_error():
 @patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
 def test_eventhub_trigger(mock_cred, mock_blob, mock_openai):
     mock_event = MagicMock()
-    mock_event.get_body.return_value = b'{"titulo": "Petrobras", "conteudo": "Alta no petróleo"}'
+    mock_event.get_body.return_value = '{"titulo": "Petrobras", "conteudo": "Alta no petróleo"}'.encode("utf-8")
     mock_openai.return_value.chat.completions.create.return_value.choices = [
         MagicMock(message=MagicMock(content='{"acoes": ["PETR4"], "sentimento": "positivo", "resumo": "Alta do petróleo"}'))
     ]
@@ -40,3 +40,30 @@ def test_eventhub_trigger(mock_cred, mock_blob, mock_openai):
 
     eventhub_trigger([mock_event])
     assert mock_container.get_blob_client.called
+
+@patch("news_sentiment_analyzer.function_app.SecretClient")
+@patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
+def test_get_openai_client(mock_cred, mock_secret):
+    mock_secret_instance = MagicMock()
+    mock_secret_instance.get_secret.side_effect = [
+        MagicMock(value="fake-key"),
+        MagicMock(value="https://fake-endpoint")
+    ]
+    mock_secret.return_value = mock_secret_instance
+
+    client = get_openai_client()
+    assert client.api_key == "fake-key"
+    assert client.azure_endpoint == "https://fake-endpoint"
+
+@patch("news_sentiment_analyzer.function_app.get_openai_client")
+@patch("news_sentiment_analyzer.function_app.BlobServiceClient")
+@patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
+def test_eventhub_trigger_empty(mock_cred, mock_blob, mock_openai):
+    mock_event = MagicMock()
+    mock_event.get_body.return_value = b'{}'  # sem título ou conteúdo
+
+    mock_container = MagicMock()
+    mock_blob.return_value.get_container_client.return_value = mock_container
+
+    eventhub_trigger([mock_event])
+    assert not mock_container.get_blob_client.called
