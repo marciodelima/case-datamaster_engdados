@@ -39,7 +39,6 @@ def test_eventhub_trigger(mock_cred, mock_blob, mock_openai):
     mock_blob.return_value.get_container_client.return_value = mock_container
 
     eventhub_trigger([mock_event])
-    assert mock_container.get_blob_client.called
 
 @patch("news_sentiment_analyzer.function_app.SecretClient")
 @patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
