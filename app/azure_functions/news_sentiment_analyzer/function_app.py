@@ -16,6 +16,7 @@ from openai import AzureOpenAI
 from typing import List
 import azure.functions as func
 import azurefunctions.extensions.bindings.eventhub as eh
+import re
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
@@ -30,19 +31,20 @@ def get_openai_client():
     return AzureOpenAI(
         api_key=api_key,
         azure_endpoint=endpoint,
-        api_version="2023-07-01-preview"
+        api_version="2024-12-01-preview"
     )
 
 def analyze_news(title, full_text, client):
     prompt = f"""
     A seguir está uma notícia sobre o mercado financeiro brasileiro:
-    Título: {title}
-    Texto: {full_text}
+    Título: {title:1000}
+    Texto: {full_text:3000}
 
     1. Quais ações da B3 estão relacionadas a essa notícia? (Ex: PETR4, VALE3, ITUB4)
     2. Classifique o sentimento da notícia como Positivo, Neutro ou Negativo.
     3. Gere um resumo curto da notícia para ser usado como título.
     4. Caso a notícia não seja de uma ação brasileira ou caso não seja classificado a ação ou empresa, responda sentimento neutro e a acoes com o valor NA.
+    5. Caso a notícia tenha conteúdo de racismo, sexual, intolerância responda sentimento neuto e a acoes com o valor NA. 
 
     Responda em português no formato JSON com os campos e valores: "acoes", "sentimento", "resumo"
     """
@@ -50,9 +52,16 @@ def analyze_news(title, full_text, client):
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.3
+            temperature=0.3,
+            max_tokens=1024,
+            top_p=1.0
         )
-        return json.loads(response.choices[0].message.content.strip())
+        raw_content = response.choices[0].message.content.strip()
+        if raw_content.startswith("```json"):
+            raw_content = re.sub(r"^```json\s*", "", raw_content)
+            raw_content = re.sub(r"\s*```$", "", raw_content)            
+        
+        return json.loads(raw_content)
     except Exception as e:
         logging.error(f"Erro ao interpretar resposta do LLM: {e}")
         return {"acoes": ["NA"], "sentimento": "neutro", "resumo": "Sem resumo"}
