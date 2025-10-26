@@ -22,6 +22,7 @@ jobs:
       PYTHON_VERSION: '3.10'
       FUNCTION_LIST: |
         ri_collector
+        ri_resumer
         news_sentiment_analyzer
 
     steps:
