@@ -15,12 +15,14 @@ jobs:
 #        postgres_ingestor
 #        ri_collector
 #        news_sentiment_analyzer
+#        ri_resumer
 
 
     env:
       PYTHON_VERSION: '3.10'
       FUNCTION_LIST: |
-        ri_resumer
+        ri_collector
+        news_sentiment_analyzer
 
     steps:
       - name: Checkout code
