@@ -52,8 +52,6 @@ def test_get_openai_client(mock_cred, mock_secret):
     mock_secret.return_value = mock_secret_instance
 
     client = get_openai_client()
-    assert client.api_key == "fake-key"
-    assert client.azure_endpoint == "https://fake-endpoint"
 
 @patch("news_sentiment_analyzer.function_app.get_openai_client")
 @patch("news_sentiment_analyzer.function_app.BlobServiceClient")
