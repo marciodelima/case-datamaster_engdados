@@ -61,3 +61,17 @@ def test_ri_resumer_success(
     # Executa a função
     main(None)
 
+def test_extract_text_from_pdf():
+    from ri_resumer.function_app import extract_text
+    import fitz
+
+    # cria um PDF em memória
+    doc = fitz.open()
+    page = doc.new_page()
+    page.insert_text((72, 72), "Texto de teste")
+    pdf_bytes = doc.write()
+    doc.close()
+
+    texto = extract_text(pdf_bytes)
+    assert "Texto de teste" in texto
+
