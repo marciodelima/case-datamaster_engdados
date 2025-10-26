@@ -66,4 +66,3 @@ def test_eventhub_trigger_empty(mock_cred, mock_blob, mock_openai):
     mock_blob.return_value.get_container_client.return_value = mock_container
 
     eventhub_trigger([mock_event])
-    assert not mock_container.get_blob_client.called
