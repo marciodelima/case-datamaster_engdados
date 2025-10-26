@@ -68,8 +68,8 @@ def analyze_news(title, full_text, client):
 
 @app.event_hub_message_trigger(
     arg_name="events",
-    event_hub_name="%EVENTHUB_NAME%",
-    connection="%EVENTHUB_CONNECTION%",
+    event_hub_name="EVENTHUB_NAME",
+    connection="EVENTHUB_CONNECTION",
     cardinality="many"
 )
 def eventhub_trigger(events: List[eh.EventData]):
@@ -97,7 +97,7 @@ def eventhub_trigger(events: List[eh.EventData]):
                         "sentimento": resultado["sentimento"],
                         "timestamp": datetime.utcnow().isoformat()
                     })
-                time.sleep(2)
+                time.sleep(10)
             except Exception as e:
                 logging.error(f"Erro ao processar evento: {e}")
 
