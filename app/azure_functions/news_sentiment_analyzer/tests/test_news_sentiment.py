@@ -42,6 +42,7 @@ def test_eventhub_trigger(mock_cred, mock_blob, mock_openai):
 
 @patch("news_sentiment_analyzer.function_app.SecretClient")
 @patch("news_sentiment_analyzer.function_app.DefaultAzureCredential")
+@patch.dict(os.environ, {"KEYVAULT_URI": "https://fake-vault.vault.azure.net/"})
 def test_get_openai_client(mock_cred, mock_secret):
     mock_secret_instance = MagicMock()
     mock_secret_instance.get_secret.side_effect = [
