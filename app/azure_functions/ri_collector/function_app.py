@@ -75,7 +75,8 @@ def main(mytimerricollector: func.TimerRequest) -> None:
                 "User-Agent": "Mozilla/5.0",
                 "Accept": "application/pdf"
             }        
-            r = requests.get(url, stream=True, headers=headers, verify=False)
+            #r = requests.get(url, stream=True, headers=headers, verify=False)
+            r = requests.get(url, headers=headers, verify=False)
             if r.status_code == 200 and 'application/octet-stream' in r.headers.get('Content-Type', ''):
                 pdf_bytes = r.content
                 if not pdf_bytes or len(pdf_bytes) < 100:
@@ -84,11 +85,14 @@ def main(mytimerricollector: func.TimerRequest) -> None:
                 path = f"raw/ri/{empresa}/{empresa}-ri.pdf"
                 container.get_blob_client(path).upload_blob(pdf_bytes, overwrite=True)
                 logging.info(f"PDF salvo com sucesso: {path}")
-                time.sleep(35)
+                time.sleep(60)
             else:
                 logging.warning(f"Resposta inválida ou não é um PDF: status={r.status_code}, content-type={r.headers.get('Content-Type')}")
+                time.sleep(60)
+                continue
         except Exception as e:
             logging.error(f"Erro ao processar {empresa}: {e}")
+            time.sleep(60)
 
     logging.info("Final da execução da função ri_collector")
 
