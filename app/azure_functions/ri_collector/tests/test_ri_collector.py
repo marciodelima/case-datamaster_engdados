@@ -4,7 +4,11 @@ import os
 from unittest.mock import patch, MagicMock
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-from ri_collector.function_app import main
+from ri_collector.function_app import (
+    get_secret_client,
+    get_postgres_connection_string,
+    main
+)
 
 @patch.dict(os.environ, {"KEYVAULT_URI": "https://fake-vault.vault.azure.net/"})
 @patch("ri_collector.function_app.DefaultAzureCredential")
