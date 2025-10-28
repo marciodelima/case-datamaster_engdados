@@ -48,7 +48,7 @@ data "azurerm_key_vault" "kv" {
   resource_group_name = var.resource_group_name
 }
 
-data "azurerm_eventhub_authorization_rule" "eh_auth_rule" {
+data "azurerm_eventhub_namespace_authorization_rule" "eh_auth_rule" {
   name                = "RootManageSharedAccessKey"
   namespace_name      = azurerm_eventhub_namespace.streaming_ns.name
   resource_group_name = var.resource_group_name
@@ -56,7 +56,7 @@ data "azurerm_eventhub_authorization_rule" "eh_auth_rule" {
 
 resource "azurerm_key_vault_secret" "eventhub_connection_string" {
   name         = "EventHubConnectionString"
-  value        = data.azurerm_eventhub_authorization_rule.eh_auth_rule.primary_connection_string
+  value        = data.azurerm_eventhub_namespace_authorization_rule.eh_auth_rule.primary_connection_string
   key_vault_id = data.azurerm_key_vault.kv.id
 }
 
