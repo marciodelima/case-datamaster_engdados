@@ -43,3 +43,16 @@ resource "azurerm_eventhub" "streaming_hub" {
 #  }
 }
 
+data "azurerm_eventhub_authorization_rule" "eh_auth_rule" {
+  name                = "RootManageSharedAccessKey"
+  namespace_name      = azurerm_eventhub_namespace.streaming_ns.name
+  resource_group_name = var.resource_group_name
+  eventhub_name       = azurerm_eventhub.streaming_hub.name
+}
+
+resource "azurerm_key_vault_secret" "eventhub_connection_string" {
+  name         = "EventHubConnectionString"
+  value        = data.azurerm_eventhub_authorization_rule.eh_auth_rule.primary_connection_string
+  key_vault_id = azurerm_key_vault.main.id
+}
+
