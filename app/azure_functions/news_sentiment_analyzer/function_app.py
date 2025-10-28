@@ -66,6 +66,7 @@ def analyze_news(title, full_text, client):
         logging.error(f"Erro ao interpretar resposta do LLM: {e}")
         return {"acoes": ["NA"], "sentimento": "neutro", "resumo": "Sem resumo"}
 
+@app.function_name(name="eventhub_trigger")
 @app.event_hub_message_trigger(
     arg_name="events",
     event_hub_name="noticias_investimentos",

@@ -3,7 +3,6 @@ azure-keyvault-secrets==4.7.0
 azure-storage-blob==12.16.0
 azure-eventhub==5.13.0
 azure-functions==1.14.0
-azurefunctions-extensions-bindings-eventhub
 beautifulsoup4==4.12.2
 feedparser==6.0.10
 openai==1.10.0
@@ -12,7 +11,6 @@ psycopg2-binary==2.9.6
 numpy==1.23.5
 pandas==1.5.3
 fastavro==1.7.4
-brapi
 python-dotenv==1.0.0
 pytest==8.2.1
 pytest-cov==4.1.0
