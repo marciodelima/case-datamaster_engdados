@@ -58,6 +58,6 @@ data "azurerm_eventhub_authorization_rule" "eh_auth_rule" {
 resource "azurerm_key_vault_secret" "eventhub_connection_string" {
   name         = "EventHubConnectionString"
   value        = data.azurerm_eventhub_authorization_rule.eh_auth_rule.primary_connection_string
-  key_vault_id = azurerm_key_vault.kv.id
+  key_vault_id = data.azurerm_key_vault.kv.id
 }
 
