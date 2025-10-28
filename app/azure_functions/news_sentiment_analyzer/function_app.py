@@ -69,7 +69,7 @@ def analyze_news(title, full_text, client):
 @app.event_hub_message_trigger(
     arg_name="events",
     event_hub_name="noticias_investimentos",
-    connection="%EVENTHUB_CONNECTION%",
+    connection="EVENTHUB_CONNECTION",
     cardinality="many"
 )
 def eventhub_trigger(events: List[eh.EventData]):

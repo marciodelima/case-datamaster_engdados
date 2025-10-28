@@ -75,7 +75,6 @@ def main(mytimerricollector: func.TimerRequest) -> None:
                 "User-Agent": "Mozilla/5.0",
                 "Accept": "application/pdf"
             }        
-            #r = requests.get(url, stream=True, headers=headers, verify=False)
             r = requests.get(url, headers=headers, verify=False)
             if r.status_code == 200 and 'application/octet-stream' in r.headers.get('Content-Type', ''):
                 pdf_bytes = r.content
