@@ -73,7 +73,7 @@ def analyze_news(title, full_text, client):
     connection="EVENTHUB_CONNECTION",
     cardinality="many"
 )
-def eventhub_trigger(events: List[eh.EventData]):
+def eventhub_trigger(events: List[func.EventHubEvent]):
     logging.info(f"Iniciando processamento de {len(events)} eventos")
 
     try:
