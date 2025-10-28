@@ -87,7 +87,7 @@ INSERT INTO acoes (ticker, empresa, setor, link_relatorio) VALUES
 ('PETR4', 'Petrobras', 'Petróleo', 'https://drive.google.com/uc?export=download&id=1IBhTG-1LpATOV5kP3_inDPrTJuKEeLOi'),
 ('VALE3', 'Vale', 'Mineração', 'https://drive.google.com/uc?export=download&id=1SY2P-N8U6e3pBB32RIk6K5bGgfymDxgI'),
 ('BBSE3', 'BB Seguridade', 'Seguros', 'https://drive.google.com/uc?export=download&id=1WqYCRdKUSCg9v8QKFzpi2xiJpU1qBYIG'),
-('ALUP11', 'Alupar', 'Energia', 'https://drive.google.com/uc?export=download&id=1nXcUt--MCOWv7iKBwFeOTGnYGYs6oE0k'),
+('ALUP11', 'Alupar', 'Energia', 'https://drive.google.com/uc?export=download&id=1I9hEusqDjzv4S4wMLh2LUP4RgM84Thez'),
 ('GRND3', 'Grendene', 'Consumo', 'https://drive.google.com/uc?export=download&id=1f6PyL1qmfXIrkTN-b0W8Jd-l950JO6v1');
 
 -- Dados de Notícias
