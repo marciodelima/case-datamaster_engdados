@@ -79,16 +79,16 @@ INSERT INTO clientes (cpf, nome, renda, email, data_nascimento, perfil_risco) VA
 
 -- Dados de Ações
 INSERT INTO acoes (ticker, empresa, setor, link_relatorio) VALUES
-('TAEE11', 'Taesa', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/TAESA-2T25.pdf'),
-('BBAS3', 'Banco do Brasil', 'Financeiro', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/BBAS3-2T25.pdf'),
-('ITSA4', 'Itaúsa', 'Financeiro', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/ITSA4-2T25.pdf'),
-('EGIE3', 'Engie Brasil', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/EGIE3-2T25.pdf'),
-('CPLE6', 'Copel', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/CPLE6-2T25.pdf'),
-('PETR4', 'Petrobras', 'Petróleo', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/PETR4-2T25.pdf'),
-('VALE3', 'Vale', 'Mineração', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/VALE3-2T25.pdf'),
-('BBSE3', 'BB Seguridade', 'Seguros', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/BBSE3-2T25.pdf'),
-('ALUP11', 'Alupar', 'Energia', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/ALUP11-2T25.pdf'),
-('GRND3', 'Grendene', 'Consumo', 'https://raw.githubusercontent.com/marciodelima/case-datamaster_engdados/main/app/data/GRND3-2T25.pdf');
+('TAEE11', 'Taesa', 'Energia', 'https://drive.google.com/uc?export=download&id=1mfodd2GFtx0x3a3GaqqKN5Pw9v78Kj-_'),
+('BBAS3', 'Banco do Brasil', 'Financeiro', 'https://drive.google.com/uc?export=download&id=1Ez2zT0gMQTzqr3TC3gC2nkSC9oatmRSG'),
+('ITSA4', 'Itaúsa', 'Financeiro', 'https://drive.google.com/uc?export=download&id=1LaDuGNadxfBZyq3CcGwbmle-LMzfH9Ij'),
+('EGIE3', 'Engie Brasil', 'Energia', 'https://drive.google.com/uc?export=download&id=1wnzAtYNJM289tRjMXY2BJOYHq0yxuEfm'),
+('CPLE6', 'Copel', 'Energia', 'https://drive.google.com/uc?export=download&id=1BWjm0HeoJNVGCPXg-_L_zKupXWl7Z-bN'),
+('PETR4', 'Petrobras', 'Petróleo', 'https://drive.google.com/uc?export=download&id=1IBhTG-1LpATOV5kP3_inDPrTJuKEeLOi'),
+('VALE3', 'Vale', 'Mineração', 'https://drive.google.com/uc?export=download&id=1SY2P-N8U6e3pBB32RIk6K5bGgfymDxgI'),
+('BBSE3', 'BB Seguridade', 'Seguros', 'https://drive.google.com/uc?export=download&id=1WqYCRdKUSCg9v8QKFzpi2xiJpU1qBYIG'),
+('ALUP11', 'Alupar', 'Energia', 'https://drive.google.com/uc?export=download&id=1nXcUt--MCOWv7iKBwFeOTGnYGYs6oE0k'),
+('GRND3', 'Grendene', 'Consumo', 'https://drive.google.com/uc?export=download&id=1f6PyL1qmfXIrkTN-b0W8Jd-l950JO6v1');
 
 -- Dados de Notícias
 INSERT INTO noticias (titulo, conteudo, data_publicacao, hora_publicacao) VALUES
