@@ -15,7 +15,6 @@ from azure.storage.blob import BlobServiceClient
 from openai import AzureOpenAI
 from typing import List
 import azure.functions as func
-import azurefunctions.extensions.bindings.eventhub as eh
 import re
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
