@@ -36,8 +36,8 @@ def get_openai_client():
 def analyze_news(title, full_text, client):
     prompt = f"""
     A seguir está uma notícia sobre o mercado financeiro brasileiro:
-    Título: {title:1000}
-    Texto: {full_text:3000}
+    Título: {title:200}
+    Texto: {full_text:1000}
 
     1. Quais ações da B3 estão relacionadas a essa notícia? (Ex: PETR4, VALE3, ITUB4)
     2. Classifique o sentimento da notícia como Positivo, Neutro ou Negativo.

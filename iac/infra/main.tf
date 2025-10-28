@@ -34,6 +34,7 @@ module "event_hubs" {
   location            = var.location
   resource_group_name = var.resource_group_name
   nome_storage        = module.storage.storage_name
+  keyvault_name       = var.keyvault_name
   depends_on          = [module.storage]
 }
 
