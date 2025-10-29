@@ -12,8 +12,10 @@ import pyarrow.parquet as pq
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobServiceClient
+from azure.core.exceptions import ResourceNotFoundError
 from openai import AzureOpenAI
 from typing import List
+import uuid
 import azure.functions as func
 import re
 
@@ -81,10 +83,15 @@ def eventhub_trigger(events: List[func.EventHubEvent]):
         client = get_openai_client()
 
         resultados = []
-        for event in events[:10]:
+        for event in events:
             try:
                 body = event.get_body().decode("utf-8").replace("\n", "\\n").replace("\t", "\\t")
                 record = json.loads(body, strict=False)
+                
+                json_blob_path = f"raw/news/originais/{str(uuid.uuid4())}.json"
+                container.get_blob_client(json_blob_path).upload_blob(body.encode("utf-8"), overwrite=True)
+                logging.info(f"JSON bruto salvo em: {json_blob_path}")
+
                 full_text = f"{record.get('conteudo', '')}"
                 resultado = analyze_news("NA", full_text, client)
 
@@ -103,18 +110,26 @@ def eventhub_trigger(events: List[func.EventHubEvent]):
         if resultados:
             df = pd.DataFrame(resultados)
             df = df[df["acao"] != "NA"]
-            bronze_path = "bronze/news"
+            delta_path = "raw/news"
 
             for acao in df["acao"].unique():
-                df_acao = df[df["acao"] == acao]
+                blob_path = f"{delta_path}/{acao}/sentimento_{acao}.parquet"
+                blob_client = container.get_blob_client(blob_path)
+                try:
+                    existing_data = blob_client.download_blob().readall()
+                    existing_table = pq.read_table(BytesIO(existing_data))
+                    existing_df = existing_table.to_pandas()
+                    df_acao = pd.concat([existing_df, df_acao], ignore_index=True)
+                except ResourceNotFoundError:
+                    logging.info(f"Arquivo {blob_path} ainda não existe. Criando novo.")
+
                 table = pa.Table.from_pandas(df_acao)
                 buffer = BytesIO()
                 pq.write_table(table, buffer)
                 buffer.seek(0)
 
-                blob_path = f"{bronze_path}/{acao}/sentimento_{acao}.parquet"
                 container.get_blob_client(blob_path).upload_blob(buffer.read(), overwrite=True)
-                logging.info(f"Arquivo salvo: {blob_path}")
+                logging.info(f"Arquivo atualizado: {blob_path}")
 
             logging.info(f"{len(resultados)} análises de sentimento gravadas.")
         else:
