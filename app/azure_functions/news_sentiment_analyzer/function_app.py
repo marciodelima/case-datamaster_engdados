@@ -44,7 +44,7 @@ def analyze_news(title, full_text, client):
     4. Caso a notícia não seja de uma ação brasileira ou caso não seja classificado a ação ou empresa, responda sentimento neutro e a acoes com o valor NA.
     5. Caso a notícia tenha conteúdo de racismo, sexual, intolerância responda sentimento neutro e a acoes com o valor NA. 
 
-    Responda em português no formato JSON com os campos e valores: "acoes", "sentimento", "resumo"
+    Responda em português no formato JSON com os campos e valores: "acoes[]", "sentimento", "resumo"
     """
     try:
         response = client.chat.completions.create(
