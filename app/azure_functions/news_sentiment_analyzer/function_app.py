@@ -43,7 +43,7 @@ def analyze_news(title, full_text, client):
     2. Classifique o sentimento da notícia como Positivo, Neutro ou Negativo.
     3. Gere um resumo curto da notícia para ser usado como título.
     4. Caso a notícia não seja de uma ação brasileira ou caso não seja classificado a ação ou empresa, responda sentimento neutro e a acoes com o valor NA.
-    5. Caso a notícia tenha conteúdo de racismo, sexual, intolerância responda sentimento neuto e a acoes com o valor NA. 
+    5. Caso a notícia tenha conteúdo de racismo, sexual, intolerância responda sentimento neutro e a acoes com o valor NA. 
 
     Responda em português no formato JSON com os campos e valores: "acoes", "sentimento", "resumo"
     """
@@ -103,7 +103,8 @@ def eventhub_trigger(events: List[func.EventHubEvent]):
 
         if resultados:
             df = pd.DataFrame(resultados)
-            bronze_path = os.environ["DELTA_PATH"]
+            df = df[df["acao"] != "NA"]
+            bronze_path = "bronze/news"
 
             for acao in df["acao"].unique():
                 df_acao = df[df["acao"] == acao]
