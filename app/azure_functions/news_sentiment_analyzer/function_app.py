@@ -36,8 +36,7 @@ def get_openai_client():
 def analyze_news(title, full_text, client):
     prompt = f"""
     A seguir está uma notícia sobre o mercado financeiro brasileiro:
-    Título: {title:200}
-    Texto: {full_text:1000}
+    Texto: {full_text[:1024]}
 
     1. Quais ações da B3 estão relacionadas a essa notícia? (Ex: PETR4, VALE3, ITUB4)
     2. Classifique o sentimento da notícia como Positivo, Neutro ou Negativo.
@@ -82,13 +81,12 @@ def eventhub_trigger(events: List[func.EventHubEvent]):
         client = get_openai_client()
 
         resultados = []
-        for event in events[:10]:  # micro-batch de até 10 mensagens
+        for event in events[:10]:
             try:
-                body = event.get_body().decode("utf-8")
-                record = json.loads(body)
-                title = record.get("titulo", "")
-                full_text = f"{title} {record.get('conteudo', '')}"
-                resultado = analyze_news(title, full_text, client)
+                body = event.get_body().decode("utf-8").replace("\n", "\\n").replace("\t", "\\t")
+                record = json.loads(body, strict=False)
+                full_text = f"{record.get('conteudo', '')}"
+                resultado = analyze_news("NA", full_text, client)
 
                 for acao in resultado["acoes"]:
                     resultados.append({
@@ -97,6 +95,7 @@ def eventhub_trigger(events: List[func.EventHubEvent]):
                         "sentimento": resultado["sentimento"],
                         "timestamp": datetime.utcnow().isoformat()
                     })
+                    break
                 time.sleep(10)
             except Exception as e:
                 logging.error(f"Erro ao processar evento: {e}")
