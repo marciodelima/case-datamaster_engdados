@@ -52,7 +52,7 @@ def analyze_ri_report(empresa, texto, client, max_attempts=5):
     Texto do relatório:
     {texto}
 
-    Responda em português no formato JSON com os campos: "empresa", "trimestre", "avaliacoes", "classificacao_geral", "nota_final"
+    Responda em português no formato JSON com os campos: "empresa", "trimestre", "avaliacoes", "classificacao_geral", "nota_final". O valor trimestre deve ter o formato como exemplo: 1T25, 2T25, 3T25 ou 4T25, se o valor nao for esses listados, informar 2T25.
     """
 
     for attempt in range(1, max_attempts + 1):
@@ -130,7 +130,7 @@ def main(mytimerresumer: func.TimerRequest) -> None:
             pq.write_table(table, buffer)
             buffer.seek(0)
 
-            parquet_path = f"bronze/ri/resultados/{empresa}/ri-{empresa}-{trimestre}.parquet"
+            parquet_path = f"raw/ri-resultados/{empresa}/ri-{empresa}-{trimestre}.parquet"
             container.get_blob_client(parquet_path).upload_blob(buffer.read(), overwrite=True)
             logging.info(f"Resultado salvo: {parquet_path}")
 
