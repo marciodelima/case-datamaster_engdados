@@ -221,7 +221,7 @@ resource "azurerm_portal_dashboard" "finance_dashboard" {
   location            = var.location
   tags                = { dash = "geral" }
 
-  properties = local.finance_dashboard_json
+  dashboard_properties = local.finance_dashboard_json
 }
 
 resource "azurerm_portal_dashboard" "jobs_dashboard" {
@@ -230,6 +230,6 @@ resource "azurerm_portal_dashboard" "jobs_dashboard" {
   location            = var.location
   tags                = { dash = "jobs databricks" }
 
-  properties = local.jobs_dashboard_json
+  dashboard_properties = local.jobs_dashboard_json
 }
 
