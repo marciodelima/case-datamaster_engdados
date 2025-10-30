@@ -30,11 +30,15 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = var.databricks_id }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Line"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.Databricks/workspaces", MetricName = "ClusterCount", Aggregation = "Average" }
+                content = {
+                  version   = "1.0"
+                  chartType = "line"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.Databricks/workspaces"
+                      metricName      = "ClusterCount"
+                      aggregation     = "Average"
+                    }
                   ]
                 }
               }
@@ -46,12 +50,20 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = var.databricks_id }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Column"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.Databricks/workspaces", MetricName = "JobSuccessCount", Aggregation = "Total" },
-                    { MetricNamespace = "Microsoft.Databricks/workspaces", MetricName = "JobFailureCount", Aggregation = "Total" }
+                content = {
+                  version   = "1.0"
+                  chartType = "column"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.Databricks/workspaces"
+                      metricName      = "JobSuccessCount"
+                      aggregation     = "Total"
+                    },
+                    {
+                      metricNamespace = "Microsoft.Databricks/workspaces"
+                      metricName      = "JobFailureCount"
+                      aggregation     = "Total"
+                    }
                   ]
                 }
               }
@@ -63,12 +75,20 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = var.storage_id }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Area"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.Storage/storageAccounts", MetricName = "UsedCapacity", Aggregation = "Average" },
-                    { MetricNamespace = "Microsoft.Storage/storageAccounts", MetricName = "Transactions", Aggregation = "Total" }
+                content = {
+                  version   = "1.0"
+                  chartType = "area"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.Storage/storageAccounts"
+                      metricName      = "UsedCapacity"
+                      aggregation     = "Average"
+                    },
+                    {
+                      metricNamespace = "Microsoft.Storage/storageAccounts"
+                      metricName      = "Transactions"
+                      aggregation     = "Total"
+                    }
                   ]
                 }
               }
@@ -80,12 +100,20 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = var.eventhub_id }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Column"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.EventHub/namespaces", MetricName = "IncomingMessages", Aggregation = "Total" },
-                    { MetricNamespace = "Microsoft.EventHub/namespaces", MetricName = "OutgoingMessages", Aggregation = "Total" }
+                content = {
+                  version   = "1.0"
+                  chartType = "column"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.EventHub/namespaces"
+                      metricName      = "IncomingMessages"
+                      aggregation     = "Total"
+                    },
+                    {
+                      metricNamespace = "Microsoft.EventHub/namespaces"
+                      metricName      = "OutgoingMessages"
+                      aggregation     = "Total"
+                    }
                   ]
                 }
               }
@@ -97,12 +125,20 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = var.postgres_id }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Line"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.DBforPostgreSQL/flexibleServers", MetricName = "cpu_percent", Aggregation = "Average" },
-                    { MetricNamespace = "Microsoft.DBforPostgreSQL/flexibleServers", MetricName = "memory_percent", Aggregation = "Average" }
+                content = {
+                  version   = "1.0"
+                  chartType = "line"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.DBforPostgreSQL/flexibleServers"
+                      metricName      = "cpu_percent"
+                      aggregation     = "Average"
+                    },
+                    {
+                      metricNamespace = "Microsoft.DBforPostgreSQL/flexibleServers"
+                      metricName      = "memory_percent"
+                      aggregation     = "Average"
+                    }
                   ]
                 }
               }
@@ -122,12 +158,20 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = local.function_ids[name] }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Column"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.Web/sites", MetricName = "FunctionExecutionCount", Aggregation = "Total" },
-                    { MetricNamespace = "Microsoft.Web/sites", MetricName = "Http5xx", Aggregation = "Total" }
+                content = {
+                  version   = "1.0"
+                  chartType = "column"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.Web/sites"
+                      metricName      = "FunctionExecutionCount"
+                      aggregation     = "Total"
+                    },
+                    {
+                      metricNamespace = "Microsoft.Web/sites"
+                      metricName      = "Http5xx"
+                      aggregation     = "Total"
+                    }
                   ]
                 }
               }
@@ -170,12 +214,20 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = var.databricks_id }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Column"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.Databricks/workspaces", MetricName = "JobSuccessCount", Aggregation = "Total" },
-                    { MetricNamespace = "Microsoft.Databricks/workspaces", MetricName = "JobFailureCount", Aggregation = "Total" }
+                content = {
+                  version   = "1.0"
+                  chartType = "column"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.Databricks/workspaces"
+                      metricName      = "JobSuccessCount"
+                      aggregation     = "Total"
+                    },
+                    {
+                      metricNamespace = "Microsoft.Databricks/workspaces"
+                      metricName      = "JobFailureCount"
+                      aggregation     = "Total"
+                    }
                   ]
                 }
               }
@@ -187,11 +239,15 @@ locals {
               type   = "Extension/MetricsExplorerPart"
               inputs = { scope = var.databricks_id }
               settings = {
-                Content = {
-                  Version   = "1.0"
-                  ChartType = "Line"
-                  Metrics = [
-                    { MetricNamespace = "Microsoft.Databricks/workspaces", MetricName = "JobRunTime", Aggregation = "Average" }
+                content = {
+                  version   = "1.0"
+                  chartType = "line"
+                  metrics = [
+                    {
+                      metricNamespace = "Microsoft.Databricks/workspaces"
+                      metricName      = "JobRunTime"
+                      aggregation     = "Average"
+                    }
                   ]
                 }
               }
@@ -216,20 +272,18 @@ locals {
 }
 
 resource "azurerm_portal_dashboard" "finance_dashboard" {
-  name                = "finance-observability"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = { dash = "geral" }
-
-  dashboard_properties = local.finance_dashboard_json
+  name                  = "finance-observability"
+  resource_group_name   = var.resource_group_name
+  location              = var.location
+  tags                  = { dash = "geral" }
+  dashboard_properties  = local.finance_dashboard_json
 }
 
 resource "azurerm_portal_dashboard" "jobs_dashboard" {
-  name                = "jobs-execution-dashboard"
-  resource_group_name = var.resource_group_name
-  location            = var.location
-  tags                = { dash = "jobs databricks" }
-
-  dashboard_properties = local.jobs_dashboard_json
+  name                  = "jobs-execution-dashboard"
+  resource_group_name   = var.resource_group_name
+  location              = var.location
+  tags                  = { dash = "jobs databricks" }
+  dashboard_properties  = local.jobs_dashboard_json
 }
 
