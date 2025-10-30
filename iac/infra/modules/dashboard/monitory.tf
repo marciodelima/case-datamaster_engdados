@@ -7,7 +7,7 @@ data "azurerm_function_app" "functions" {
 locals {
   function_ids = {
     for name in var.function_names :
-    name => lookup(data.azurerm_function_app.functions, name, null) != null ? data.azurerm_function_app.functions[name].id : ""
+    name => try(data.azurerm_function_app.functions[name].id, null)
   }
 
   finance_dashboard_json = jsonencode({
@@ -108,31 +108,31 @@ locals {
               }
             }
           }
-          },
-          {
-            for idx, name in var.function_names :
-            tostring(100 + idx) => {
-              position = {
-                x       = idx % 2 == 0 ? 0 : 6
-                y       = 20 + floor(idx / 2) * 6
-                rowSpan = 6
-                colSpan = 6
-              }
-              metadata = {
-                type   = "Extension/MetricsExplorerPart"
-                inputs = { scope = local.function_ids[name] }
-                settings = {
-                  Content = {
-                    Version   = "1.0"
-                    ChartType = "Column"
-                    Metrics = [
-                      { MetricNamespace = "Microsoft.Web/sites", MetricName = "FunctionExecutionCount", Aggregation = "Total" },
-                      { MetricNamespace = "Microsoft.Web/sites", MetricName = "Http5xx", Aggregation = "Total" }
-                    ]
-                  }
+        },
+        {
+          for idx, name in var.function_names :
+          tostring(100 + idx) => {
+            position = {
+              x       = idx % 2 == 0 ? 0 : 6
+              y       = 20 + floor(idx / 2) * 6
+              rowSpan = 6
+              colSpan = 6
+            }
+            metadata = {
+              type   = "Extension/MetricsExplorerPart"
+              inputs = { scope = local.function_ids[name] }
+              settings = {
+                Content = {
+                  Version   = "1.0"
+                  ChartType = "Column"
+                  Metrics = [
+                    { MetricNamespace = "Microsoft.Web/sites", MetricName = "FunctionExecutionCount", Aggregation = "Total" },
+                    { MetricNamespace = "Microsoft.Web/sites", MetricName = "Http5xx", Aggregation = "Total" }
+                  ]
                 }
               }
             }
+          } if local.function_ids[name] != null
         })
       }
     }
@@ -221,7 +221,7 @@ resource "azurerm_portal_dashboard" "finance_dashboard" {
   location            = var.location
   tags                = { dash = "geral" }
 
-  dashboard_properties = local.finance_dashboard_json
+  properties = local.finance_dashboard_json
 }
 
 resource "azurerm_portal_dashboard" "jobs_dashboard" {
@@ -230,6 +230,6 @@ resource "azurerm_portal_dashboard" "jobs_dashboard" {
   location            = var.location
   tags                = { dash = "jobs databricks" }
 
-  dashboard_properties = local.jobs_dashboard_json
+  properties = local.jobs_dashboard_json
 }
 
